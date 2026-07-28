@@ -1,122 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import './App.css';
+import {
+  type DrawerProps,
+  Hamburger,
+  Label,
+  makeStyles,
+  NavDrawer,
+  NavDrawerHeader,
+  tokens,
+  Tooltip,
+  useId,
+  useRestoreFocusTarget,
+} from '@fluentui/react-components';
+import * as React from 'react';
+
+const useStyles = makeStyles({
+  root: {
+    margin: '0',
+    padding: '0',
+    overflow: 'hidden',
+    display: 'flex',
+    width: '100%',
+    height: '100dvh',
+    overscrollBehavior: 'none',
+  },
+  nav: {
+    minWidth: '260px',
+  },
+  content: {
+    flex: '1',
+    padding: '16px',
+    display: 'grid',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
+  field: {
+    display: 'flex',
+    marginTop: '4px',
+    marginLeft: '8px',
+    flexDirection: 'column',
+
+    rowGap: tokens.spacingVerticalS,
+  },
+});
+
+type DrawerType = Required<DrawerProps>['type'];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const styles = useStyles();
+  const typeLableId = useId('type-label');
+  const [type, setType] = React.useState<DrawerType>('inline');
+  const [isOpen, setIsOpen] = React.useState(true);
+  const restoreFocusTargetAttributes = useRestoreFocusTarget();
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className={styles.root}>
+      {/* Navbar */}
+      <NavDrawer open={isOpen} type={type} className={styles.nav}>
+        <NavDrawerHeader>
+          <Tooltip content="Close Navigation" relationship="label">
+            <Hamburger onClick={() => setIsOpen(!isOpen)} />
+          </Tooltip>
+        </NavDrawerHeader>
+      </NavDrawer>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {/* Conteúdo da página. */}
+      <div className={styles.content}>
+        <Tooltip content="Close Navigation" relationship="label">
+          <Hamburger onClick={() => setIsOpen(!isOpen)} />
+        </Tooltip>
+        <div className={styles.field}>
+          <Label id={typeLableId}>Type</Label>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
