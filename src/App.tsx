@@ -1,11 +1,14 @@
 import '@/App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from '@/routes/AppRoutes.tsx';
+import { FluentProvider } from '@fluentui/react-components';
 
 function App() {
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <FluentProvider>
+        <AppRoutes />
+      </FluentProvider>
     </BrowserRouter>
   );
 }

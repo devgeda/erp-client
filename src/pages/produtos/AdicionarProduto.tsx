@@ -1,4 +1,3 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Button,
   Combobox,
@@ -9,22 +8,15 @@ import {
   Option,
   shorthands,
   Switch,
-  Tab,
-  TabList,
   Text,
-  Title3,
   tokens,
 } from '@fluentui/react-components';
 import {
   Add24Regular,
   Dismiss24Regular,
-  Edit24Regular,
-  Eye24Regular,
-  History24Regular,
   Save24Regular,
 } from '@fluentui/react-icons';
 
-// 1. Definição de Estilos (Metodologia Fluent v9 - Griffel)
 const useStyles = makeStyles({
   root: {
     display: 'flex',
@@ -44,7 +36,6 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  // Estilo sutil para separar as abas do resto do conteúdo
   tabContainer: {
     borderBottomWidth: '1px',
     borderBottomStyle: 'solid',
@@ -66,7 +57,6 @@ const useStyles = makeStyles({
     ...shorthands.gap('16px'),
     boxShadow: tokens.shadow2,
   },
-  // Grids para organizar os inputs de acordo com o tamanho ideal
   grid2: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -77,7 +67,6 @@ const useStyles = makeStyles({
     gridTemplateColumns: 'repeat(3, 1fr)',
     ...shorthands.gap('16px'),
   },
-  // Utilitário para campos que precisam ocupar mais espaço
   colSpan2: {
     gridColumnEnd: 'span 2',
   },
@@ -104,82 +93,19 @@ const useStyles = makeStyles({
   },
   cardTitle: {
     color: tokens.colorNeutralForeground1,
-    // Removi o marginBottom daqui pois o cardHeader já vai cuidar do espaçamento
   },
-
-  // Atualize o grid6 para corrigir o vazamento do IVA ST
   grid6: {
     display: 'grid',
-    // O pulo do gato está no minmax(0, 1fr) em vez de apenas 1fr
     gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
     ...shorthands.gap('16px'),
   },
 });
 
-export const ProdutosPage = () => {
+export const AdicionarProduto = () => {
   const styles = useStyles();
-  // Hooks do React Router
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // Uma forma simples de descobrir qual aba deve estar ativa baseada na URL atual
-  // Ex: /produtos/adicionar -> ativa a aba "adicionar"
-  const currentTab = location.pathname.includes('adicionar')
-    ? 'adicionar'
-    : location.pathname.includes('editar')
-      ? 'editar'
-      : 'visualizar';
-
-  const handleTabSelect = (_event: unknown, data: { value: unknown }) => {
-    // Quando o usuário clica na aba, você navega para a rota correspondente
-    // (aqui é só a disposição visual, a lógica exata de rota você ajusta pro seu setup)
-    if (data.value === 'adicionar') navigate('/produtos/adicionar');
-    if (data.value === 'editar') navigate('/produtos/editar/123'); // ID de exemplo
-    if (data.value === 'visualizar') navigate('/produtos/visualizar/123');
-  };
 
   return (
-    <div className={styles.root}>
-      {/* GRUPO DE CABEÇALHO + ABAS */}
-      <div className={styles.headerGroup}>
-        {/* Título e Ações Globais */}
-        <div className={styles.headerTop}>
-          <div>
-            <Text
-              size={300}
-              weight="semibold"
-              style={{ color: tokens.colorBrandForeground1 }}
-            >
-              ESTOQUE
-            </Text>
-            <Title3 block>Adicionar Produto</Title3>
-          </div>
-        </div>
-
-        {/* O TABLIST DE NAVEGAÇÃO */}
-        <div className={styles.tabContainer}>
-          <TabList
-            selectedValue={currentTab}
-            onTabSelect={handleTabSelect}
-            size="medium" // O Fluent v9 oferece tamanhos small, medium, large
-          >
-            <Tab value="visualizar" icon={<Eye24Regular />}>
-              Visualizar
-            </Tab>
-            <Tab value="adicionar" icon={<Add24Regular />}>
-              Adicionar
-            </Tab>
-            <Tab value="editar" icon={<Edit24Regular />}>
-              Editar
-            </Tab>
-            <Tab value="historico" icon={<History24Regular />}>
-              Histórico
-            </Tab>
-          </TabList>
-        </div>
-      </div>
-
-      {/* BLOCO 1: INFORMAÇÕES GERAIS */}
+    <>
       <div className={styles.card}>
         {/* Novo cabeçalho do Card segurando o Título e o Switch */}
         <div className={styles.cardHeader}>
@@ -327,6 +253,6 @@ export const ProdutosPage = () => {
           Adicionar Produto
         </Button>
       </div>
-    </div>
+    </>
   );
 };

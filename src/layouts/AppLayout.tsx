@@ -10,8 +10,6 @@ import {
   MenuTrigger,
   Persona,
   shorthands,
-  Text,
-  Title3,
   tokens,
 } from '@fluentui/react-components';
 import {
