@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useMatches, useNavigate } from 'react-router-dom';
 import {
   makeStyles,
   shorthands,
@@ -14,8 +14,6 @@ import {
   Eye24Regular,
   History24Regular,
 } from '@fluentui/react-icons';
-
-import { pageTitle } from '@/pages/produtos/EditarProduto.tsx';
 
 const useStyles = makeStyles({
   root: {
@@ -108,6 +106,12 @@ export const ProdutosPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const matches = useMatches();
+
+  // Pega a rota filha que está ativa no momento
+  const currentMatch = matches[matches.length - 1];
+  const handle = currentMatch?.handle as any;
+
   // Uma forma simples de descobrir qual aba deve estar ativa baseada na URL atual
   // Ex: /produtos/adicionar -> ativa a aba "adicionar"
   const currentTab = location.pathname.includes('adicionar')
@@ -143,7 +147,7 @@ export const ProdutosPage = () => {
             >
               {sectionTitle}
             </Text>
-            <Title3 block>{pageTitle}</Title3>
+            <Title3 block>{handle?.pageTitle ?? 'Seção de Produtos'}</Title3>
           </div>
         </div>
 

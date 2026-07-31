@@ -25,6 +25,12 @@ const useStyles = makeStyles({
     maxWidth: '1200px',
     ...shorthands.margin('0', 'auto'),
   },
+  switch: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    verticalAlign: 'middle',
+  },
   headerGroup: {
     display: 'flex',
     flexDirection: 'column',
@@ -59,6 +65,8 @@ const useStyles = makeStyles({
   },
   grid2: {
     display: 'grid',
+    pointerEvents: 'none',
+    cursor: 'default',
     gridTemplateColumns: '1fr 1fr',
     ...shorthands.gap('16px'),
   },
@@ -112,7 +120,11 @@ export const AdicionarProduto = () => {
           <Text size={500} weight="semibold" className={styles.cardTitle}>
             Informações Gerais
           </Text>
-          <Field orientation="horizontal" label="Produto Ativo">
+          <Field
+            orientation="horizontal"
+            label="Produto Ativo"
+            className={styles.switch}
+          >
             <Switch defaultChecked />
           </Field>
         </div>
@@ -120,7 +132,7 @@ export const AdicionarProduto = () => {
         <div className={styles.grid3}>
           <div className={styles.colSpan2}>
             <Field label="Nome do Produto" required>
-              <Input placeholder="Ex: Óleo de Motor 5W30" />
+              <Input />
             </Field>
           </div>
 

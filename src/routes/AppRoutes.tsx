@@ -1,4 +1,8 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 import { AppLayout } from '@/layouts/AppLayout.tsx';
 import { ProdutosPage } from '@/pages/produtos/ProdutosPage.tsx';
 import { AdicionarProduto } from '@/pages/produtos/AdicionarProduto.tsx';
@@ -6,19 +10,52 @@ import { VisualizarProduto } from '@/pages/produtos/VisualizarProduto.tsx';
 import { EditarProduto } from '@/pages/produtos/EditarProduto.tsx';
 import { HistoricoProduto } from '@/pages/produtos/HistoricoProduto.tsx';
 
-export function AppRoutes() {
-  return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/produtos" />} />
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Navigate to="/produtos" replace />,
+  },
+  {
+    element: <AppLayout />,
+    children: [
+      {
+        path: '/produtos',
+        element: <ProdutosPage />,
+        children: [
+          {
+            path: '/produtos/adicionar',
+            element: <AdicionarProduto />,
+            handle: {
+              pageTitle: 'Adicionar Produto',
+            },
+          },
+          {
+            path: '/produtos/visualizar',
+            element: <VisualizarProduto />,
+            handle: {
+              pageTitle: 'Visualizar Produto',
+            },
+          },
+          {
+            path: '/produtos/editar',
+            element: <EditarProduto />,
+            handle: {
+              pageTitle: 'Editar Produto',
+            },
+          },
+          {
+            path: '/produtos/historico',
+            element: <HistoricoProduto />,
+            handle: {
+              pageTitle: 'Histórico de Produtos',
+            },
+          },
+        ],
+      },
+    ],
+  },
+]);
 
-      <Route element={<AppLayout />}>
-        <Route path="/produtos" element={<ProdutosPage />}>
-          <Route path="/produtos/adicionar" element={<AdicionarProduto />} />
-          <Route path="/produtos/visualizar" element={<VisualizarProduto />} />
-          <Route path="/produtos/editar" element={<EditarProduto />} />
-          <Route path="/produtos/historico" element={<HistoricoProduto />} />
-        </Route>
-      </Route>
-    </Routes>
-  );
+export function AppRoutes() {
+  return <RouterProvider router={router} />;
 }
