@@ -16,6 +16,10 @@ import {
   Dismiss24Regular,
   Save24Regular,
 } from '@fluentui/react-icons';
+import { useForm } from 'react-hook-form';
+import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
 const useStyles = makeStyles({
   root: {
@@ -73,7 +77,8 @@ const useStyles = makeStyles({
   grid3: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
-    ...shorthands.gap('16px'),
+    gap: '16px',
+    alignItems: 'start',
   },
   colSpan2: {
     gridColumnEnd: 'span 2',
@@ -112,14 +117,34 @@ const useStyles = makeStyles({
 export const AdicionarProduto = () => {
   const styles = useStyles();
 
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<z.infer<typeof produtoFormSchema>>({
+    resolver: zodResolver(produtoFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      produtoNome: '',
+      produtoCodigo: '',
+      produtoCodigoAdicional: '',
+      produtoValor: '',
+      produtoValorPromocional: '',
+      produtoCategoriaId: '',
+      produtoAtivo: true,
+    },
+  });
+
   return (
-    <>
+    <form id="form-adicionar-produto" className={styles.root}>
       <div className={styles.card}>
         {/* Novo cabeçalho do Card segurando o Título e o Switch */}
         <div className={styles.cardHeader}>
           <Text size={500} weight="semibold" className={styles.cardTitle}>
             Informações Gerais
           </Text>
+
           <Field
             orientation="horizontal"
             label="Produto Ativo"
@@ -131,8 +156,13 @@ export const AdicionarProduto = () => {
 
         <div className={styles.grid3}>
           <div className={styles.colSpan2}>
-            <Field label="Nome do Produto" required>
-              <Input />
+            <Field
+              label="Nome do Produto"
+              validationState={errors.produtoNome ? 'error' : 'none'}
+              validationMessage={errors.produtoNome?.message}
+              required
+            >
+              <Input {...register('produtoNome')} />
             </Field>
           </div>
 
@@ -265,6 +295,6 @@ export const AdicionarProduto = () => {
           Adicionar Produto
         </Button>
       </div>
-    </>
+    </form>
   );
 };
