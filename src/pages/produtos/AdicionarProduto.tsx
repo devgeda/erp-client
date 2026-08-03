@@ -16,7 +16,7 @@ import {
   Dismiss24Regular,
   Save24Regular,
 } from '@fluentui/react-icons';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -69,10 +69,9 @@ const useStyles = makeStyles({
   },
   grid2: {
     display: 'grid',
-    pointerEvents: 'none',
-    cursor: 'default',
     gridTemplateColumns: '1fr 1fr',
-    ...shorthands.gap('16px'),
+    gap: '16px',
+    alignItems: 'start',
   },
   grid3: {
     display: 'grid',
@@ -119,21 +118,14 @@ export const AdicionarProduto = () => {
 
   const {
     register,
+    setValue,
     handleSubmit,
     control,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof produtoFormSchema>>({
     resolver: zodResolver(produtoFormSchema),
     mode: 'onChange',
-    defaultValues: {
-      produtoNome: '',
-      produtoCodigo: '',
-      produtoCodigoAdicional: '',
-      produtoValor: '',
-      produtoValorPromocional: '',
-      produtoCategoriaId: '',
-      produtoAtivo: true,
-    },
   });
 
   return (
@@ -156,14 +148,29 @@ export const AdicionarProduto = () => {
 
         <div className={styles.grid3}>
           <div className={styles.colSpan2}>
-            <Field
-              label="Nome do Produto"
-              validationState={errors.produtoNome ? 'error' : 'none'}
-              validationMessage={errors.produtoNome?.message}
-              required
-            >
-              <Input {...register('produtoNome')} />
-            </Field>
+            <Controller
+              name="produtoNome"
+              control={control}
+              defaultValue={''}
+              render={({ field }) => (
+                <Field
+                  id={'produtoNome'}
+                  label="Nome do Produto"
+                  validationState={errors.produtoNome ? 'error' : 'none'}
+                  validationMessage={errors.produtoNome?.message}
+                  required
+                >
+                  <Input
+                    {...field}
+                    value={field.value}
+                    onChange={(e) => {
+                      field.onChange(e.target.value.toUpperCase());
+                    }}
+                    placeholder={'Insira o nome do produto ...'}
+                  />
+                </Field>
+              )}
+            />
           </div>
 
           <div className={styles.flexRowRight}>
@@ -178,12 +185,54 @@ export const AdicionarProduto = () => {
         </div>
 
         <div className={styles.grid2}>
-          <Field label="Código (SKU)" required>
-            <Input placeholder="Código interno" />
-          </Field>
-          <Field label="Código Adicional (EAN/Código de Barras)">
-            <Input placeholder="Código do fabricante" />
-          </Field>
+          <Controller
+            name={'produtoCodigo'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={'produtoCodigo'}
+                label="Código"
+                validationState={errors.produtoCodigo ? 'error' : 'none'}
+                validationMessage={errors.produtoCodigo?.message}
+                required
+              >
+                <Input
+                  {...field}
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value.toUpperCase());
+                  }}
+                  placeholder="Insira o código do produto ..."
+                />
+              </Field>
+            )}
+          />
+
+          <Controller
+            name={'produtoCodigoAdicional'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={'produtoCodigoAdicional'}
+                label="Código Adicional"
+                validationState={
+                  errors.produtoCodigoAdicional ? 'error' : 'none'
+                }
+                validationMessage={errors.produtoCodigoAdicional?.message}
+              >
+                <Input
+                  {...field}
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value.toUpperCase());
+                  }}
+                  placeholder="Código do fabricante"
+                />
+              </Field>
+            )}
+          />
         </div>
       </div>
 
@@ -194,7 +243,7 @@ export const AdicionarProduto = () => {
         </Text>
 
         <div className={styles.grid2}>
-          <Field label="Valor de Venda (R$)" required>
+          <Field label="Valor (R$)" required>
             <Input type="number" placeholder="0,00" />
           </Field>
           <Field label="Valor Promocional (R$)">
