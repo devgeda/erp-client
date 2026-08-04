@@ -20,6 +20,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { formatCurrencyBRL } from '@/utils/formatters.tsx';
 
 const useStyles = makeStyles({
   root: {
@@ -109,7 +110,8 @@ const useStyles = makeStyles({
   grid6: {
     display: 'grid',
     gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
-    ...shorthands.gap('16px'),
+    gap: '16px',
+    alignItems: 'start',
   },
 });
 
@@ -117,12 +119,8 @@ export const AdicionarProduto = () => {
   const styles = useStyles();
 
   const {
-    register,
-    setValue,
-    handleSubmit,
     control,
-    watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<z.infer<typeof produtoFormSchema>>({
     resolver: zodResolver(produtoFormSchema),
     mode: 'onChange',
@@ -131,12 +129,11 @@ export const AdicionarProduto = () => {
   return (
     <form id="form-adicionar-produto" className={styles.root}>
       <div className={styles.card}>
-        {/* Novo cabeçalho do Card segurando o Título e o Switch */}
+        {/* CABEÇALHO(Informações Gerais) - TEXT, FIELD<SWITCH>" */}
         <div className={styles.cardHeader}>
           <Text size={500} weight="semibold" className={styles.cardTitle}>
             Informações Gerais
           </Text>
-
           <Field
             orientation="horizontal"
             label="Produto Ativo"
@@ -146,8 +143,10 @@ export const AdicionarProduto = () => {
           </Field>
         </div>
 
+        {/* NOME DO PRODUTO - CONTROLLER<FIELD<INPUT>>" */}
         <div className={styles.grid3}>
           <div className={styles.colSpan2}>
+            {/* NOME DO PRODUTO - CONTROLLER<FIELD<INPUT>>" */}
             <Controller
               name="produtoNome"
               control={control}
@@ -174,6 +173,7 @@ export const AdicionarProduto = () => {
           </div>
 
           <div className={styles.flexRowRight}>
+            {/* CATEGORIA DO PRODUTO - FIELD<COMBOBOX<OPTION, OPTION>>, BUTTON" */}
             <Field label="Categoria" required style={{ flex: 1 }}>
               <Combobox placeholder="Selecione uma categoria">
                 <Option>Filtros</Option>
@@ -185,6 +185,7 @@ export const AdicionarProduto = () => {
         </div>
 
         <div className={styles.grid2}>
+          {/* CÓDIGO DO PRODUTO - CONTROLLER<FIELD<INPUT>>" */}
           <Controller
             name={'produtoCodigo'}
             control={control}
@@ -209,6 +210,7 @@ export const AdicionarProduto = () => {
             )}
           />
 
+          {/* CÓDIGO ADICIONAL DO PRODUTO - CONTROLLER<FIELD<INPUT>>" */}
           <Controller
             name={'produtoCodigoAdicional'}
             control={control}
@@ -236,19 +238,53 @@ export const AdicionarProduto = () => {
         </div>
       </div>
 
-      {/* BLOCO 2: VALORES */}
+      {/* CABEÇALHO(Preificação) - TEXT" */}
       <div className={styles.card}>
         <Text size={500} weight="semibold" className={styles.cardTitle}>
           Preificação
         </Text>
 
         <div className={styles.grid2}>
-          <Field label="Valor (R$)" required>
-            <Input type="number" placeholder="0,00" />
-          </Field>
-          <Field label="Valor Promocional (R$)">
-            <Input type="number" placeholder="0,00" />
-          </Field>
+          <Controller
+            name="produtoValor"
+            control={control}
+            defaultValue={0.0}
+            render={({ field, fieldState }) => (
+              <Field
+                id={'produtoValor'}
+                label="Valor (R$)"
+                validationState={fieldState.error ? 'error' : 'none'}
+                validationMessage={fieldState.error?.message}
+              >
+                <Input
+                  {...field}
+                  value={field.value ? formatCurrencyBRL(field.value) : ''}
+                  placeholder="R$ 0,00"
+                />
+              </Field>
+            )}
+          />
+          <Controller
+            name="produtoValorPromocional"
+            control={control}
+            defaultValue={0.0}
+            render={({ field }) => (
+              <Field
+                id={'produtoValorPromocional'}
+                label="Valor (R$)"
+                validationState={
+                  errors.produtoValorPromocional ? 'error' : 'none'
+                }
+                validationMessage={errors.produtoValorPromocional?.message}
+              >
+                <Input
+                  {...field}
+                  value={field.value ? formatCurrencyBRL(field.value) : ''}
+                  placeholder="R$ 0,00"
+                />
+              </Field>
+            )}
+          />
         </div>
       </div>
 

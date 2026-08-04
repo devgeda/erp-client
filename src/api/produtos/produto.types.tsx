@@ -2,8 +2,8 @@ export interface ProdutoRequestDTO {
   produtoNome: string;
   produtoCodigo: string;
   produtoCodigoAdicional: string;
-  produtoValor: string;
-  produtoValorPromocional: string;
+  produtoValor: number;
+  produtoValorPromocional: number;
   produtoCategoriaId: string;
   produtoAtivo: boolean;
 }
