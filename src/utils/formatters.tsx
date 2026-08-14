@@ -1,4 +1,3 @@
-// FORMATAR O CAMPO DE VALOR
 export const formatCurrencyBRL = (value: string | number) => {
   const onlyDigits = String(value).replace(/\D/g, '');
   if (!onlyDigits) return '';
@@ -10,7 +9,6 @@ export const formatCurrencyBRL = (value: string | number) => {
   });
 };
 
-// CONVERTER O VALOR PARA UM VALOR VALIDO PARA O BANCO
 export const parseCurrencyToNumber = (value: string): number => {
   const onlyDigits = value.replace(/\D/g, '');
   if (!onlyDigits) return 0;

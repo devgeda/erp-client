@@ -6,21 +6,18 @@ import {
   Input,
   makeStyles,
   Option,
+  Select,
   shorthands,
   Switch,
   Text,
   tokens,
 } from '@fluentui/react-components';
-import {
-  Add24Regular,
-  Dismiss24Regular,
-  Save24Regular,
-} from '@fluentui/react-icons';
-import { Controller, useForm } from 'react-hook-form';
+import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
+import { useForm } from 'react-hook-form';
 import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { formatCurrencyBRL } from '@/utils/formatters.tsx';
+import { z } from 'zod';
+import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCategoriaDialog.tsx';
 
 const useStyles = makeStyles({
   root: {
@@ -115,19 +112,35 @@ const useStyles = makeStyles({
   },
 });
 
+type ProdutoFormScheme = z.infer<typeof produtoFormSchema>;
+
 export const AdicionarProduto = () => {
   const styles = useStyles();
 
-  const {
-    control,
-    formState: { errors },
-  } = useForm<z.infer<typeof produtoFormSchema>>({
-    resolver: zodResolver(produtoFormSchema),
+  const { register, handleSubmit, formState } = useForm<ProdutoFormScheme>({
     mode: 'onChange',
+    resolver: zodResolver(produtoFormSchema),
+    defaultValues: {
+      produtoNome: '',
+      produtoCodigo: '',
+      produtoCodigoAdicional: '',
+      produtoValor: '',
+      produtoValorPromocional: '',
+      produtoCategoriaId: '',
+      produtoAtivo: true,
+    },
   });
 
+  function onProdutoFormSubmit(data: ProdutoFormScheme) {
+    console.log(data);
+  }
+
   return (
-    <form id="form-adicionar-produto" className={styles.root}>
+    <form
+      id="form-adicionar-produto"
+      className={styles.root}
+      onSubmit={handleSubmit(onProdutoFormSubmit)}
+    >
       <div className={styles.card}>
         {/* CABEÇALHO(Informações Gerais) - TEXT, FIELD<SWITCH>" */}
         <div className={styles.cardHeader}>
@@ -143,98 +156,52 @@ export const AdicionarProduto = () => {
           </Field>
         </div>
 
-        {/* NOME DO PRODUTO - CONTROLLER<FIELD<INPUT>>" */}
         <div className={styles.grid3}>
           <div className={styles.colSpan2}>
-            {/* NOME DO PRODUTO - CONTROLLER<FIELD<INPUT>>" */}
-            <Controller
-              name="produtoNome"
-              control={control}
-              defaultValue={''}
-              render={({ field }) => (
-                <Field
-                  id={'produtoNome'}
-                  label="Nome do Produto"
-                  validationState={errors.produtoNome ? 'error' : 'none'}
-                  validationMessage={errors.produtoNome?.message}
-                  required
-                >
-                  <Input
-                    {...field}
-                    value={field.value}
-                    onChange={(e) => {
-                      field.onChange(e.target.value.toUpperCase());
-                    }}
-                    placeholder={'Insira o nome do produto ...'}
-                  />
-                </Field>
-              )}
-            />
+            {/* NOME DO PRODUTO - FIELD<INPUT>" */}
+            <Field
+              id={'produtoNome'}
+              label="Nome do Produto"
+              validationState={'error'}
+              validationMessage={
+                formState.errors
+                  ? formState.errors.produtoNome?.message
+                  : 'none'
+              }
+              required
+            >
+              <Input
+                {...register('produtoNome')}
+                placeholder={'Insira o nome do produto ...'}
+              />
+            </Field>
           </div>
 
           <div className={styles.flexRowRight}>
-            {/* CATEGORIA DO PRODUTO - FIELD<COMBOBOX<OPTION, OPTION>>, BUTTON" */}
+            {/* CATEGORIA DO PRODUTO - FIELD<COMBOBOX<OPTION, OPTION>>, BUTTON */}
             <Field label="Categoria" required style={{ flex: 1 }}>
-              <Combobox placeholder="Selecione uma categoria">
-                <Option>Filtros</Option>
-                <Option>Óleos e Lubrificantes</Option>
-              </Combobox>
+              <Select form={'form-adicionar-produto'}></Select>
             </Field>
-            <Button icon={<Add24Regular />} aria-label="Adicionar Categoria" />
+            <AdicionarProdutoCategoriaDialog />
           </div>
         </div>
 
         <div className={styles.grid2}>
           {/* CÓDIGO DO PRODUTO - CONTROLLER<FIELD<INPUT>>" */}
-          <Controller
-            name={'produtoCodigo'}
-            control={control}
-            defaultValue={''}
-            render={({ field }) => (
-              <Field
-                id={'produtoCodigo'}
-                label="Código"
-                validationState={errors.produtoCodigo ? 'error' : 'none'}
-                validationMessage={errors.produtoCodigo?.message}
-                required
-              >
-                <Input
-                  {...field}
-                  value={field.value}
-                  onChange={(e) => {
-                    field.onChange(e.target.value.toUpperCase());
-                  }}
-                  placeholder="Insira o código do produto ..."
-                />
-              </Field>
-            )}
-          />
+          <Field id={'produtoCodigo'} label="Código" required>
+            <Input
+              {...register('produtoCodigo')}
+              placeholder="Insira o código do produto ..."
+            />
+          </Field>
 
           {/* CÓDIGO ADICIONAL DO PRODUTO - CONTROLLER<FIELD<INPUT>>" */}
-          <Controller
-            name={'produtoCodigoAdicional'}
-            control={control}
-            defaultValue={''}
-            render={({ field }) => (
-              <Field
-                id={'produtoCodigoAdicional'}
-                label="Código Adicional"
-                validationState={
-                  errors.produtoCodigoAdicional ? 'error' : 'none'
-                }
-                validationMessage={errors.produtoCodigoAdicional?.message}
-              >
-                <Input
-                  {...field}
-                  value={field.value}
-                  onChange={(e) => {
-                    field.onChange(e.target.value.toUpperCase());
-                  }}
-                  placeholder="Código do fabricante"
-                />
-              </Field>
-            )}
-          />
+          <Field id={'produtoCodigoAdicional'} label="Código Adicional">
+            <Input
+              {...register('produtoCodigoAdicional')}
+              placeholder="Código do fabricante"
+            />
+          </Field>
         </div>
       </div>
 
@@ -245,46 +212,15 @@ export const AdicionarProduto = () => {
         </Text>
 
         <div className={styles.grid2}>
-          <Controller
-            name="produtoValor"
-            control={control}
-            defaultValue={0.0}
-            render={({ field, fieldState }) => (
-              <Field
-                id={'produtoValor'}
-                label="Valor (R$)"
-                validationState={fieldState.error ? 'error' : 'none'}
-                validationMessage={fieldState.error?.message}
-              >
-                <Input
-                  {...field}
-                  value={field.value ? formatCurrencyBRL(field.value) : ''}
-                  placeholder="R$ 0,00"
-                />
-              </Field>
-            )}
-          />
-          <Controller
-            name="produtoValorPromocional"
-            control={control}
-            defaultValue={0.0}
-            render={({ field }) => (
-              <Field
-                id={'produtoValorPromocional'}
-                label="Valor (R$)"
-                validationState={
-                  errors.produtoValorPromocional ? 'error' : 'none'
-                }
-                validationMessage={errors.produtoValorPromocional?.message}
-              >
-                <Input
-                  {...field}
-                  value={field.value ? formatCurrencyBRL(field.value) : ''}
-                  placeholder="R$ 0,00"
-                />
-              </Field>
-            )}
-          />
+          <Field id={'produtoValor'} label="Valor (R$)">
+            <Input {...register('produtoValor')} placeholder="R$ 0,00" />
+          </Field>
+          <Field id={'produtoValorPromocional'} label="Valor (R$)">
+            <Input
+              {...register('produtoValorPromocional')}
+              placeholder="R$ 0,00"
+            />
+          </Field>
         </div>
       </div>
 
@@ -373,10 +309,14 @@ export const AdicionarProduto = () => {
 
       {/* RODAPÉ DE AÇÕES */}
       <div className={styles.actionFooter}>
-        <Button appearance="secondary" icon={<Dismiss24Regular />}>
+        <Button
+          type={'reset'}
+          appearance="secondary"
+          icon={<Dismiss24Regular />}
+        >
           Cancelar
         </Button>
-        <Button appearance="primary" icon={<Save24Regular />}>
+        <Button type={'submit'} appearance="primary" icon={<Save24Regular />}>
           Adicionar Produto
         </Button>
       </div>

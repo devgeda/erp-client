@@ -2,6 +2,7 @@ import type {
   ProdutoRequestDTO,
   ProdutoResponseDTO,
 } from '@/api/produtos/produto.types.tsx';
+import { api } from '@/api/client.tsx';
 
 export async function criarProduto(data: ProdutoRequestDTO) {
   const response = await api.post<ProdutoResponseDTO>('/produtos', data);

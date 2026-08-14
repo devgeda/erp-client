@@ -13,6 +13,7 @@
     "@fluentui/react-components": "^9.74.4",
     "@fluentui/react-icons": "^2.0.334",
     "@hookform/resolvers": "^5.6.0",
+    "axios": "^1.19.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.84.0",
