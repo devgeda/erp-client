@@ -28,7 +28,7 @@ import {
   TaskListSquareLtrRegular,
   Wrench24Regular,
 } from '@fluentui/react-icons';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles({
   root: {
@@ -92,6 +92,13 @@ const useStyles = makeStyles({
 
 export const AppLayout = () => {
   const styles = useStyles();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    localStorage.removeItem('token');
+
+    navigate('/log-in');
+  }
 
   return (
     <div className={styles.root}>
@@ -190,7 +197,9 @@ export const AppLayout = () => {
                     Configurações
                   </MenuItem>
                   <Divider />
-                  <MenuItem icon={<SignOut24Regular />}>Sair</MenuItem>
+                  <MenuItem icon={<SignOut24Regular />} onClick={handleLogout}>
+                    Sair
+                  </MenuItem>
                 </MenuList>
               </MenuPopover>
             </Menu>
@@ -199,8 +208,6 @@ export const AppLayout = () => {
 
         {/* ÁREA DO OUTLET */}
         <div className={styles.outletArea}>
-          {/* Seu <Outlet /> entra exatamente aqui.
-              Substitua a div abaixo pelo componente Outlet do React Router. */}
           <div
             style={{
               border: `2px ${tokens.colorNeutralStroke1}`,
