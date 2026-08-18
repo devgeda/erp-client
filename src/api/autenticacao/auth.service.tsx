@@ -27,7 +27,7 @@ export interface UsuarioResponseDTO {
 }
 
 export const loginFormSchema = z.object({
-  email: z.string().max(255, 'Máx. 255 caracteres'),
+  email: z.email('Insira um email válido'),
   senha: z
     .string()
     .min(8, 'Mínimo de 8 caracteres')
@@ -40,10 +40,11 @@ export const signupFormSchema = z
       .string()
       .min(12, 'Mín. 12 caracteres')
       .max(24, 'Máx. 24 caracteres'),
-    email: z.string().max(255, 'Máx. 255 caracteres'),
+    email: z.email('Insira um email válido'),
     senha: z
       .string()
       .min(8, 'Mínimo de 8 caracteres')
+      .max(255, 'Máx. 255 caracteres')
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/, {
         message:
           'A senha deve conter letra maiúscula, minúscula, número e caractere especial',
