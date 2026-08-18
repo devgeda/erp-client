@@ -7,5 +7,3 @@ export const categoriaFormSchema = z.object({
     .max(150, 'Máx. 150 caracteres'),
   categoriaAtivo: z.boolean('Defina o status da categoria'),
 });
-
-export type CriarCategoriaFormData = z.infer<typeof categoriaFormSchema>;

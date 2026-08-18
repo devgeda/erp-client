@@ -9,3 +9,9 @@ export async function criarCategoria(data: CategoriaRequestDTO) {
 
   return response.data;
 }
+
+export async function obterCategoria() {
+  const response = await api.get<CategoriaResponseDTO[]>('/categorias');
+
+  return response.data;
+}

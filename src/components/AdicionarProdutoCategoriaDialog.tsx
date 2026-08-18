@@ -14,11 +14,11 @@ import {
   Switch,
 } from '@fluentui/react-components';
 import { Add24Regular } from '@fluentui/react-icons';
-import { z } from 'zod';
 import { categoriaFormSchema } from '@/api/categorias/categoria.schemas.tsx';
 import { criarCategoria } from '@/api/categorias/categoria.service.tsx';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { CategoriaRequestDTO } from '@/api/categorias/categoria.types.tsx';
 
 const useStyles = makeStyles({
   switch: {
@@ -40,17 +40,19 @@ const useStyles = makeStyles({
   },
 });
 
-type CategoriaFormSchema = z.infer<typeof categoriaFormSchema>;
-
 export const AdicionarProdutoCategoriaDialog = (): JSXElement => {
   const styles = useStyles();
 
-  const { handleSubmit, register } = useForm<CategoriaFormSchema>({
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<CategoriaRequestDTO>({
     resolver: zodResolver(categoriaFormSchema),
     mode: 'onChange',
   });
 
-  async function onCategoriaFormSubmit(data: CategoriaFormSchema) {
+  async function onCategoriaFormSubmit(data: CategoriaRequestDTO) {
     try {
       await criarCategoria(data);
     } catch (e) {
@@ -72,25 +74,28 @@ export const AdicionarProdutoCategoriaDialog = (): JSXElement => {
           <DialogBody className={styles.content}>
             <DialogTitle>Adicionar Categoria</DialogTitle>
             <DialogContent className={styles.grid}>
-              <Field id={'categoriaNome'} label={'Nome da Categoria'}>
+              <Field
+                id={'categoriaNome'}
+                label={'Nome da Categoria'}
+                validationState={errors.categoriaNome ? 'error' : 'none'}
+                validationMessage={errors.categoriaNome?.message}
+                required
+              >
                 <Input
                   {...register('categoriaNome')}
                   placeholder="Insira o nome da categoria"
                 />
               </Field>
               <Field
-                {...register('categoriaAtivo')}
                 label={'Categoria Ativa'}
                 className={styles.switch}
+                required
               >
-                <Switch defaultChecked />
+                <Switch {...register('categoriaAtivo')} defaultChecked />
               </Field>
             </DialogContent>
             <DialogActions>
-              <Button
-                appearance={'primary'}
-                onSubmit={handleSubmit(onCategoriaFormSubmit)}
-              >
+              <Button appearance={'primary'} type={'submit'}>
                 Salvar
               </Button>
               <DialogTrigger disableButtonEnhancement>

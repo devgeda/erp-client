@@ -13,10 +13,13 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useEffect, useState } from 'react';
+import type { CategoriaResponseDTO } from '@/api/categorias/categoria.types.tsx';
+import { obterCategoria } from '@/api/categorias/categoria.service.tsx';
 import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCategoriaDialog.tsx';
 
 const useStyles = makeStyles({
@@ -112,12 +115,33 @@ const useStyles = makeStyles({
   },
 });
 
-type ProdutoFormScheme = z.infer<typeof produtoFormSchema>;
+type produtoFormScheme = z.infer<typeof produtoFormSchema>;
 
 export const AdicionarProduto = () => {
   const styles = useStyles();
+  const [categorias, setCategorias] = useState<CategoriaResponseDTO[]>([]);
+  const [carregando, setCarregando] = useState(true);
 
-  const { register, handleSubmit, formState } = useForm<ProdutoFormScheme>({
+  useEffect(() => {
+    async function carregarCategorias() {
+      try {
+        const categoriasData = await obterCategoria();
+        setCategorias(categoriasData);
+      } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+      } finally {
+        setCarregando(false);
+      }
+    }
+    carregarCategorias();
+  }, []);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<produtoFormScheme>({
     mode: 'onChange',
     resolver: zodResolver(produtoFormSchema),
     defaultValues: {
@@ -131,7 +155,7 @@ export const AdicionarProduto = () => {
     },
   });
 
-  function onProdutoFormSubmit(data: ProdutoFormScheme) {
+  function onProdutoFormSubmit(data: produtoFormScheme) {
     console.log(data);
   }
 
@@ -147,12 +171,13 @@ export const AdicionarProduto = () => {
           <Text size={500} weight="semibold" className={styles.cardTitle}>
             Informações Gerais
           </Text>
+          {/* SWITCH - PRODUTO ATIVO */}
           <Field
             orientation="horizontal"
             label="Produto Ativo"
             className={styles.switch}
           >
-            <Switch defaultChecked />
+            <Switch {...register('produtoAtivo')} defaultChecked />
           </Field>
         </div>
 
@@ -162,28 +187,46 @@ export const AdicionarProduto = () => {
             <Field
               id={'produtoNome'}
               label="Nome do Produto"
-              validationState={'error'}
-              validationMessage={
-                formState.errors
-                  ? formState.errors.produtoNome?.message
-                  : 'none'
-              }
+              validationState={errors.produtoNome ? 'error' : 'none'}
+              validationMessage={errors.produtoNome?.message}
               required
             >
-              <Input
-                {...register('produtoNome')}
-                placeholder={'Insira o nome do produto ...'}
-              />
+              <Input {...register('produtoNome')} />
             </Field>
           </div>
 
           <div className={styles.flexRowRight}>
             {/* CATEGORIA DO PRODUTO - FIELD<COMBOBOX<OPTION, OPTION>>, BUTTON */}
-            <Field label="Categoria" required style={{ flex: 1 }}>
-              <Select form={'form-adicionar-produto'}></Select>
-            </Field>
-            <AdicionarProdutoCategoriaDialog />
+            <Controller
+              name={'produtoCategoriaId'}
+              control={control}
+              defaultValue={''}
+              render={({ field, fieldState }) => (
+                <Field
+                  label="Categoria"
+                  validationState={fieldState.error ? 'error' : 'none'}
+                  validationMessage={fieldState.error?.message}
+                  className={''}
+                  required
+                >
+                  <Select
+                    disabled={carregando}
+                    onChange={(_e, data) => field.onChange(data.value)}
+                  >
+                    <option value={''}>
+                      {carregando ? 'Carregando...' : 'Selecione uma categoria'}
+                    </option>
+                    {categorias.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.nome}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+              )}
+            ></Controller>
           </div>
+          <AdicionarProdutoCategoriaDialog />
         </div>
 
         <div className={styles.grid2}>
