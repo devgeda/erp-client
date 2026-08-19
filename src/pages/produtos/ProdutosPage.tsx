@@ -1,4 +1,5 @@
 import { Outlet, useLocation, useMatches, useNavigate } from 'react-router-dom';
+
 import {
   makeStyles,
   shorthands,
@@ -125,8 +126,6 @@ export const ProdutosPage = () => {
           : 'adicionar';
 
   const handleTabSelect = (_event: unknown, data: { value: unknown }) => {
-    // Quando o usuário clica na aba, você navega para a rota correspondente
-    // (aqui é só a disposição visual, a lógica exata de rota você ajusta pro seu setup)
     if (data.value === 'adicionar') navigate('/produtos/adicionar');
     if (data.value === 'editar') navigate('/produtos/editar');
     if (data.value === 'visualizar') navigate('/produtos/visualizar');

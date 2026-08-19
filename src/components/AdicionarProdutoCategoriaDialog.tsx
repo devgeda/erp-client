@@ -19,6 +19,7 @@ import { criarCategoria } from '@/api/categorias/categoria.service.tsx';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { CategoriaRequestDTO } from '@/api/categorias/categoria.types.tsx';
+import { onNestedSubmit } from '@/utils/nestedFormSubmit.tsx';
 
 const useStyles = makeStyles({
   switch: {
@@ -57,8 +58,15 @@ export const AdicionarProdutoCategoriaDialog = (): JSXElement => {
       await criarCategoria(data);
     } catch (e) {
       console.error(e);
+    } finally {
+      console.log(data);
     }
   }
+
+  const onInnerSubmit = onNestedSubmit({
+    handleSubmit,
+    submitFunction: onCategoriaFormSubmit,
+  });
 
   return (
     <Dialog modalType="modal">
@@ -67,31 +75,29 @@ export const AdicionarProdutoCategoriaDialog = (): JSXElement => {
       </DialogTrigger>
 
       <DialogSurface>
-        <form
-          id={'form-dialog-categoria'}
-          onSubmit={handleSubmit(onCategoriaFormSubmit)}
-        >
+        <form id={'form-dialog-categoria'} onSubmit={onInnerSubmit} noValidate>
           <DialogBody className={styles.content}>
             <DialogTitle>Adicionar Categoria</DialogTitle>
             <DialogContent className={styles.grid}>
               <Field
-                id={'categoriaNome'}
+                id={'nome'}
                 label={'Nome da Categoria'}
-                validationState={errors.categoriaNome ? 'error' : 'none'}
-                validationMessage={errors.categoriaNome?.message}
+                validationState={errors.nome ? 'error' : 'none'}
+                validationMessage={errors.nome?.message}
                 required
               >
                 <Input
-                  {...register('categoriaNome')}
+                  {...register('nome')}
                   placeholder="Insira o nome da categoria"
                 />
               </Field>
               <Field
+                id={'ativo'}
                 label={'Categoria Ativa'}
                 className={styles.switch}
                 required
               >
-                <Switch {...register('categoriaAtivo')} defaultChecked />
+                <Switch {...register('ativo')} defaultChecked />
               </Field>
             </DialogContent>
             <DialogActions>

@@ -1,6 +1,6 @@
 export interface CategoriaRequestDTO {
-  categoriaNome: string;
-  categoriaAtivo: boolean;
+  nome: string;
+  ativo: boolean;
 }
 
 export interface CategoriaResponseDTO {
