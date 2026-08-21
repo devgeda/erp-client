@@ -54,7 +54,7 @@ const useStyles = makeStyles({
 });
 
 interface AdicionarProdutoCategoriaDialogProps {
-  isOpen: boolean; // Tells TypeScript this must be a boolean
+  isOpen: boolean;
   onClose: () => void;
 }
 

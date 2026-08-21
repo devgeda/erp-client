@@ -1,4 +1,5 @@
 import type {
+  ProdutoFiscalResponseDTO,
   ProdutoRequestDTO,
   ProdutoResponseDTO,
 } from '@/api/produtos/produto.types.tsx';
@@ -11,7 +12,13 @@ export async function criarProduto(data: ProdutoRequestDTO) {
 }
 
 export async function listarProduto() {
-  const response = await api.get<ProdutoResponseDTO[]>('produtos');
+  const response = await api.get<ProdutoResponseDTO[]>('/produtos');
+
+  return response.data;
+}
+
+export async function listarProdutoFiscal(domain: string) {
+  const response = await api.get<ProdutoFiscalResponseDTO[]>(`/${domain}`);
 
   return response.data;
 }

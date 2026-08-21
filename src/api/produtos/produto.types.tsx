@@ -2,10 +2,11 @@ export interface ProdutoRequestDTO {
   nome: string;
   codigo: string;
   codigoAdicional: string;
-  valor: string;
-  valorAdicional: string;
+  valor: number;
+  valorAdicional: number;
   categoriaId: string;
   ativo: boolean;
+  cfopInterno: string;
 }
 
 export interface ProdutoResponseDTO {
@@ -17,4 +18,11 @@ export interface ProdutoResponseDTO {
   valorPromocional: number;
   categoriaId: string;
   ativo: boolean;
+  cfopInterno: string;
+}
+
+export interface ProdutoFiscalResponseDTO {
+  id: string;
+  nome: string;
+  codigo: string;
 }

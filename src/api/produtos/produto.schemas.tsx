@@ -7,8 +7,9 @@ export const produtoFormSchema = z.object({
     .string()
     .min(1, 'Mín. 1 caractere')
     .max(32, 'Máx. 32 caracteres'),
-  valor: z.string().min(0.01, 'O valor deve ser maior que zero'),
-  valorPromocional: z.string().min(0.01, 'O valor deve ser maior que zero'),
+  valor: z.string().min(1, 'O valor precisa ser válido'),
+  valorPromocional: z.string().min(1, 'O valor precisa ser válido'),
   categoriaId: z.string().uuid('Id de categoria inválido'),
   ativo: z.boolean('Defina o status do produto'),
+  cfopInterno: z.string(),
 });

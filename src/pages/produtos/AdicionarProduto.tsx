@@ -26,6 +26,9 @@ import { useEffect, useState } from 'react';
 import type { CategoriaResponseDTO } from '@/api/categorias/categoria.types.tsx';
 import { obterCategoria } from '@/api/categorias/categoria.service.tsx';
 import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCategoriaDialog.tsx';
+import { formatCurrencyBRL } from '@/utils/formatters.tsx';
+import { listarProdutoFiscal } from '@/api/produtos/produto.service.tsx';
+import type { ProdutoFiscalResponseDTO } from '@/api/produtos/produto.types.tsx';
 
 const useStyles = makeStyles({
   root: {
@@ -120,11 +123,14 @@ const useStyles = makeStyles({
   },
 });
 
-type produtoFormScheme = z.infer<typeof produtoFormSchema>;
+type ProdutoFormInput = z.input<typeof produtoFormSchema>;
+type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
 
 export const AdicionarProduto = () => {
   const styles = useStyles();
   const [categorias, setCategorias] = useState<CategoriaResponseDTO[]>([]);
+  const [ficais, setFiscais] = useState<ProdutoFiscalResponseDTO[]>([]);
+  const [carregandoCategorias, setCarregandoCategorias] = useState(true);
   const [carregando, setCarregando] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
@@ -136,10 +142,27 @@ export const AdicionarProduto = () => {
       } catch (error) {
         console.error('Erro ao carregar categorias:', error);
       } finally {
-        setCarregando(false);
+        setCarregandoCategorias(false);
       }
     }
     carregarCategorias();
+  }, [isDialogOpen]);
+  {
+    /* ADICIONAR UM BOTAO PARA ATUALIZAR A LISTA OU ATUALIZAR QUANDO FECHAR OU ABRIR O SELECT*/
+  }
+
+  useEffect(() => {
+    async function carregarFiscal(domain: string) {
+      try {
+        const fiscalData = await listarProdutoFiscal(domain);
+        setFiscais(fiscalData);
+      } catch (error) {
+        console.error('Erro ao carregar fiscal:', error);
+      } finally {
+        setCarregando(false);
+      }
+    }
+    carregarFiscal(domain);
   }, [isDialogOpen]);
 
   const {
@@ -147,7 +170,7 @@ export const AdicionarProduto = () => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<produtoFormScheme>({
+  } = useForm<ProdutoFormInput>({
     mode: 'onChange',
     resolver: zodResolver(produtoFormSchema),
     defaultValues: {
@@ -158,10 +181,11 @@ export const AdicionarProduto = () => {
       valorPromocional: '',
       categoriaId: '',
       ativo: true,
+      cfopInterno: '',
     },
   });
 
-  function onProdutoFormSubmit(data: produtoFormScheme) {
+  function onProdutoFormSubmit(data: ProdutoFormOutput) {
     console.log(data);
   }
 
@@ -286,11 +310,13 @@ export const AdicionarProduto = () => {
                   required
                 >
                   <Select
-                    disabled={carregando}
+                    disabled={carregandoCategorias}
                     onChange={(_e, data) => field.onChange(data.value)}
                   >
                     <option value={''}>
-                      {carregando ? 'Carregando...' : 'Selecione uma categoria'}
+                      {carregandoCategorias
+                        ? 'Carregando...'
+                        : 'Selecione uma categoria'}
                     </option>
                     {categorias.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -316,14 +342,53 @@ export const AdicionarProduto = () => {
         </Text>
 
         <div className={styles.grid2}>
-          <Controller name={'valor'} control={control}>
-            <Field id={'produtoValor'} label="Valor (R$)">
-              <Input {...register('valor')} placeholder="R$ 0,00" />
-            </Field>
-          </Controller>
-          <Field id={'valorPromocional'} label="Valor Promocional (R$)">
-            <Input {...register('valorPromocional')} placeholder="R$ 0,00" />
-          </Field>
+          <Controller
+            name={'valor'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={'valor'}
+                label={'Valor (R$)'}
+                validationState={errors.valor ? 'error' : 'none'}
+                validationMessage={errors.valor?.message}
+                required
+              >
+                <Input
+                  {...field}
+                  placeholder={'R$0,00'}
+                  value={field.value.toString() || ''}
+                  onChange={(e) => {
+                    const formatted = formatCurrencyBRL(e.target.value);
+                    field.onChange(formatted);
+                  }}
+                />
+              </Field>
+            )}
+          />
+          <Controller
+            name={'valorPromocional'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={'valorPromocional'}
+                label={'Valor Promocional (R$)'}
+                validationState={errors.valorPromocional ? 'error' : 'none'}
+                validationMessage={errors.valorPromocional?.message}
+              >
+                <Input
+                  {...field}
+                  placeholder={'R$0,00'}
+                  value={field.value.toString() || ''}
+                  onChange={(e) => {
+                    const formatted = formatCurrencyBRL(e.target.value);
+                    field.onChange(formatted);
+                  }}
+                />
+              </Field>
+            )}
+          />
         </div>
       </div>
 
@@ -356,7 +421,34 @@ export const AdicionarProduto = () => {
 
         <Divider style={{ margin: '12px 0' }} />
 
-        <div className={styles.colSpan2}>
+        <div className={styles.grid2}>
+          <Controller
+            name={'cfopInterno'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={`cfopInterno`}
+                label="CFOP Interno"
+                validationState={errors.cfopInterno ? 'error' : 'none'}
+                validationMessage={errors.cfopInterno?.message}
+              >
+                <Select
+                  disabled={carregando}
+                  onChange={(_e, data) => field.onChange(data.value)}
+                >
+                  <option value={''}>
+                    {carregando ? 'Carregando...' : 'Selecione '}
+                  </option>
+                  {fiscal.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nome}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+            )}
+          />
           <Field label="CFOP Interno">
             <Input placeholder="Ex: 5102" />
           </Field>
