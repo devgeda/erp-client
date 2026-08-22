@@ -21,14 +21,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import type { CategoriaResponseDTO } from '@/api/categorias/categoria.types.tsx';
 import { obterCategoria } from '@/api/categorias/categoria.service.tsx';
 import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCategoriaDialog.tsx';
 import { formatCurrencyBRL } from '@/utils/formatters.tsx';
-import { listarProdutoFiscal } from '@/api/produtos/produto.service.tsx';
-import type { ProdutoFiscalResponseDTO } from '@/api/produtos/produto.types.tsx';
+import { AdicionarProdutoFiscalSelect } from '@/components/AdicionarProdutoFiscalSelect.tsx';
 
 const useStyles = makeStyles({
   root: {
@@ -123,20 +121,20 @@ const useStyles = makeStyles({
   },
 });
 
-type ProdutoFormInput = z.input<typeof produtoFormSchema>;
-type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
+export type ProdutoFormInput = z.input<typeof produtoFormSchema>;
+export type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
 
 export const AdicionarProduto = () => {
   const styles = useStyles();
   const [categorias, setCategorias] = useState<CategoriaResponseDTO[]>([]);
-  const [ficais, setFiscais] = useState<ProdutoFiscalResponseDTO[]>([]);
   const [carregandoCategorias, setCarregandoCategorias] = useState(true);
-  const [carregando, setCarregando] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     async function carregarCategorias() {
       try {
+        setCarregandoCategorias(true);
         const categoriasData = await obterCategoria();
         setCategorias(categoriasData);
       } catch (error) {
@@ -145,25 +143,9 @@ export const AdicionarProduto = () => {
         setCarregandoCategorias(false);
       }
     }
-    carregarCategorias();
-  }, [isDialogOpen]);
-  {
-    /* ADICIONAR UM BOTAO PARA ATUALIZAR A LISTA OU ATUALIZAR QUANDO FECHAR OU ABRIR O SELECT*/
-  }
 
-  useEffect(() => {
-    async function carregarFiscal(domain: string) {
-      try {
-        const fiscalData = await listarProdutoFiscal(domain);
-        setFiscais(fiscalData);
-      } catch (error) {
-        console.error('Erro ao carregar fiscal:', error);
-      } finally {
-        setCarregando(false);
-      }
-    }
-    carregarFiscal(domain);
-  }, [isDialogOpen]);
+    carregarCategorias();
+  }, []);
 
   const {
     register,
@@ -311,6 +293,7 @@ export const AdicionarProduto = () => {
                 >
                   <Select
                     disabled={carregandoCategorias}
+                    value={field.value || ''}
                     onChange={(_e, data) => field.onChange(data.value)}
                   >
                     <option value={''}>
@@ -326,7 +309,9 @@ export const AdicionarProduto = () => {
                   </Select>
                   <AdicionarProdutoCategoriaDialog
                     isOpen={isDialogOpen}
-                    onClose={() => setIsDialogOpen(false)}
+                    onClose={() => {
+                      setIsDialogOpen(false);
+                    }}
                   />
                 </Field>
               )}
@@ -422,32 +407,11 @@ export const AdicionarProduto = () => {
         <Divider style={{ margin: '12px 0' }} />
 
         <div className={styles.grid2}>
-          <Controller
-            name={'cfopInterno'}
+          <AdicionarProdutoFiscalSelect
+            nome={'nome'}
+            endPointPath={'/produtos/cfopInterno'}
+            label={'CFOP Interno'}
             control={control}
-            defaultValue={''}
-            render={({ field }) => (
-              <Field
-                id={`cfopInterno`}
-                label="CFOP Interno"
-                validationState={errors.cfopInterno ? 'error' : 'none'}
-                validationMessage={errors.cfopInterno?.message}
-              >
-                <Select
-                  disabled={carregando}
-                  onChange={(_e, data) => field.onChange(data.value)}
-                >
-                  <option value={''}>
-                    {carregando ? 'Carregando...' : 'Selecione '}
-                  </option>
-                  {fiscal.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nome}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-            )}
           />
           <Field label="CFOP Interno">
             <Input placeholder="Ex: 5102" />

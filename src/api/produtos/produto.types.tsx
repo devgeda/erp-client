@@ -22,7 +22,7 @@ export interface ProdutoResponseDTO {
 }
 
 export interface ProdutoFiscalResponseDTO {
-  id: string;
-  nome: string;
   codigo: string;
+  descricao: string;
+  grupo: string;
 }

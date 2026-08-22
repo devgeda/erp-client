@@ -12,13 +12,13 @@ export async function criarProduto(data: ProdutoRequestDTO) {
 }
 
 export async function listarProduto() {
-  const response = await api.get<ProdutoResponseDTO[]>('/produtos');
+  const response = await api.get<ProdutoResponseDTO[]>('produtos');
 
   return response.data;
 }
 
-export async function listarProdutoFiscal(domain: string) {
-  const response = await api.get<ProdutoFiscalResponseDTO[]>(`/${domain}`);
+export async function listarProdutoFiscal(path: string) {
+  const response = await api.get<ProdutoFiscalResponseDTO[]>(path);
 
   return response.data;
 }
