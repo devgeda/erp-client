@@ -14,6 +14,7 @@ import {
 } from '@fluentui/react-components';
 import {
   Add24Regular,
+  ArrowRepeatAll20Regular,
   Dismiss24Regular,
   Save24Regular,
 } from '@fluentui/react-icons';
@@ -80,6 +81,10 @@ const useStyles = makeStyles({
     gap: '16px',
     alignItems: 'start',
   },
+  gridH: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+  },
   grid3: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -119,6 +124,11 @@ const useStyles = makeStyles({
     gap: '16px',
     alignItems: 'start',
   },
+  buttonGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    ...shorthands.gap('8px'), // Espaço entre os botões
+  },
 });
 
 export type ProdutoFormInput = z.input<typeof produtoFormSchema>;
@@ -128,6 +138,7 @@ export const AdicionarProduto = () => {
   const styles = useStyles();
   const [categorias, setCategorias] = useState<CategoriaResponseDTO[]>([]);
   const [carregandoCategorias, setCarregandoCategorias] = useState(true);
+  const [updateCategorias, setUpdateCategorias] = useState(0);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -136,6 +147,7 @@ export const AdicionarProduto = () => {
       try {
         setCarregandoCategorias(true);
         const categoriasData = await obterCategoria();
+        categoriasData.sort((a, b) => a.nome.localeCompare(b.nome));
         setCategorias(categoriasData);
       } catch (error) {
         console.error('Erro ao carregar categorias:', error);
@@ -143,9 +155,8 @@ export const AdicionarProduto = () => {
         setCarregandoCategorias(false);
       }
     }
-
     carregarCategorias();
-  }, []);
+  }, [updateCategorias]);
 
   const {
     register,
@@ -268,13 +279,21 @@ export const AdicionarProduto = () => {
           <Text size={500} weight="semibold" className={styles.cardTitle}>
             Categoria
           </Text>
-          <Button
-            icon={<Add24Regular />}
-            aria-label="Adicionar Categoria"
-            onClick={() => setIsDialogOpen(true)}
-          >
-            Adicionar Categoria
-          </Button>
+          <div className={styles.buttonGroup}>
+            <Button
+              icon={<Add24Regular />}
+              aria-label="Adicionar Categoria"
+              onClick={() => setIsDialogOpen(true)}
+            >
+              Adicionar Categoria
+            </Button>
+            <Button
+              icon={<ArrowRepeatAll20Regular />}
+              onClick={() => {
+                setUpdateCategorias((prev) => prev + 1);
+              }}
+            />
+          </div>
         </div>
 
         <div className={styles.grid6}>
@@ -311,6 +330,7 @@ export const AdicionarProduto = () => {
                     isOpen={isDialogOpen}
                     onClose={() => {
                       setIsDialogOpen(false);
+                      setUpdateCategorias((prev) => prev + 1);
                     }}
                   />
                 </Field>
