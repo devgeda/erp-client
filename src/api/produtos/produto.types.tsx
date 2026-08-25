@@ -1,11 +1,14 @@
 export interface ProdutoRequestDTO {
   nome: string;
   codigo: string;
-  codigoAdicional: string;
-  valor: number;
-  valorAdicional: number;
+  codigoAdicional?: string;
+  valor: string;
+  valorPromocional: string;
   categoriaId: string;
   ativo: boolean;
+  ncm: string;
+  cest: string;
+  origemDoProduto: string;
   cfopInterno: string;
   cfopInterestadual: string;
   cstIcms: string;
@@ -18,11 +21,14 @@ export interface ProdutoResponseDTO {
   id: string;
   nome: string;
   codigo: string;
-  codigoAdicional: string;
-  valor: number;
-  valorPromocional: number;
+  codigoAdicional?: string;
+  valor: string;
+  valorPromocional: string;
   categoriaId: string;
   ativo: boolean;
+  ncm: string;
+  cest: string;
+  origemDoProduto: string;
   cfopInterno: string;
   cfopInterestadual: string;
   cstIcms: string;

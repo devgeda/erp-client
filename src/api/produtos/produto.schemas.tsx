@@ -5,12 +5,16 @@ export const produtoFormSchema = z.object({
   codigo: z.string().min(1, 'Mín 1 caractere.').max(32, 'Máx 32 caracteres.'),
   codigoAdicional: z
     .string()
-    .min(1, 'Mín. 1 caractere')
-    .max(32, 'Máx. 32 caracteres'),
+    .min(0, 'Mín. 1 caractere')
+    .max(32, 'Máx. 32 caracteres')
+    .optional(),
   valor: z.string().min(1, 'O valor precisa ser válido'),
   valorPromocional: z.string().min(1, 'O valor precisa ser válido'),
   categoriaId: z.string().uuid('Id de categoria inválido'),
   ativo: z.boolean('Defina o status do produto'),
+  ncm: z.string(),
+  cest: z.string(),
+  origemDoProduto: z.string(),
   cfopInterno: z.string(),
   cfopInterestadual: z.string(),
   cstIcms: z.string(),

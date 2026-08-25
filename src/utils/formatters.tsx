@@ -14,3 +14,28 @@ export const parseCurrencyToNumber = (value: string): number => {
   if (!onlyDigits) return 0;
   return Number(onlyDigits) / 100;
 };
+
+export const formatFiscalField = (value: string, fieldType: string) => {
+  if (fieldType === 'ncm') {
+    const onlyDigitsSliced = value.replace(/\D/g, '').slice(0, 8);
+
+    // onChangeFormat
+    if (onlyDigitsSliced.length <= 4) return onlyDigitsSliced;
+    if (onlyDigitsSliced.length <= 6) {
+      return `${onlyDigitsSliced.slice(0, 4)}.${onlyDigitsSliced.slice(4)}`;
+    }
+
+    return `${onlyDigitsSliced.slice(0, 4)}.${onlyDigitsSliced.slice(4, 6)}.${onlyDigitsSliced.slice(6)}`;
+  }
+  if (fieldType === 'cest') {
+    const onlyDigitsSliced = value.replace(/\D/g, '').slice(0, 7);
+
+    // onChangeFormat
+    if (onlyDigitsSliced.length <= 2) return onlyDigitsSliced;
+    if (onlyDigitsSliced.length <= 5) {
+      return `${onlyDigitsSliced.slice(0, 2)}.${onlyDigitsSliced.slice(2)}`;
+    }
+    return `${onlyDigitsSliced.slice(0, 2)}.${onlyDigitsSliced.slice(2, 5)}.${onlyDigitsSliced.slice(5)}`;
+  }
+  return '';
+};

@@ -1,7 +1,6 @@
 import {
   Button,
   Combobox,
-  Divider,
   Field,
   Input,
   makeStyles,
@@ -26,8 +25,13 @@ import { useEffect, useState } from 'react';
 import type { CategoriaResponseDTO } from '@/api/categorias/categoria.types.tsx';
 import { obterCategoria } from '@/api/categorias/categoria.service.tsx';
 import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCategoriaDialog.tsx';
-import { formatCurrencyBRL } from '@/utils/formatters.tsx';
+import {
+  formatCurrencyBRL,
+  formatFiscalField,
+  parseCurrencyToNumber,
+} from '@/utils/formatters.tsx';
 import { AdicionarProdutoFiscalSelect } from '@/components/AdicionarProdutoFiscalSelect.tsx';
+import { criarProduto } from '@/api/produtos/produto.service.tsx';
 
 const useStyles = makeStyles({
   root: {
@@ -176,12 +180,34 @@ export const AdicionarProduto = () => {
       valorPromocional: '',
       categoriaId: '',
       ativo: true,
+      origemDoProduto: '',
       cfopInterno: '',
     },
   });
 
-  function onProdutoFormSubmit(data: ProdutoFormOutput) {
-    console.log(data);
+  async function onProdutoFormSubmit(data: ProdutoFormOutput) {
+    const payloadParaBackend = {
+      ...data,
+
+      codigoAdicional: data.codigoAdicional ?? '',
+
+      valor: data.valor ? parseCurrencyToNumber(data.valor).toFixed(2) : '',
+
+      valorPromocional: data.valorPromocional
+        ? parseCurrencyToNumber(data.valorPromocional).toFixed(2)
+        : '',
+
+      ncm: data.ncm.replaceAll('.', ''),
+      cest: data.cest.replaceAll('.', ''),
+    };
+
+    try {
+      await criarProduto(payloadParaBackend);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      console.log(payloadParaBackend);
+    }
   }
 
   return (
@@ -189,6 +215,7 @@ export const AdicionarProduto = () => {
       id="form-adicionar-produto"
       className={styles.root}
       onSubmit={handleSubmit(onProdutoFormSubmit)}
+      noValidate
     >
       {/* INFORMAÇÕES */}
       <div className={styles.card}>
@@ -363,7 +390,7 @@ export const AdicionarProduto = () => {
               >
                 <Input
                   {...field}
-                  placeholder={'R$0,00'}
+                  placeholder={'R$ 0,00'}
                   value={field.value.toString() || ''}
                   onChange={(e) => {
                     const formatted = formatCurrencyBRL(e.target.value);
@@ -386,7 +413,7 @@ export const AdicionarProduto = () => {
               >
                 <Input
                   {...field}
-                  placeholder={'R$0,00'}
+                  placeholder={'R$ 0,00'}
                   value={field.value.toString() || ''}
                   onChange={(e) => {
                     const formatted = formatCurrencyBRL(e.target.value);
@@ -407,26 +434,78 @@ export const AdicionarProduto = () => {
 
         <div className={styles.grid6}>
           <div className={styles.colSpan2}>
-            <Field label="Origem do Produto">
-              <Combobox placeholder="Selecione a origem">
-                <Option>0 - Nacional</Option>
-                <Option>1 - Estrangeira</Option>
+            <Field
+              id={'origemDoProduto'}
+              label={'Origem do Produto'}
+              validationState={errors.origemDoProduto ? 'error' : 'none'}
+              validationMessage={errors.origemDoProduto?.message}
+            >
+              <Combobox
+                {...register('origemDoProduto')}
+                placeholder="Selecione a origem"
+              >
+                <Option value={'0'}>0 - Nacional</Option>
+                <Option value={'1'}>1 - Estrangeira</Option>
               </Combobox>
             </Field>
           </div>
           <div className={styles.colSpan2}>
-            <Field label="NCM">
-              <Input placeholder="0000.00.00" />
-            </Field>
+            <Controller
+              name={'ncm'}
+              control={control}
+              defaultValue={''}
+              render={({ field }) => (
+                <Field
+                  id={'ncm'}
+                  label={'NCM'}
+                  validationState={errors.ncm ? 'error' : 'none'}
+                  validationMessage={errors.ncm?.message}
+                >
+                  <Input
+                    {...field}
+                    placeholder={'0000.00.00'}
+                    value={field.value || ''}
+                    onChange={(e) => {
+                      const maskValue = formatFiscalField(
+                        e.target.value,
+                        'ncm'
+                      );
+                      field.onChange(maskValue);
+                    }}
+                  />
+                </Field>
+              )}
+            />
           </div>
           <div className={styles.colSpan2}>
-            <Field label="CEST">
-              <Input placeholder="00.000.00" />
-            </Field>
+            <Controller
+              name={'cest'}
+              control={control}
+              defaultValue={''}
+              render={({ field }) => (
+                <Field
+                  id={'cest'}
+                  label={'CEST'}
+                  validationState={errors.cest ? 'error' : 'none'}
+                  validationMessage={errors.cest?.message}
+                >
+                  <Input
+                    {...field}
+                    value={field.value || ''}
+                    placeholder={'00.000.00'}
+                    onChange={(e) => {
+                      const maskValue = formatFiscalField(
+                        e.target.value,
+                        'cest'
+                      );
+                      field.onChange(maskValue);
+                    }}
+                  />
+                </Field>
+              )}
+            />
           </div>
         </div>
-
-        <Divider style={{ margin: '12px 0' }} />
 
         <div className={styles.grid2}>
           <AdicionarProdutoFiscalSelect
@@ -445,37 +524,39 @@ export const AdicionarProduto = () => {
         </div>
 
         <div className={styles.grid4}>
-          <AdicionarProdutoFiscalSelect
-            endPointPath={'/produtos/cst-icms'}
-            label={'CST ICMS'}
-            nome={'cstIcms'}
-            control={control}
-          />
-          <AdicionarProdutoFiscalSelect
-            endPointPath={'/produtos/csosn'}
-            label={'CSOSN'}
-            nome={'csosn'}
-            control={control}
-          />
-          <AdicionarProdutoFiscalSelect
-            endPointPath={'/produtos/cstPis'}
-            label={'CST PIS'}
-            nome={'cstPis'}
-            control={control}
-          />
-          <AdicionarProdutoFiscalSelect
-            endPointPath={'/produtos/cstCofins'}
-            label={'CST COFINS'}
-            nome={'cstCofins'}
-            control={control}
-          />
+          <div className={styles.colSpan2}>
+            <AdicionarProdutoFiscalSelect
+              endPointPath={'/produtos/cst-icms'}
+              label={'CST ICMS'}
+              nome={'cstIcms'}
+              control={control}
+            />
+            <AdicionarProdutoFiscalSelect
+              endPointPath={'/produtos/csosn'}
+              label={'CSOSN'}
+              nome={'csosn'}
+              control={control}
+            />
+            <AdicionarProdutoFiscalSelect
+              endPointPath={'/produtos/cstPis'}
+              label={'CST PIS'}
+              nome={'cstPis'}
+              control={control}
+            />
+            <AdicionarProdutoFiscalSelect
+              endPointPath={'/produtos/cstCofins'}
+              label={'CST COFINS'}
+              nome={'cstCofins'}
+              control={control}
+            />
+          </div>
         </div>
 
         {/* ALÍQUOTAS */}
         <Text size={300} weight="medium" style={{ marginTop: '8px' }}>
           Alíquotas (%)
         </Text>
-        <div className={styles.grid6}>
+        <div className={styles.grid3}>
           <Field label="ICMS">
             <Input type="number" />
           </Field>
