@@ -39,6 +39,17 @@ export const AdicionarProdutoFiscalSelect = ({
     carregarFiscal();
   }, [isFiscalSelectOpen, endPointPath]);
 
+  const fiscalAgrupado = fiscal.reduce<
+    Record<string, ProdutoFiscalResponseDTO[]>
+  >((acc, atual) => {
+    if (!acc[atual.grupo]) {
+      acc[atual.grupo] = [];
+    }
+    acc[atual.grupo].push(atual);
+
+    return acc;
+  }, {});
+
   return (
     <Controller
       name={nome}
@@ -47,7 +58,7 @@ export const AdicionarProdutoFiscalSelect = ({
       render={({ field, fieldState }) => (
         <Field
           id={`${nome}`}
-          label={label}
+          label={`${label}`}
           validationState={fieldState.error ? 'error' : 'none'}
           validationMessage={fieldState.error?.message}
         >
@@ -59,15 +70,23 @@ export const AdicionarProdutoFiscalSelect = ({
             <option value={''}>
               {carregandoFiscal ? 'Carregando...' : label}
             </option>
-            {fiscal.map((f) => (
-              <optgroup>
-                /*
-                <option key={f.codigo} value={f.codigo}>
-                  {`${f.codigo} - ${f.descricao}`}
-                </option>
-                */
-              </optgroup>
-            ))}
+            {fiscal.find((value) => value.grupo)
+              ? Object.entries(fiscalAgrupado).map(
+                  ([nomeDoGrupo, itensDoGrupo]) => (
+                    <optgroup key={nomeDoGrupo} label={nomeDoGrupo}>
+                      {itensDoGrupo.map((f) => (
+                        <option key={f.codigo} value={f.codigo}>
+                          {`${f.codigo} - ${f.descricao}`}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )
+                )
+              : fiscal.map((f) => (
+                  <option key={f.codigo} value={f.codigo}>
+                    {`${f.codigo} - ${f.descricao}`}
+                  </option>
+                ))}
           </Select>
         </Field>
       )}

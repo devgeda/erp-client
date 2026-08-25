@@ -12,4 +12,9 @@ export const produtoFormSchema = z.object({
   categoriaId: z.string().uuid('Id de categoria inválido'),
   ativo: z.boolean('Defina o status do produto'),
   cfopInterno: z.string(),
+  cfopInterestadual: z.string(),
+  cstIcms: z.string(),
+  csosn: z.string(),
+  cstPis: z.string(),
+  cstCofins: z.string(),
 });

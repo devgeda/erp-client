@@ -7,6 +7,11 @@ export interface ProdutoRequestDTO {
   categoriaId: string;
   ativo: boolean;
   cfopInterno: string;
+  cfopInterestadual: string;
+  cstIcms: string;
+  csosn: string;
+  cstPis: string;
+  cstCofins: string;
 }
 
 export interface ProdutoResponseDTO {
@@ -19,6 +24,11 @@ export interface ProdutoResponseDTO {
   categoriaId: string;
   ativo: boolean;
   cfopInterno: string;
+  cfopInterestadual: string;
+  cstIcms: string;
+  csosn: string;
+  cstPis: string;
+  cstCofins: string;
 }
 
 export interface ProdutoFiscalResponseDTO {

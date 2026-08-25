@@ -81,9 +81,11 @@ const useStyles = makeStyles({
     gap: '16px',
     alignItems: 'start',
   },
-  gridH: {
+  grid4: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '16px',
+    alignItems: 'start',
   },
   grid3: {
     display: 'grid',
@@ -428,38 +430,48 @@ export const AdicionarProduto = () => {
 
         <div className={styles.grid2}>
           <AdicionarProdutoFiscalSelect
-            nome={'nome'}
+            nome={'cfopInterno'}
             endPointPath={'/produtos/cfopInterno'}
             label={'CFOP Interno'}
             control={control}
           />
-          <Field label="CFOP Interno">
-            <Input placeholder="Ex: 5102" />
-          </Field>
-          <Field label="CFOP Interestadual">
-            <Input placeholder="Ex: 6102" />
-          </Field>
+
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/cfopInterestadual'}
+            label={'Cfop Externo'}
+            nome={'cfopInterestadual'}
+            control={control}
+          />
         </div>
 
-        <div className={styles.grid3}>
-          <Field label="CST ICMS / CSOSN">
-            <Combobox placeholder="Selecione">
-              <Option>102 - Tributada pelo Simples</Option>
-            </Combobox>
-          </Field>
-          <Field label="CST PIS">
-            <Combobox placeholder="Selecione">
-              <Option>01 - Operação Tributável</Option>
-            </Combobox>
-          </Field>
-          <Field label="CST COFINS">
-            <Combobox placeholder="Selecione">
-              <Option>01 - Operação Tributável</Option>
-            </Combobox>
-          </Field>
+        <div className={styles.grid4}>
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/cst-icms'}
+            label={'CST ICMS'}
+            nome={'cstIcms'}
+            control={control}
+          />
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/csosn'}
+            label={'CSOSN'}
+            nome={'csosn'}
+            control={control}
+          />
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/cstPis'}
+            label={'CST PIS'}
+            nome={'cstPis'}
+            control={control}
+          />
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/cstCofins'}
+            label={'CST COFINS'}
+            nome={'cstCofins'}
+            control={control}
+          />
         </div>
 
-        {/* Linha densa para as alíquotas, cada input ocupa 1 espaço no grid de 6 */}
+        {/* ALÍQUOTAS */}
         <Text size={300} weight="medium" style={{ marginTop: '8px' }}>
           Alíquotas (%)
         </Text>
