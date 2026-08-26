@@ -16,6 +16,7 @@ import {
   ArrowRepeatAll20Regular,
   Dismiss24Regular,
   Save24Regular,
+  TextPercentRegular,
 } from '@fluentui/react-icons';
 import { Controller, useForm } from 'react-hook-form';
 import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
@@ -28,6 +29,7 @@ import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCa
 import {
   formatCurrencyBRL,
   formatFiscalField,
+  formatPercent,
   parseCurrencyToNumber,
 } from '@/utils/formatters.tsx';
 import { AdicionarProdutoFiscalSelect } from '@/components/AdicionarProdutoFiscalSelect.tsx';
@@ -554,12 +556,34 @@ export const AdicionarProduto = () => {
 
         {/* ALÍQUOTAS */}
         <Text size={300} weight="medium" style={{ marginTop: '8px' }}>
-          Alíquotas (%)
+          Alíquotas
         </Text>
+
         <div className={styles.grid3}>
-          <Field label="ICMS">
-            <Input type="number" />
-          </Field>
+          <Controller
+            name={'icms'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={'icms'}
+                label={'ICMS'}
+                validationState={errors.icms ? 'error' : 'none'}
+                validationMessage={errors.icms?.message}
+              >
+                <Input
+                  {...field}
+                  value={field.value || ''}
+                  onChange={(e) => {
+                    const maskPercent = formatPercent(e.target.value);
+                    field.onChange(maskPercent);
+                  }}
+                  contentAfter={<TextPercentRegular />}
+                />
+              </Field>
+            )}
+          />
+
           <Field label="PIS">
             <Input type="number" />
           </Field>

@@ -15,6 +15,7 @@ export interface ProdutoRequestDTO {
   csosn: string;
   cstPis: string;
   cstCofins: string;
+  icms: string;
 }
 
 export interface ProdutoResponseDTO {
@@ -35,6 +36,7 @@ export interface ProdutoResponseDTO {
   csosn: string;
   cstPis: string;
   cstCofins: string;
+  icms: string;
 }
 
 export interface ProdutoFiscalResponseDTO {

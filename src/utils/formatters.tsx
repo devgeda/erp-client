@@ -1,6 +1,5 @@
 export const formatCurrencyBRL = (value: string | number) => {
   const onlyDigits = String(value).replace(/\D/g, '');
-  if (!onlyDigits) return '';
 
   const numberValue = Number(onlyDigits) / 100;
   return numberValue.toLocaleString('pt-BR', {
@@ -38,4 +37,14 @@ export const formatFiscalField = (value: string, fieldType: string) => {
     return `${onlyDigitsSliced.slice(0, 2)}.${onlyDigitsSliced.slice(2, 5)}.${onlyDigitsSliced.slice(5)}`;
   }
   return '';
+};
+
+export const formatPercent = (value: string) => {
+  const percent = Number(value);
+
+  return percent.toLocaleString('pt-BR', {
+    style: 'decimal',
+    currency: 'BRL',
+    trailingZeroDisplay: 'stripIfInteger',
+  });
 };

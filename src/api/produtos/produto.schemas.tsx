@@ -21,4 +21,5 @@ export const produtoFormSchema = z.object({
   csosn: z.string(),
   cstPis: z.string(),
   cstCofins: z.string(),
+  icms: z.string(),
 });
