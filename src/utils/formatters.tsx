@@ -40,11 +40,8 @@ export const formatFiscalField = (value: string, fieldType: string) => {
 };
 
 export const formatPercent = (value: string) => {
-  const percent = Number(value);
+  const onlyDigits = String(value).replace(/\D/g, '');
 
-  return percent.toLocaleString('pt-BR', {
-    style: 'decimal',
-    currency: 'BRL',
-    trailingZeroDisplay: 'stripIfInteger',
-  });
+  const percent = Number(onlyDigits) / 100;
+  return `${percent.toFixed(2)}`;
 };

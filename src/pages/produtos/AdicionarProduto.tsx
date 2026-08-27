@@ -3,6 +3,7 @@ import {
   Combobox,
   Field,
   Input,
+  Link,
   makeStyles,
   Option,
   Select,
@@ -16,7 +17,6 @@ import {
   ArrowRepeatAll20Regular,
   Dismiss24Regular,
   Save24Regular,
-  TextPercentRegular,
 } from '@fluentui/react-icons';
 import { Controller, useForm } from 'react-hook-form';
 import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
@@ -29,11 +29,12 @@ import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCa
 import {
   formatCurrencyBRL,
   formatFiscalField,
-  formatPercent,
   parseCurrencyToNumber,
 } from '@/utils/formatters.tsx';
 import { AdicionarProdutoFiscalSelect } from '@/components/AdicionarProdutoFiscalSelect.tsx';
 import { criarProduto } from '@/api/produtos/produto.service.tsx';
+import { AdicionarProdutoAliquotaField } from '@/components/AdicionarProdutoAliquotaField.tsx';
+import { FISCAL_INFO } from '@/constants/fiscalInfo.ts';
 
 const useStyles = makeStyles({
   root: {
@@ -87,15 +88,21 @@ const useStyles = makeStyles({
     gap: '16px',
     alignItems: 'start',
   },
+  grid3: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '16px',
+    alignItems: 'start',
+  },
   grid4: {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
     gap: '16px',
     alignItems: 'start',
   },
-  grid3: {
+  grid6: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
     gap: '16px',
     alignItems: 'start',
   },
@@ -125,12 +132,6 @@ const useStyles = makeStyles({
   },
   cardTitle: {
     color: tokens.colorNeutralForeground1,
-  },
-  grid6: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
-    gap: '16px',
-    alignItems: 'start',
   },
   buttonGroup: {
     display: 'flex',
@@ -433,125 +434,107 @@ export const AdicionarProduto = () => {
         <Text size={500} weight="semibold" className={styles.cardTitle}>
           Informações Fiscais
         </Text>
-
-        <div className={styles.grid6}>
-          <div className={styles.colSpan2}>
-            <Field
-              id={'origemDoProduto'}
-              label={'Origem do Produto'}
-              validationState={errors.origemDoProduto ? 'error' : 'none'}
-              validationMessage={errors.origemDoProduto?.message}
+        <div className={styles.grid3}>
+          <Field
+            id={'origemDoProduto'}
+            label={'Origem do Produto'}
+            validationState={errors.origemDoProduto ? 'error' : 'none'}
+            validationMessage={errors.origemDoProduto?.message}
+          >
+            <Combobox
+              {...register('origemDoProduto')}
+              placeholder="Selecione a origem"
             >
-              <Combobox
-                {...register('origemDoProduto')}
-                placeholder="Selecione a origem"
+              <Option value={'0'}>0 - Nacional</Option>
+              <Option value={'1'}>1 - Estrangeira</Option>
+            </Combobox>
+          </Field>
+          <Controller
+            name={'ncm'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={'ncm'}
+                label={'NCM'}
+                validationState={errors.ncm ? 'error' : 'none'}
+                validationMessage={errors.ncm?.message}
               >
-                <Option value={'0'}>0 - Nacional</Option>
-                <Option value={'1'}>1 - Estrangeira</Option>
-              </Combobox>
-            </Field>
-          </div>
-          <div className={styles.colSpan2}>
-            <Controller
-              name={'ncm'}
-              control={control}
-              defaultValue={''}
-              render={({ field }) => (
-                <Field
-                  id={'ncm'}
-                  label={'NCM'}
-                  validationState={errors.ncm ? 'error' : 'none'}
-                  validationMessage={errors.ncm?.message}
-                >
-                  <Input
-                    {...field}
-                    placeholder={'0000.00.00'}
-                    value={field.value || ''}
-                    onChange={(e) => {
-                      const maskValue = formatFiscalField(
-                        e.target.value,
-                        'ncm'
-                      );
-                      field.onChange(maskValue);
-                    }}
-                  />
-                </Field>
-              )}
-            />
-          </div>
-          <div className={styles.colSpan2}>
-            <Controller
-              name={'cest'}
-              control={control}
-              defaultValue={''}
-              render={({ field }) => (
-                <Field
-                  id={'cest'}
-                  label={'CEST'}
-                  validationState={errors.cest ? 'error' : 'none'}
-                  validationMessage={errors.cest?.message}
-                >
-                  <Input
-                    {...field}
-                    value={field.value || ''}
-                    placeholder={'00.000.00'}
-                    onChange={(e) => {
-                      const maskValue = formatFiscalField(
-                        e.target.value,
-                        'cest'
-                      );
-                      field.onChange(maskValue);
-                    }}
-                  />
-                </Field>
-              )}
-            />
-          </div>
+                <Input
+                  {...field}
+                  placeholder={'0000.00.00'}
+                  value={field.value || ''}
+                  onChange={(e) => {
+                    const maskValue = formatFiscalField(e.target.value, 'ncm');
+                    field.onChange(maskValue);
+                  }}
+                />
+              </Field>
+            )}
+          />
+          <Controller
+            name={'cest'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={'cest'}
+                label={'CEST'}
+                validationState={errors.cest ? 'error' : 'none'}
+                validationMessage={errors.cest?.message}
+              >
+                <Input
+                  {...field}
+                  value={field.value || ''}
+                  placeholder={'00.000.00'}
+                  onChange={(e) => {
+                    const maskValue = formatFiscalField(e.target.value, 'cest');
+                    field.onChange(maskValue);
+                  }}
+                />
+              </Field>
+            )}
+          />
         </div>
-
-        <div className={styles.grid2}>
+        <div className={styles.grid6}>
           <AdicionarProdutoFiscalSelect
             nome={'cfopInterno'}
+            infoLabelText={FISCAL_INFO.CFOP_INTERNO}
             endPointPath={'/produtos/cfopInterno'}
             label={'CFOP Interno'}
             control={control}
           />
-
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/cfopInterestadual'}
-            label={'Cfop Externo'}
+            label={'CFOP Interestadual'}
+            infoLabelText={FISCAL_INFO.CFOP_INTERESTADUAL}
             nome={'cfopInterestadual'}
             control={control}
           />
-        </div>
-
-        <div className={styles.grid4}>
-          <div className={styles.colSpan2}>
-            <AdicionarProdutoFiscalSelect
-              endPointPath={'/produtos/cst-icms'}
-              label={'CST ICMS'}
-              nome={'cstIcms'}
-              control={control}
-            />
-            <AdicionarProdutoFiscalSelect
-              endPointPath={'/produtos/csosn'}
-              label={'CSOSN'}
-              nome={'csosn'}
-              control={control}
-            />
-            <AdicionarProdutoFiscalSelect
-              endPointPath={'/produtos/cstPis'}
-              label={'CST PIS'}
-              nome={'cstPis'}
-              control={control}
-            />
-            <AdicionarProdutoFiscalSelect
-              endPointPath={'/produtos/cstCofins'}
-              label={'CST COFINS'}
-              nome={'cstCofins'}
-              control={control}
-            />
-          </div>
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/cst-icms'}
+            label={'CST ICMS'}
+            nome={'cstIcms'}
+            control={control}
+          />
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/csosn'}
+            label={'CSOSN'}
+            nome={'csosn'}
+            control={control}
+          />
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/cstPis'}
+            label={'CST PIS'}
+            nome={'cstPis'}
+            control={control}
+          />
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/cstCofins'}
+            label={'CST COFINS'}
+            nome={'cstCofins'}
+            control={control}
+          />
         </div>
 
         {/* ALÍQUOTAS */}
@@ -560,45 +543,55 @@ export const AdicionarProduto = () => {
         </Text>
 
         <div className={styles.grid3}>
-          <Controller
-            name={'icms'}
+          <AdicionarProdutoAliquotaField
+            nome={'aliquotaIcms'}
+            label={'ICMS'}
+            infoLabelText={FISCAL_INFO.ICMS}
             control={control}
-            defaultValue={''}
-            render={({ field }) => (
-              <Field
-                id={'icms'}
-                label={'ICMS'}
-                validationState={errors.icms ? 'error' : 'none'}
-                validationMessage={errors.icms?.message}
-              >
-                <Input
-                  {...field}
-                  value={field.value || ''}
-                  onChange={(e) => {
-                    const maskPercent = formatPercent(e.target.value);
-                    field.onChange(maskPercent);
-                  }}
-                  contentAfter={<TextPercentRegular />}
-                />
-              </Field>
-            )}
           />
 
-          <Field label="PIS">
-            <Input type="number" />
-          </Field>
-          <Field label="COFINS">
-            <Input type="number" />
-          </Field>
-          <Field label="IPI">
-            <Input type="number" />
-          </Field>
-          <Field label="FCP">
-            <Input type="number" />
-          </Field>
-          <Field label="IVA ST">
-            <Input type="number" />
-          </Field>
+          <AdicionarProdutoAliquotaField
+            nome={'aliquotaPis'}
+            label={'PIS'}
+            infoLabelText={FISCAL_INFO.PIS}
+            control={control}
+          />
+
+          <AdicionarProdutoAliquotaField
+            nome={'aliquotaCofins'}
+            label={'COFINS'}
+            infoLabelText={FISCAL_INFO.COFINS}
+            control={control}
+          />
+          <AdicionarProdutoAliquotaField
+            nome={'aliquotaIpi'}
+            label={'IPI'}
+            infoLabelText={FISCAL_INFO.IPI}
+            infoLabelAddon={
+              <Link
+                href={
+                  'https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/legislacao/documentos-e-arquivos/tipi.pdf'
+                }
+                target={'_blank'}
+                rel={'noopener noreferrer'}
+              >
+                Tabela TIPI - Fonte: Gov.br
+              </Link>
+            }
+            control={control}
+          />
+          <AdicionarProdutoAliquotaField
+            nome={'aliquotaFcp'}
+            label={'FCP'}
+            infoLabelText={FISCAL_INFO.FCP}
+            control={control}
+          />
+          <AdicionarProdutoAliquotaField
+            nome={'ivaSt'}
+            label={'IVA-ST'}
+            infoLabelText={FISCAL_INFO.IVA_ST}
+            control={control}
+          />
         </div>
       </div>
 

@@ -1,13 +1,28 @@
-import { Field, type JSXElement, Select } from '@fluentui/react-components';
+import {
+  Field,
+  InfoLabel,
+  type JSXElement,
+  Label,
+  makeStyles,
+  Select,
+} from '@fluentui/react-components';
 import { type Control, Controller, type Path } from 'react-hook-form';
 import type { ProdutoFormInput } from '@/pages/produtos/AdicionarProduto.tsx';
-import { useEffect, useState } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { listarProdutoFiscal } from '@/api/produtos/produto.service.tsx';
 import type { ProdutoFiscalResponseDTO } from '@/api/produtos/produto.types.tsx';
+
+const useStyles = makeStyles({
+  label: {
+    marginBottom: '6px',
+  },
+});
 
 export interface AdicionarProdutoFiscalSelectProps {
   endPointPath: string;
   label: string;
+  infoLabelText: string;
+  infoLabelAddon?: ReactElement;
   nome: Path<ProdutoFormInput>;
   control: Control<ProdutoFormInput>;
 }
@@ -15,9 +30,12 @@ export interface AdicionarProdutoFiscalSelectProps {
 export const AdicionarProdutoFiscalSelect = ({
   endPointPath,
   label,
+  infoLabelText,
+  infoLabelAddon,
   nome,
   control,
 }: AdicionarProdutoFiscalSelectProps): JSXElement => {
+  const styles = useStyles();
   const [fiscal, setFiscal] = useState<ProdutoFiscalResponseDTO[]>([]);
   const [carregandoFiscal, setCarregandoFiscal] = useState(true);
   const [isFiscalSelectOpen, setIsFiscalSelectOpen] = useState(false);
@@ -58,11 +76,21 @@ export const AdicionarProdutoFiscalSelect = ({
       render={({ field, fieldState }) => (
         <Field
           id={`${nome}`}
-          label={`${label}`}
           validationState={fieldState.error ? 'error' : 'none'}
           validationMessage={fieldState.error?.message}
         >
+          <div className={styles.label}>
+            <Label>{label}</Label>
+            <InfoLabel
+              info={
+                <>
+                  {infoLabelText} {infoLabelAddon}
+                </>
+              }
+            ></InfoLabel>
+          </div>
           <Select
+            style={{ width: '100%', minWidth: 0 }}
             disabled={carregandoFiscal}
             onChange={(_e, data) => field.onChange(data.value)}
             onBlur={() => setIsFiscalSelectOpen(false)}

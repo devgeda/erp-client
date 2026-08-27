@@ -181,10 +181,9 @@ export const AppLayout = () => {
             <Menu>
               <MenuTrigger disableButtonEnhancement>
                 <Button appearance="subtle">
-                  {/* Persona é o componente ideal para Foto + Nome + Cargo */}
                   <Persona
-                    name="João Medeiros"
-                    secondaryText="Gerente de Vendas"
+                    name="NOME DE USUARIO"
+                    secondaryText="CARGO"
                     presence={{ status: 'available' }}
                     avatar={{ color: 'colorful' }}
                   />
