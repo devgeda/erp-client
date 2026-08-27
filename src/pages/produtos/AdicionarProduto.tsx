@@ -2,7 +2,9 @@ import {
   Button,
   Combobox,
   Field,
+  InfoLabel,
   Input,
+  Label,
   Link,
   makeStyles,
   Option,
@@ -65,6 +67,9 @@ const useStyles = makeStyles({
     borderBottomWidth: '1px',
     borderBottomStyle: 'solid',
     borderBottomColor: tokens.colorNeutralStroke2,
+  },
+  label: {
+    marginBottom: '6px',
   },
   header: {
     display: 'flex',
@@ -437,10 +442,29 @@ export const AdicionarProduto = () => {
         <div className={styles.grid3}>
           <Field
             id={'origemDoProduto'}
-            label={'Origem do Produto'}
             validationState={errors.origemDoProduto ? 'error' : 'none'}
             validationMessage={errors.origemDoProduto?.message}
           >
+            <div className={styles.label}>
+              <Label>Origem do Produto</Label>
+              <InfoLabel
+                info={
+                  <>
+                    {FISCAL_INFO.ORIGEM_DO_PRODUTO}
+
+                    <Link
+                      href={
+                        'https://www.sefaz.pb.gov.br/legislacao/99-regulamentos/anexos-icms/1532-anexo-14-codigo-de-situacao-tributaria-cst?tmpl=component&format=pdf'
+                      }
+                      target={'_blank'}
+                      rel={'noopener noreferrer'}
+                    >
+                      Tabela A do ICMS - Fonte: sefaz.pb.gov.br
+                    </Link>
+                  </>
+                }
+              ></InfoLabel>
+            </div>
             <Combobox
               {...register('origemDoProduto')}
               placeholder="Selecione a origem"
@@ -514,24 +538,28 @@ export const AdicionarProduto = () => {
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/cst-icms'}
             label={'CST ICMS'}
+            infoLabelText={FISCAL_INFO.CST_ICMS}
             nome={'cstIcms'}
             control={control}
           />
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/csosn'}
             label={'CSOSN'}
+            infoLabelText={FISCAL_INFO.CSOSN}
             nome={'csosn'}
             control={control}
           />
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/cstPis'}
-            label={'CST PIS'}
+            label={'CST Pis'}
+            infoLabelText={FISCAL_INFO.CST_PIS}
             nome={'cstPis'}
             control={control}
           />
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/cstCofins'}
-            label={'CST COFINS'}
+            label={'CST Cofins'}
+            infoLabelText={FISCAL_INFO.CST_COFINS}
             nome={'cstCofins'}
             control={control}
           />
