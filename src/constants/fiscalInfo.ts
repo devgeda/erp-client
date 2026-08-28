@@ -10,6 +10,8 @@ export const FISCAL_INFO = {
     'Índice de Valor Adicionado Setorial. No cadastro de produtos, o IVA-ST é uma porcentagem estipulada pelo governo que serve para calcular o imposto de produtos sujeitos à Substituição Tributária (ICMS-ST).',
 
   // CÓDIGOS FISCAIS
+  NCM: 'Nomenclatura Comum do Mercosul, é um código de oito dígitos que identifica a natureza e a classificação fiscal de mercadorias no Brasil e nos países do Mercosul.',
+  CEST: 'Código Especificador da Substituição Tributária,  (Código Especificador da Substituição Tributária) é um código numérico de 7 dígitos usado para identificar e padronizar mercadorias sujeitas ao regime de substituição tributária (ICMS-ST) e à antecipação do recolhimento do ICMS no Brasil.',
   CFOP_INTERNO:
     'Código Fiscal de Operações e Prestações de operação interna, identifica a movimentação de mercadorias e prestação de serviços dentro do mesmo estado.',
   CFOP_INTERESTADUAL:

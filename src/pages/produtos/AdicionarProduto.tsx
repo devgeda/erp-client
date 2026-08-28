@@ -1,13 +1,11 @@
 import {
   Button,
-  Combobox,
   Field,
   InfoLabel,
   Input,
   Label,
   Link,
   makeStyles,
-  Option,
   Select,
   shorthands,
   Switch,
@@ -232,11 +230,17 @@ export const AdicionarProduto = () => {
             Informações Gerais
           </Text>
 
-          <Switch
-            label={'Produto Ativo'}
-            {...register('ativo')}
-            defaultChecked
-          />
+          <Field
+            id={'ativo'}
+            validationState={errors.ativo ? 'error' : 'none'}
+            validationMessage={errors.ativo?.message}
+          >
+            <Switch
+              label={'Produto Ativo'}
+              {...register('ativo')}
+              defaultChecked
+            />
+          </Field>
         </div>
 
         <div className={styles.grid3}>
@@ -440,39 +444,24 @@ export const AdicionarProduto = () => {
           Informações Fiscais
         </Text>
         <div className={styles.grid3}>
-          <Field
-            id={'origemDoProduto'}
-            validationState={errors.origemDoProduto ? 'error' : 'none'}
-            validationMessage={errors.origemDoProduto?.message}
-          >
-            <div className={styles.label}>
-              <Label>Origem do Produto</Label>
-              <InfoLabel
-                info={
-                  <>
-                    {FISCAL_INFO.ORIGEM_DO_PRODUTO}
-
-                    <Link
-                      href={
-                        'https://www.sefaz.pb.gov.br/legislacao/99-regulamentos/anexos-icms/1532-anexo-14-codigo-de-situacao-tributaria-cst?tmpl=component&format=pdf'
-                      }
-                      target={'_blank'}
-                      rel={'noopener noreferrer'}
-                    >
-                      Tabela A do ICMS - Fonte: sefaz.pb.gov.br
-                    </Link>
-                  </>
+          <AdicionarProdutoFiscalSelect
+            endPointPath={'/produtos/origem-do-produto'}
+            label={'Origem do Produto'}
+            infoLabelText={FISCAL_INFO.ORIGEM_DO_PRODUTO}
+            infoLabelAddon={
+              <Link
+                href={
+                  'https://app1.sefaz.mt.gov.br/Sistema/legislacao/regulamentoicms.nsf/cc90333e16d28a8c0425736e0076800a/c560e4b8bc6af2ea04256f0f006df104?OpenDocument'
                 }
-              ></InfoLabel>
-            </div>
-            <Combobox
-              {...register('origemDoProduto')}
-              placeholder="Selecione a origem"
-            >
-              <Option value={'0'}>0 - Nacional</Option>
-              <Option value={'1'}>1 - Estrangeira</Option>
-            </Combobox>
-          </Field>
+                target={'_blank'}
+                rel={'noopener noreferrer'}
+              >
+                Tabela A do ICMS - Fonte: sefaz.mt.gov.br
+              </Link>
+            }
+            nome={'origemDoProduto'}
+            control={control}
+          />
           <Controller
             name={'ncm'}
             control={control}
@@ -480,10 +469,13 @@ export const AdicionarProduto = () => {
             render={({ field }) => (
               <Field
                 id={'ncm'}
-                label={'NCM'}
                 validationState={errors.ncm ? 'error' : 'none'}
                 validationMessage={errors.ncm?.message}
               >
+                <div className={styles.label}>
+                  <Label>NCM</Label>
+                  <InfoLabel info={<>{FISCAL_INFO.NCM}</>} />
+                </div>
                 <Input
                   {...field}
                   placeholder={'0000.00.00'}
@@ -503,10 +495,13 @@ export const AdicionarProduto = () => {
             render={({ field }) => (
               <Field
                 id={'cest'}
-                label={'CEST'}
                 validationState={errors.cest ? 'error' : 'none'}
                 validationMessage={errors.cest?.message}
               >
+                <div className={styles.label}>
+                  <Label>CEST</Label>
+                  <InfoLabel info={<>{FISCAL_INFO.CEST}</>} />
+                </div>
                 <Input
                   {...field}
                   value={field.value || ''}
@@ -524,12 +519,12 @@ export const AdicionarProduto = () => {
           <AdicionarProdutoFiscalSelect
             nome={'cfopInterno'}
             infoLabelText={FISCAL_INFO.CFOP_INTERNO}
-            endPointPath={'/produtos/cfopInterno'}
+            endPointPath={'/produtos/cfop-interno'}
             label={'CFOP Interno'}
             control={control}
           />
           <AdicionarProdutoFiscalSelect
-            endPointPath={'/produtos/cfopInterestadual'}
+            endPointPath={'/produtos/cfop-interestadual'}
             label={'CFOP Interestadual'}
             infoLabelText={FISCAL_INFO.CFOP_INTERESTADUAL}
             nome={'cfopInterestadual'}
@@ -550,14 +545,14 @@ export const AdicionarProduto = () => {
             control={control}
           />
           <AdicionarProdutoFiscalSelect
-            endPointPath={'/produtos/cstPis'}
+            endPointPath={'/produtos/cst-pis'}
             label={'CST Pis'}
             infoLabelText={FISCAL_INFO.CST_PIS}
             nome={'cstPis'}
             control={control}
           />
           <AdicionarProdutoFiscalSelect
-            endPointPath={'/produtos/cstCofins'}
+            endPointPath={'/produtos/cst-cofins'}
             label={'CST Cofins'}
             infoLabelText={FISCAL_INFO.CST_COFINS}
             nome={'cstCofins'}

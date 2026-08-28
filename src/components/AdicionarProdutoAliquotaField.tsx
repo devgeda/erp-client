@@ -60,7 +60,6 @@ export const AdicionarProdutoAliquotaField = ({
             onChange={(_e, data) => {
               const maskPercent = formatPercent(data.value);
               field.onChange(maskPercent);
-              console.log(maskPercent);
             }}
             contentAfter={<TextPercentRegular />}
           />

@@ -92,7 +92,10 @@ export const AdicionarProdutoFiscalSelect = ({
           <Select
             style={{ width: '100%', minWidth: 0 }}
             disabled={carregandoFiscal}
-            onChange={(_e, data) => field.onChange(data.value)}
+            onChange={(_e, data) => {
+              field.onChange(data.value);
+              console.log(data.value);
+            }}
             onBlur={() => setIsFiscalSelectOpen(false)}
           >
             <option value={''}>
