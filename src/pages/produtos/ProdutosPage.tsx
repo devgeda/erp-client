@@ -14,6 +14,7 @@ import {
   Edit24Regular,
   Eye24Regular,
   History24Regular,
+  Search24Regular,
 } from '@fluentui/react-icons';
 
 const useStyles = makeStyles({
@@ -113,20 +114,21 @@ export const ProdutosPage = () => {
   const currentMatch = matches[matches.length - 1];
   const handle = currentMatch?.handle as any;
 
-  // Uma forma simples de descobrir qual aba deve estar ativa baseada na URL atual
-  // Ex: /produtos/adicionar -> ativa a aba "adicionar"
   const currentTab = location.pathname.includes('adicionar')
     ? 'adicionar'
-    : location.pathname.includes('editar')
-      ? 'editar'
-      : location.pathname.includes('visualizar')
-        ? 'visualizar'
-        : location.pathname.includes('historico')
-          ? 'historico'
-          : 'adicionar';
+    : location.pathname.includes('pesquisar')
+      ? 'pesquisar'
+      : location.pathname.includes('editar')
+        ? 'editar'
+        : location.pathname.includes('visualizar')
+          ? 'visualizar'
+          : location.pathname.includes('historico')
+            ? 'historico'
+            : 'adicionar';
 
   const handleTabSelect = (_event: unknown, data: { value: unknown }) => {
     if (data.value === 'adicionar') navigate('/produtos/adicionar');
+    if (data.value === 'pesquisar') navigate('/produtos/pesquisar');
     if (data.value === 'editar') navigate('/produtos/editar');
     if (data.value === 'visualizar') navigate('/produtos/visualizar');
     if (data.value === 'historico') navigate('/produtos/historico');
@@ -159,6 +161,9 @@ export const ProdutosPage = () => {
           >
             <Tab value="adicionar" icon={<Add24Regular />}>
               Adicionar
+            </Tab>
+            <Tab value="pesquisar" icon={<Search24Regular />}>
+              Pesquisar
             </Tab>
             <Tab value="visualizar" icon={<Eye24Regular />}>
               Visualizar

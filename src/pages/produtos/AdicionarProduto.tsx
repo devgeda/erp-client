@@ -174,6 +174,7 @@ export const AdicionarProduto = () => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<ProdutoFormInput>({
     mode: 'onChange',
@@ -337,47 +338,45 @@ export const AdicionarProduto = () => {
           </div>
         </div>
 
-        <div className={styles.grid6}>
-          <div className={styles.colSpan2}>
-            <Controller
-              name={'categoriaId'}
-              control={control}
-              defaultValue={''}
-              render={({ field }) => (
-                <Field
-                  id={'categoriaId'}
-                  label="Categoria"
-                  validationState={errors.categoriaId ? 'error' : 'none'}
-                  validationMessage={errors.categoriaId?.message}
-                  required
+        <div className={styles.grid3}>
+          <Controller
+            name={'categoriaId'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Field
+                id={'categoriaId'}
+                label="Categoria"
+                validationState={errors.categoriaId ? 'error' : 'none'}
+                validationMessage={errors.categoriaId?.message}
+                required
+              >
+                <Select
+                  disabled={carregandoCategorias}
+                  value={field.value || ''}
+                  onChange={(_e, data) => field.onChange(data.value)}
                 >
-                  <Select
-                    disabled={carregandoCategorias}
-                    value={field.value || ''}
-                    onChange={(_e, data) => field.onChange(data.value)}
-                  >
-                    <option value={''}>
-                      {carregandoCategorias
-                        ? 'Carregando...'
-                        : 'Selecione uma categoria'}
+                  <option value={''}>
+                    {carregandoCategorias
+                      ? 'Carregando...'
+                      : 'Selecione uma categoria'}
+                  </option>
+                  {categorias.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nome}
                     </option>
-                    {categorias.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.nome}
-                      </option>
-                    ))}
-                  </Select>
-                  <AdicionarProdutoCategoriaDialog
-                    isOpen={isDialogOpen}
-                    onClose={() => {
-                      setIsDialogOpen(false);
-                      setUpdateCategorias((prev) => prev + 1);
-                    }}
-                  />
-                </Field>
-              )}
-            ></Controller>
-          </div>
+                  ))}
+                </Select>
+                <AdicionarProdutoCategoriaDialog
+                  isOpen={isDialogOpen}
+                  onClose={() => {
+                    setIsDialogOpen(false);
+                    setUpdateCategorias((prev) => prev + 1);
+                  }}
+                />
+              </Field>
+            )}
+          ></Controller>
         </div>
       </div>
 
@@ -624,6 +623,7 @@ export const AdicionarProduto = () => {
           type={'reset'}
           appearance="secondary"
           icon={<Dismiss24Regular />}
+          onClick={() => reset()}
         >
           Cancelar
         </Button>

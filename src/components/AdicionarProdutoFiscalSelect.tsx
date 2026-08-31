@@ -94,7 +94,6 @@ export const AdicionarProdutoFiscalSelect = ({
             disabled={carregandoFiscal}
             onChange={(_e, data) => {
               field.onChange(data.value);
-              console.log(data.value);
             }}
             onBlur={() => setIsFiscalSelectOpen(false)}
           >

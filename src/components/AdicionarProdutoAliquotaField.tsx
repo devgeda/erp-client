@@ -5,6 +5,7 @@ import {
   type JSXElement,
   Label,
   makeStyles,
+  Text,
 } from '@fluentui/react-components';
 import { formatPercent } from '@/utils/formatters.tsx';
 import { TextPercentRegular } from '@fluentui/react-icons';
@@ -50,7 +51,8 @@ export const AdicionarProdutoAliquotaField = ({
             <InfoLabel
               info={
                 <>
-                  {infoLabelText} {infoLabelAddon}
+                  <Text align={'justify'}>{infoLabelText}</Text>
+                  {infoLabelAddon}
                 </>
               }
             ></InfoLabel>

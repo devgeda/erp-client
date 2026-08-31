@@ -12,6 +12,7 @@ import { EditarProduto } from '@/pages/produtos/EditarProduto.tsx';
 import { HistoricoProduto } from '@/pages/produtos/HistoricoProduto.tsx';
 import { LoginPage } from '@/pages/autenticacao/LoginPage.tsx';
 import { SignupPage } from '@/pages/autenticacao/SignupPage.tsx';
+import { PesquisarProduto } from '@/pages/produtos/PesquisarProduto.tsx';
 
 export function ProtectedRoute() {
   const token = localStorage.getItem('token');
@@ -61,6 +62,11 @@ const router = createBrowserRouter([
                 handle: {
                   pageTitle: 'Adicionar Produto',
                 },
+              },
+              {
+                path: '/produtos/pesquisar',
+                element: <PesquisarProduto />,
+                handle: { pageTitle: 'Pesquisar Produto' },
               },
               {
                 path: '/produtos/visualizar',
