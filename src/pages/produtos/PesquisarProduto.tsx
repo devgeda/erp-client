@@ -1,13 +1,22 @@
 import {
+  Divider,
   Field,
-  Input,
-  Button,
   makeStyles,
+  Portal,
+  SearchBox,
   shorthands,
   Text,
   tokens,
+  Toolbar,
+  ToolbarButton,
+  ToolbarDivider,
+  ToolbarToggleButton,
+  typographyStyles,
 } from '@fluentui/react-components';
-import { Dismiss24Regular, Search24Regular } from '@fluentui/react-icons';
+import * as React from 'react';
+
+import { ChevronDown24Regular } from '@fluentui/react-icons';
+import { AdicionarProdutoProdutosDataGrid } from '@/components/AdicionarProdutoProdutosDataGrid.tsx';
 
 const useStyles = makeStyles({
   card: {
@@ -28,10 +37,32 @@ const useStyles = makeStyles({
   cardTitle: {
     color: tokens.colorNeutralForeground1,
   },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '16px',
+  },
+  portalContent: {
+    ...typographyStyles.subtitle1,
+
+    backgroundColor: tokens.colorBrandBackground2,
+    color: tokens.colorBrandForeground2,
+    border: `${tokens.strokeWidthThick} dashed ${tokens.colorBrandStroke2}`,
+    padding: '12px 6px',
+  },
 });
 
 export const PesquisarProduto = () => {
   const styles = useStyles();
+
+  /****************************************************************************/
+  const [mountNode, setMountNode] = React.useState<HTMLElement | null>(null);
+  const [open, setOpen] = React.useState(false);
+
+  /* CÓDIGO RELACIONADO AO PORTAL DOS FILTROS EXTRAS                          */
+  /****************************************************************************/
+
   return (
     <>
       <div className={styles.card}>
@@ -40,13 +71,37 @@ export const PesquisarProduto = () => {
             PESQUISAR PRODUTO
           </Text>
         </div>
-        <div>
+        <div className={styles.toolbar}>
           <Field>
-            <Input></Input>
+            <SearchBox></SearchBox>
           </Field>
-          <Button icon={<Search24Regular />}></Button>
-          <Button icon={<Dismiss24Regular />}></Button>
+          <Divider vertical={true} />
+          <Toolbar>
+            <ToolbarToggleButton>Filtrar por Nome</ToolbarToggleButton>
+            <ToolbarToggleButton>Filtrar por Código</ToolbarToggleButton>
+            <ToolbarToggleButton>
+              Filtrar por Código Adicional
+            </ToolbarToggleButton>
+            <ToolbarDivider />
+            <ToolbarButton
+              onClick={() => setOpen(!open)}
+              icon={<ChevronDown24Regular />}
+            />
+          </Toolbar>
         </div>
+        <div ref={setMountNode} />
+        {open && mountNode && (
+          <Portal mountNode={mountNode}>
+            <div>
+              <Toolbar>
+                <Text>OUTROS FILTROS</Text>
+              </Toolbar>
+            </div>
+          </Portal>
+        )}
+      </div>
+      <div className={styles.card}>
+        <AdicionarProdutoProdutosDataGrid />
       </div>
     </>
   );
