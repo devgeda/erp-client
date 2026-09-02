@@ -24,10 +24,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import type { CategoriaResponseDTO } from '@/api/categorias/categoria.types.tsx';
-import { obterCategoria } from '@/api/categorias/categoria.service.tsx';
+import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
 import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCategoriaDialog.tsx';
 import {
-  formatCurrencyBRL,
+  formatInputCurrencyBRL,
   formatFiscalField,
   parseCurrencyToNumber,
 } from '@/utils/formatters.tsx';
@@ -158,7 +158,7 @@ export const AdicionarProduto = () => {
     async function carregarCategorias() {
       try {
         setCarregandoCategorias(true);
-        const categoriasData = await obterCategoria();
+        const categoriasData = await obterCategorias();
         categoriasData.sort((a, b) => a.nome.localeCompare(b.nome));
         setCategorias(categoriasData);
       } catch (error) {
@@ -404,7 +404,7 @@ export const AdicionarProduto = () => {
                   placeholder={'R$ 0,00'}
                   value={field.value.toString() || ''}
                   onChange={(e) => {
-                    const formatted = formatCurrencyBRL(e.target.value);
+                    const formatted = formatInputCurrencyBRL(e.target.value);
                     field.onChange(formatted);
                   }}
                 />
@@ -427,7 +427,7 @@ export const AdicionarProduto = () => {
                   placeholder={'R$ 0,00'}
                   value={field.value.toString() || ''}
                   onChange={(e) => {
-                    const formatted = formatCurrencyBRL(e.target.value);
+                    const formatted = formatInputCurrencyBRL(e.target.value);
                     field.onChange(formatted);
                   }}
                 />

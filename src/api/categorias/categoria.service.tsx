@@ -10,8 +10,14 @@ export async function criarCategoria(data: CategoriaRequestDTO) {
   return response.data;
 }
 
-export async function obterCategoria() {
-  const response = await api.get<CategoriaResponseDTO[]>('/categorias');
+export async function obterCategoriaPorId(id: string) {
+  const response = await api.get<CategoriaResponseDTO>(`/categorias/${id}`);
+
+  return response.data;
+}
+
+export async function obterCategorias() {
+  const response = await api.get<CategoriaResponseDTO[]>(`/categorias`);
 
   return response.data;
 }
