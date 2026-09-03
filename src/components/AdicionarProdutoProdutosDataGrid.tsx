@@ -11,8 +11,9 @@ import {
   TableCellLayout,
   type TableColumnDefinition,
   type TableRowId,
+  Tooltip,
 } from '@fluentui/react-components';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ProdutoResponseDTO } from '@/api/produtos/produto.types.tsx';
 import { listarProdutos } from '@/api/produtos/produto.service.tsx';
 import { formatCurrencyBRL } from '@/utils/formatters.tsx';
@@ -36,6 +37,8 @@ type ValorPromocionalCell = { label: string };
 
 type CategoriaIdCell = { label: string };
 
+type LocalizacaoCell = { label: string };
+
 type AtivoCell = { label: string };
 
 type Item = {
@@ -46,22 +49,11 @@ type Item = {
   valor: ValorCell;
   valorPromocional: ValorPromocionalCell;
   categoriaId: CategoriaIdCell;
+  localizacao: LocalizacaoCell;
   ativo: AtivoCell;
 };
 
 const columns: TableColumnDefinition<Item>[] = [
-  createTableColumn<Item>({
-    columnId: 'id',
-    compare: (a, b) => {
-      return a.id.label.localeCompare(b.id.label);
-    },
-    renderHeaderCell: () => {
-      return 'Id';
-    },
-    renderCell: (item) => {
-      return <TableCellLayout>{item.id.label}</TableCellLayout>;
-    },
-  }),
   createTableColumn<Item>({
     columnId: 'nome',
     compare: (a, b) => {
@@ -71,7 +63,11 @@ const columns: TableColumnDefinition<Item>[] = [
       return 'Nome';
     },
     renderCell: (item) => {
-      return <TableCellLayout>{item.nome.label}</TableCellLayout>;
+      return (
+        <Tooltip content={item.nome.label} relationship="label">
+          <TableCellLayout truncate>{item.nome.label}</TableCellLayout>
+        </Tooltip>
+      );
     },
   }),
   createTableColumn<Item>({
@@ -83,7 +79,7 @@ const columns: TableColumnDefinition<Item>[] = [
       return 'Código';
     },
     renderCell: (item) => {
-      return <TableCellLayout>{item.codigo.label}</TableCellLayout>;
+      return <TableCellLayout truncate>{item.codigo.label}</TableCellLayout>;
     },
   }),
   createTableColumn<Item>({
@@ -95,7 +91,9 @@ const columns: TableColumnDefinition<Item>[] = [
       return 'Código Adicional';
     },
     renderCell: (item) => {
-      return <TableCellLayout>{item.codigoAdicional.label}</TableCellLayout>;
+      return (
+        <TableCellLayout truncate>{item.codigoAdicional.label}</TableCellLayout>
+      );
     },
   }),
   createTableColumn<Item>({
@@ -104,10 +102,10 @@ const columns: TableColumnDefinition<Item>[] = [
       return a.valor.label.localeCompare(b.valor.label);
     },
     renderHeaderCell: () => {
-      return 'valor';
+      return 'Valor';
     },
     renderCell: (item) => {
-      return <TableCellLayout>{item.valor.label}</TableCellLayout>;
+      return <TableCellLayout truncate>{item.valor.label}</TableCellLayout>;
     },
   }),
   createTableColumn<Item>({
@@ -119,7 +117,11 @@ const columns: TableColumnDefinition<Item>[] = [
       return 'Valor Promocional';
     },
     renderCell: (item) => {
-      return <TableCellLayout>{item.valorPromocional.label}</TableCellLayout>;
+      return (
+        <TableCellLayout truncate>
+          {item.valorPromocional.label}
+        </TableCellLayout>
+      );
     },
   }),
   createTableColumn<Item>({
@@ -131,7 +133,23 @@ const columns: TableColumnDefinition<Item>[] = [
       return 'Categoria';
     },
     renderCell: (item) => {
-      return <TableCellLayout>{item.categoriaId.label}</TableCellLayout>;
+      return (
+        <TableCellLayout truncate>{item.categoriaId.label}</TableCellLayout>
+      );
+    },
+  }),
+  createTableColumn<Item>({
+    columnId: 'localizacao',
+    compare: (a, b) => {
+      return a.localizacao.label.localeCompare(b.localizacao.label);
+    },
+    renderHeaderCell: () => {
+      return 'Localizacao';
+    },
+    renderCell: (item) => {
+      return (
+        <TableCellLayout truncate>{item.localizacao.label}</TableCellLayout>
+      );
     },
   }),
   createTableColumn<Item>({
@@ -143,7 +161,7 @@ const columns: TableColumnDefinition<Item>[] = [
       return 'Ativo';
     },
     renderCell: (item) => {
-      return <TableCellLayout>{item.ativo.label}</TableCellLayout>;
+      return <TableCellLayout truncate>{item.ativo.label}</TableCellLayout>;
     },
   }),
 ];
@@ -154,11 +172,29 @@ export const AdicionarProdutoProdutosDataGrid = (): JSXElement => {
     {}
   );
   const [carregandoProdutos, setCarregandoProdutos] = useState(false);
-
-  const [selectedRows, setSelectedRows] = useState(new Set<TableRowId>([1]));
+  const [selectedRows, setSelectedRows] = useState(new Set<TableRowId>());
+  const estadoOrdenacaoInicial = {
+    sortColumn: 'nome',
+    sortDirection: 'ascending' as const,
+  };
+  const [sortState, setSortState] = useState<DataGridProps['sortState']>(
+    estadoOrdenacaoInicial
+  );
+  const [filtroNome, setFiltroNome] = useState('');
+  const [filtroCodigo, setFiltroCodigo] = useState('');
+  const [filtroCodigoAdicional, setFiltroCodigoAdicional] = useState('');
+  const [filtroCategoria, setFiltroCategoria] = useState('');
+  const [filtroLocalizacao, setFiltroLocalizacao] = useState('');
+  const [filtroAtivo, setFiltroAtivo] = useState<'todos' | 'sim' | 'nao'>(
+    'todos'
+  );
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
     setSelectedRows(data.selectedItems);
+  };
+
+  const onSortChange: DataGridProps['onSortChange'] = (_e, nextSortState) => {
+    setSortState(nextSortState);
   };
 
   useEffect(() => {
@@ -180,35 +216,53 @@ export const AdicionarProdutoProdutosDataGrid = (): JSXElement => {
       }
     }
     carregarProdutos();
-  }, []);
+  }, [produtos, categoriasMap]);
 
-  const items: Item[] = produtos.map((produto) => {
-    return {
-      id: { label: produto.id },
-      nome: { label: produto.nome },
-      codigo: { label: produto.codigo },
-      codigoAdicional: { label: produto.codigoAdicional ?? '' },
-      valor: { label: formatCurrencyBRL(produto.valor) },
-      valorPromocional: {
-        label: formatCurrencyBRL(produto.valorPromocional),
-      },
-      categoriaId: {
-        label: categoriasMap[produto.categoriaId] ?? 'Desconhecida',
-      },
-      ativo: { label: produto.ativo ? 'Sim' : 'Não' },
-    };
-  });
+  const items: Item[] = useMemo(() => {
+    const produtosFiltrados = produtos.filter((produto) => {
+      if (
+        filtroNome &&
+        !produto.nome.toLowerCase().includes(filtroNome.toLowerCase())
+      ) {
+        return false;
+      }
+    });
+
+    return produtos.map((produto) => {
+      return {
+        id: { label: produto.id },
+        nome: { label: produto.nome },
+        codigo: { label: produto.codigo },
+        codigoAdicional: {
+          label: produto.codigoAdicional ?? '',
+        },
+        valor: { label: formatCurrencyBRL(produto.valor) },
+        valorPromocional: {
+          label: formatCurrencyBRL(produto.valorPromocional),
+        },
+        categoriaId: {
+          label: categoriasMap[produto.categoriaId] ?? 'Desconhecida',
+        },
+        localizacao: { label: '' },
+        ativo: { label: produto.ativo ? 'Sim' : 'Não' },
+      };
+    });
+  }, [produtos, categoriasMap, filtroNome]);
 
   return (
     <DataGrid
       items={items}
       columns={columns}
-      sortable
-      selectionMode="multiselect"
+      selectionMode="single"
+      subtleSelection={true}
       selectedItems={selectedRows}
       onSelectionChange={onSelectionChange}
       getRowId={(item) => item.id.label}
-      focusMode={'composite'}
+      resizableColumns
+
+      sortState={sortState}
+      onSortChange={onSortChange}
+      sortable
     >
       <DataGridHeader>
         <DataGridRow
@@ -222,8 +276,12 @@ export const AdicionarProdutoProdutosDataGrid = (): JSXElement => {
             <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
           )}
         </DataGridRow>
-        <DataGridBody<Item>>
-          {({ item, rowId }) => (
+      </DataGridHeader>
+      <DataGridBody<Item>>
+        {({ item, rowId }) =>
+          carregandoProdutos ? (
+            'Carregando...'
+          ) : (
             <DataGridRow<Item>
               key={rowId}
               selectionCell={{
@@ -234,9 +292,9 @@ export const AdicionarProdutoProdutosDataGrid = (): JSXElement => {
                 <DataGridCell>{renderCell(item)}</DataGridCell>
               )}
             </DataGridRow>
-          )}
-        </DataGridBody>
-      </DataGridHeader>
+          )
+        }
+      </DataGridBody>
     </DataGrid>
   );
 };

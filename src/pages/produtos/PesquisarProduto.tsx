@@ -1,4 +1,5 @@
 import {
+  Button,
   Divider,
   Field,
   makeStyles,
@@ -10,13 +11,19 @@ import {
   Toolbar,
   ToolbarButton,
   ToolbarDivider,
-  ToolbarToggleButton,
-  typographyStyles,
+  ToolbarRadioButton,
+  ToolbarRadioGroup,
 } from '@fluentui/react-components';
 import * as React from 'react';
 
-import { ChevronDown24Regular } from '@fluentui/react-icons';
+import {
+  ArrowReset24Regular,
+  ChevronDown24Regular,
+  TextSortAscending24Regular,
+  TextSortDescending24Regular,
+} from '@fluentui/react-icons';
 import { AdicionarProdutoProdutosDataGrid } from '@/components/AdicionarProdutoProdutosDataGrid.tsx';
+import { useState } from 'react';
 
 const useStyles = makeStyles({
   card: {
@@ -39,29 +46,49 @@ const useStyles = makeStyles({
   },
   toolbar: {
     display: 'flex',
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '16px',
+    width: '100%',
+  },
+  toolbarBotoesDireita: {
+    display: 'flex',
     alignItems: 'center',
     gap: '16px',
   },
-  portalContent: {
-    ...typographyStyles.subtitle1,
-
-    backgroundColor: tokens.colorBrandBackground2,
-    color: tokens.colorBrandForeground2,
-    border: `${tokens.strokeWidthThick} dashed ${tokens.colorBrandStroke2}`,
-    padding: '12px 6px',
+  fullWidth: {
+    width: '100%',
+    maxWidth: '100%',
+  },
+  toolbarSearchBox: { flexGrow: 1 },
+  toolbarSortersAndFilters: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center',
+  },
+  portalContainer: {
+    display: 'flex',
+    width: '100%',
+    marginTop: '8px',
+  },
+  filtersWrapper: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'space-between', // Espalha os botões de ponta a ponta uniformemente!
+    alignItems: 'center',
+    flexWrap: 'wrap', // Se a tela encolher, eles quebram a linha bonitinho
+    gap: '8px',
   },
 });
 
 export const PesquisarProduto = () => {
   const styles = useStyles();
-
-  /****************************************************************************/
   const [mountNode, setMountNode] = React.useState<HTMLElement | null>(null);
   const [open, setOpen] = React.useState(false);
 
-  /* CÓDIGO RELACIONADO AO PORTAL DOS FILTROS EXTRAS                          */
-  /****************************************************************************/
+  const [tipoFiltroAtivo, setTipoFiltroAtivo] = useState<
+    'nome' | 'codigo' | 'categoria'
+  >('nome');
+  const [textoBusca, setTextoBusca] = useState('');
 
   return (
     <>
@@ -72,30 +99,60 @@ export const PesquisarProduto = () => {
           </Text>
         </div>
         <div className={styles.toolbar}>
-          <Field>
-            <SearchBox></SearchBox>
-          </Field>
-          <Divider vertical={true} />
-          <Toolbar>
-            <ToolbarToggleButton>Filtrar por Nome</ToolbarToggleButton>
-            <ToolbarToggleButton>Filtrar por Código</ToolbarToggleButton>
-            <ToolbarToggleButton>
-              Filtrar por Código Adicional
-            </ToolbarToggleButton>
-            <ToolbarDivider />
-            <ToolbarButton
-              onClick={() => setOpen(!open)}
-              icon={<ChevronDown24Regular />}
-            />
-          </Toolbar>
+          <div className={styles.toolbarSearchBox}>
+            <Field className={styles.fullWidth}>
+              <SearchBox className={styles.fullWidth}></SearchBox>
+            </Field>
+          </div>
+          <div className={styles.toolbarBotoesDireita}>
+            <Divider vertical={true} />
+            <div className={styles.toolbarSortersAndFilters}>
+              <Toolbar>
+                <ToolbarButton icon={<TextSortAscending24Regular />}>
+                  Crescente
+                </ToolbarButton>
+                <ToolbarButton icon={<TextSortDescending24Regular />}>
+                  Decrescente
+                </ToolbarButton>
+                <ToolbarButton icon={<ArrowReset24Regular />}>
+                  Redefinir Ordenação
+                </ToolbarButton>
+                <ToolbarDivider />
+                <ToolbarButton
+                  onClick={() => setOpen(!open)}
+                  icon={<ChevronDown24Regular />}
+                  appearance="transparent"
+                />
+              </Toolbar>
+            </div>
+          </div>
         </div>
         <div ref={setMountNode} />
         {open && mountNode && (
           <Portal mountNode={mountNode}>
-            <div>
-              <Toolbar>
-                <Text>OUTROS FILTROS</Text>
-              </Toolbar>
+            <div className={styles.portalContainer}>
+              <div className={styles.filtersWrapper}>
+                <ToolbarRadioGroup>
+                  <ToolbarRadioButton
+                    name={'tipoFiltroAtivo'}
+                    onChange={() => setTipoFiltroAtivo('nome')}
+                  >
+                    Filtrar por Nome
+                  </ToolbarRadioButton>
+                </ToolbarRadioGroup>
+              </div>
+            </div>
+            <div className={styles.portalContainer}>
+              <div className={styles.filtersWrapper}>
+                <Button appearance="subtle">Filtrar por Nome</Button>
+                <Button appearance="subtle">Filtrar por Código</Button>
+                <Button appearance="subtle">
+                  Filtrar por Código Adicional
+                </Button>
+                <Button appearance="subtle">Filtrar por Categoria</Button>
+                <Button appearance="subtle">Filtrar por Localização</Button>
+                <Button appearance="subtle">Filtrar por Ativos</Button>
+              </div>
             </div>
           </Portal>
         )}
