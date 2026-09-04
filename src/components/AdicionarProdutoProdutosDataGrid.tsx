@@ -166,7 +166,21 @@ const columns: TableColumnDefinition<Item>[] = [
   }),
 ];
 
-export const AdicionarProdutoProdutosDataGrid = (): JSXElement => {
+type AdicionarProdutoProdutosDataGridProps = {
+  tipoFiltro:
+    | 'nome'
+    | 'codigo'
+    | 'codigoAdicional'
+    | 'categoria'
+    | 'localizacao'
+    | 'ativo';
+  termoBusca: string;
+};
+
+export const AdicionarProdutoProdutosDataGrid = ({
+  tipoFiltro,
+  termoBusca,
+}: AdicionarProdutoProdutosDataGridProps): JSXElement => {
   const [produtos, setProdutos] = useState<ProdutoResponseDTO[]>([]);
   const [categoriasMap, setCategoriasMap] = useState<Record<string, string>>(
     {}
@@ -179,14 +193,6 @@ export const AdicionarProdutoProdutosDataGrid = (): JSXElement => {
   };
   const [sortState, setSortState] = useState<DataGridProps['sortState']>(
     estadoOrdenacaoInicial
-  );
-  const [filtroNome, setFiltroNome] = useState('');
-  const [filtroCodigo, setFiltroCodigo] = useState('');
-  const [filtroCodigoAdicional, setFiltroCodigoAdicional] = useState('');
-  const [filtroCategoria, setFiltroCategoria] = useState('');
-  const [filtroLocalizacao, setFiltroLocalizacao] = useState('');
-  const [filtroAtivo, setFiltroAtivo] = useState<'todos' | 'sim' | 'nao'>(
-    'todos'
   );
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
@@ -220,15 +226,17 @@ export const AdicionarProdutoProdutosDataGrid = (): JSXElement => {
 
   const items: Item[] = useMemo(() => {
     const produtosFiltrados = produtos.filter((produto) => {
-      if (
-        filtroNome &&
-        !produto.nome.toLowerCase().includes(filtroNome.toLowerCase())
-      ) {
-        return false;
+      if (!termoBusca.trim()) return true;
+      if (tipoFiltro === 'nome') {
+        return produto.nome.toLowerCase().includes(termoBusca);
       }
+      if (tipoFiltro === 'codigo') {
+        return produto.codigo.includes(termoBusca);
+      }
+      return true;
     });
 
-    return produtos.map((produto) => {
+    return produtosFiltrados.map((produto) => {
       return {
         id: { label: produto.id },
         nome: { label: produto.nome },
@@ -247,7 +255,7 @@ export const AdicionarProdutoProdutosDataGrid = (): JSXElement => {
         ativo: { label: produto.ativo ? 'Sim' : 'Não' },
       };
     });
-  }, [produtos, categoriasMap, filtroNome]);
+  }, [produtos, categoriasMap, termoBusca, tipoFiltro]);
 
   return (
     <DataGrid

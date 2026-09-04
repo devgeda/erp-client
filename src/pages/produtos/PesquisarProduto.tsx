@@ -2,19 +2,18 @@ import {
   Button,
   Divider,
   Field,
+  Input,
   makeStyles,
   Portal,
-  SearchBox,
   shorthands,
   Text,
   tokens,
   Toolbar,
   ToolbarButton,
   ToolbarDivider,
-  ToolbarRadioButton,
-  ToolbarRadioGroup,
 } from '@fluentui/react-components';
 import * as React from 'react';
+import { useState } from 'react';
 
 import {
   ArrowReset24Regular,
@@ -23,7 +22,6 @@ import {
   TextSortDescending24Regular,
 } from '@fluentui/react-icons';
 import { AdicionarProdutoProdutosDataGrid } from '@/components/AdicionarProdutoProdutosDataGrid.tsx';
-import { useState } from 'react';
 
 const useStyles = makeStyles({
   card: {
@@ -86,9 +84,15 @@ export const PesquisarProduto = () => {
   const [open, setOpen] = React.useState(false);
 
   const [tipoFiltroAtivo, setTipoFiltroAtivo] = useState<
-    'nome' | 'codigo' | 'categoria'
+    | 'nome'
+    | 'codigo'
+    | 'codigoAdicional'
+    | 'categoria'
+    | 'localizacao'
+    | 'ativo'
   >('nome');
-  const [textoBusca, setTextoBusca] = useState('');
+
+  const [termoBusca, setTermoBusca] = useState('');
 
   return (
     <>
@@ -101,7 +105,12 @@ export const PesquisarProduto = () => {
         <div className={styles.toolbar}>
           <div className={styles.toolbarSearchBox}>
             <Field className={styles.fullWidth}>
-              <SearchBox className={styles.fullWidth}></SearchBox>
+              <Input
+                className={styles.fullWidth}
+                type={'text'}
+                placeholder={`Pesquisar por ${tipoFiltroAtivo} ...`}
+                onChange={(e) => setTermoBusca(e.target.value)}
+              ></Input>
             </Field>
           </div>
           <div className={styles.toolbarBotoesDireita}>
@@ -132,33 +141,52 @@ export const PesquisarProduto = () => {
           <Portal mountNode={mountNode}>
             <div className={styles.portalContainer}>
               <div className={styles.filtersWrapper}>
-                <ToolbarRadioGroup>
-                  <ToolbarRadioButton
-                    name={'tipoFiltroAtivo'}
-                    onChange={() => setTipoFiltroAtivo('nome')}
-                  >
-                    Filtrar por Nome
-                  </ToolbarRadioButton>
-                </ToolbarRadioGroup>
-              </div>
-            </div>
-            <div className={styles.portalContainer}>
-              <div className={styles.filtersWrapper}>
-                <Button appearance="subtle">Filtrar por Nome</Button>
-                <Button appearance="subtle">Filtrar por Código</Button>
-                <Button appearance="subtle">
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('nome')}
+                >
+                  Filtrar por Nome
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('codigo')}
+                >
+                  Filtrar por Código
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('codigoAdicional')}
+                >
                   Filtrar por Código Adicional
                 </Button>
-                <Button appearance="subtle">Filtrar por Categoria</Button>
-                <Button appearance="subtle">Filtrar por Localização</Button>
-                <Button appearance="subtle">Filtrar por Ativos</Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('categoria')}
+                >
+                  Filtrar por Categoria
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('localizacao')}
+                >
+                  Filtrar por Localização
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('ativo')}
+                >
+                  Filtrar por Ativo
+                </Button>
               </div>
             </div>
           </Portal>
         )}
       </div>
       <div className={styles.card}>
-        <AdicionarProdutoProdutosDataGrid />
+        <AdicionarProdutoProdutosDataGrid
+          tipoFiltro={tipoFiltroAtivo}
+          termoBusca={termoBusca}
+        />
       </div>
     </>
   );
