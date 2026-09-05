@@ -1,5 +1,6 @@
 import {
   Button,
+  type DataGridProps,
   Divider,
   Field,
   Input,
@@ -103,6 +104,15 @@ export const PesquisarProduto = () => {
 
   const [termoBusca, setTermoBusca] = useState('');
 
+  const estadoOrdenacaoInicial = {
+    sortColumn: 'nome',
+    sortDirection: 'ascending' as const,
+  };
+
+  const [sortState, setSortState] = useState<DataGridProps['sortState']>(
+    estadoOrdenacaoInicial
+  );
+
   return (
     <>
       <div className={styles.card}>
@@ -116,23 +126,54 @@ export const PesquisarProduto = () => {
             <Field className={styles.fullWidth}>
               <Input
                 className={styles.fullWidth}
-                type={'text'}
+                type="text"
+                style={{ textTransform: 'uppercase' }}
                 placeholder={`Pesquisar por ${placeholders[tipoFiltroAtivo] || 'Nome'} ...`}
-                onChange={(e) => setTermoBusca(e.target.value)}
-              ></Input>
+                value={termoBusca}
+                onChange={(e) => setTermoBusca(e.target.value.toUpperCase())}
+              />
             </Field>
           </div>
           <div className={styles.toolbarBotoesDireita}>
             <Divider vertical={true} />
             <div className={styles.toolbarSortersAndFilters}>
               <Toolbar>
-                <ToolbarButton icon={<TextSortAscending24Regular />}>
+                <ToolbarButton
+                  onClick={() =>
+                    setSortState((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            sortColumn: tipoFiltroAtivo,
+                            sortDirection: 'ascending',
+                          }
+                        : estadoOrdenacaoInicial
+                    )
+                  }
+                  icon={<TextSortAscending24Regular />}
+                >
                   Crescente
                 </ToolbarButton>
-                <ToolbarButton icon={<TextSortDescending24Regular />}>
+                <ToolbarButton
+                  onClick={() =>
+                    setSortState((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            sortColumn: tipoFiltroAtivo,
+                            sortDirection: 'descending',
+                          }
+                        : estadoOrdenacaoInicial
+                    )
+                  }
+                  icon={<TextSortDescending24Regular />}
+                >
                   Decrescente
                 </ToolbarButton>
-                <ToolbarButton icon={<ArrowReset24Regular />}>
+                <ToolbarButton
+                  onClick={() => setSortState(estadoOrdenacaoInicial)}
+                  icon={<ArrowReset24Regular />}
+                >
                   Redefinir Ordenação
                 </ToolbarButton>
                 <ToolbarDivider />
@@ -195,6 +236,8 @@ export const PesquisarProduto = () => {
         <AdicionarProdutoProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}
           termoBusca={termoBusca}
+          sortState={sortState}
+          onSortChange={setSortState}
         />
       </div>
     </>

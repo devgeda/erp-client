@@ -175,11 +175,15 @@ type AdicionarProdutoProdutosDataGridProps = {
     | 'localizacao'
     | 'ativo';
   termoBusca: string;
+  sortState: DataGridProps['sortState'];
+  onSortChange: (nextSortState: DataGridProps['sortState']) => void;
 };
 
 export const AdicionarProdutoProdutosDataGrid = ({
   tipoFiltro,
   termoBusca,
+  sortState,
+  onSortChange,
 }: AdicionarProdutoProdutosDataGridProps): JSXElement => {
   const [produtos, setProdutos] = useState<ProdutoResponseDTO[]>([]);
   const [categoriasMap, setCategoriasMap] = useState<Record<string, string>>(
@@ -187,20 +191,9 @@ export const AdicionarProdutoProdutosDataGrid = ({
   );
   const [carregandoProdutos, setCarregandoProdutos] = useState(false);
   const [selectedRows, setSelectedRows] = useState(new Set<TableRowId>());
-  const estadoOrdenacaoInicial = {
-    sortColumn: 'nome',
-    sortDirection: 'ascending' as const,
-  };
-  const [sortState, setSortState] = useState<DataGridProps['sortState']>(
-    estadoOrdenacaoInicial
-  );
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
     setSelectedRows(data.selectedItems);
-  };
-
-  const onSortChange: DataGridProps['onSortChange'] = (_e, nextSortState) => {
-    setSortState(nextSortState);
   };
 
   useEffect(() => {
@@ -225,15 +218,24 @@ export const AdicionarProdutoProdutosDataGrid = ({
   }, [produtos, categoriasMap]);
 
   const items: Item[] = useMemo(() => {
+    const regrasFiltro: Record<
+      string,
+      (produto: ProdutoResponseDTO) => boolean
+    > = {
+      nome: (produto) => produto.nome.includes(termoBusca),
+      codigo: (produto) => produto.codigo.includes(termoBusca),
+      codigoAdicional: (produto) =>
+        (produto.codigoAdicional || '').includes(termoBusca),
+      categoria: (produto) =>
+        (categoriasMap[produto.categoriaId] || '').includes(termoBusca),
+      ativo: (produto) => (produto.ativo ? 'SIM' : 'NÃO').includes(termoBusca),
+    };
+
     const produtosFiltrados = produtos.filter((produto) => {
       if (!termoBusca.trim()) return true;
-      if (tipoFiltro === 'nome') {
-        return produto.nome.toLowerCase().includes(termoBusca);
-      }
-      if (tipoFiltro === 'codigo') {
-        return produto.codigo.includes(termoBusca);
-      }
-      return true;
+
+      const regra = regrasFiltro[tipoFiltro];
+      return regra(produto);
     });
 
     return produtosFiltrados.map((produto) => {
@@ -249,10 +251,10 @@ export const AdicionarProdutoProdutosDataGrid = ({
           label: formatCurrencyBRL(produto.valorPromocional),
         },
         categoriaId: {
-          label: categoriasMap[produto.categoriaId] ?? 'Desconhecida',
+          label: categoriasMap[produto.categoriaId] ?? 'DESCONHECIDA',
         },
         localizacao: { label: '' },
-        ativo: { label: produto.ativo ? 'Sim' : 'Não' },
+        ativo: { label: produto.ativo ? 'SIM' : 'NÃO' },
       };
     });
   }, [produtos, categoriasMap, termoBusca, tipoFiltro]);
@@ -269,7 +271,7 @@ export const AdicionarProdutoProdutosDataGrid = ({
       resizableColumns
 
       sortState={sortState}
-      onSortChange={onSortChange}
+      onSortChange={(_e, nextSortState) => onSortChange(nextSortState)}
       sortable
     >
       <DataGridHeader>
