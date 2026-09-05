@@ -71,9 +71,9 @@ const useStyles = makeStyles({
   filtersWrapper: {
     display: 'flex',
     width: '100%',
-    justifyContent: 'space-between', // Espalha os botões de ponta a ponta uniformemente!
+    justifyContent: 'space-between',
     alignItems: 'center',
-    flexWrap: 'wrap', // Se a tela encolher, eles quebram a linha bonitinho
+    flexWrap: 'wrap',
     gap: '8px',
   },
 });
@@ -92,6 +92,15 @@ export const PesquisarProduto = () => {
     | 'ativo'
   >('nome');
 
+  const placeholders: Record<string, string> = {
+    nome: 'Nome',
+    codigo: 'Código',
+    codigoAdicional: 'Código Adicional',
+    categoria: 'Categoria',
+    localizacao: 'Localização',
+    ativo: 'Ativo',
+  };
+
   const [termoBusca, setTermoBusca] = useState('');
 
   return (
@@ -108,7 +117,7 @@ export const PesquisarProduto = () => {
               <Input
                 className={styles.fullWidth}
                 type={'text'}
-                placeholder={`Pesquisar por ${tipoFiltroAtivo} ...`}
+                placeholder={`Pesquisar por ${placeholders[tipoFiltroAtivo] || 'Nome'} ...`}
                 onChange={(e) => setTermoBusca(e.target.value)}
               ></Input>
             </Field>

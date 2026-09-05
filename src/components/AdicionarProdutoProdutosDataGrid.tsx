@@ -288,7 +288,7 @@ export const AdicionarProdutoProdutosDataGrid = ({
       <DataGridBody<Item>>
         {({ item, rowId }) =>
           carregandoProdutos ? (
-            'Carregando...'
+            'Carregando produtos ...'
           ) : (
             <DataGridRow<Item>
               key={rowId}

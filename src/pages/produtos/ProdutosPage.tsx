@@ -129,8 +129,8 @@ export const ProdutosPage = () => {
   const handleTabSelect = (_event: unknown, data: { value: unknown }) => {
     if (data.value === 'adicionar') navigate('/produtos/adicionar');
     if (data.value === 'pesquisar') navigate('/produtos/pesquisar');
-    if (data.value === 'editar') navigate('/produtos/editar');
     if (data.value === 'visualizar') navigate('/produtos/visualizar');
+    if (data.value === 'editar') navigate('/produtos/editar');
     if (data.value === 'historico') navigate('/produtos/historico');
   };
 
