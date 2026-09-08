@@ -1,75 +1,40 @@
-# React + TypeScript + Vite
+# ERP Frontend (React + Fluent UI)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este é o cliente Frontend do sistema ERP, desenvolvido para se conectar de forma dinâmica com a API backend construída em Java/Spring Boot. O projeto é focado em alta performance, tipagem rigorosa e produtividade, utilizando as ferramentas mais modernas do ecossistema React.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Stack e Tecnologias
 
-## React Compiler
+A arquitetura foi desenhada para ser escalável, robusta e fácil de manter:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   **Core e Build:** React 19 executado via Vite 8, garantindo inicialização instantânea e builds ultrarrápidos.
+*   **Interface (UI):** Fluent UI React Components (v9) e Icons da Microsoft, entregando componentes acessíveis e com visual corporativo limpo.
+*   **Roteamento:** React Router DOM (v7) para o gerenciamento de rotas fluídas (SPA).
+*   **Formulários:** React Hook Form perfeitamente integrado ao Zod para lidar com estados complexos e validações rígidas.
+*   **Comunicação:** Axios gerenciando as chamadas HTTP para o backend em Spring Boot.
+*   **Qualidade de Código:** TypeScript, ESLint e Prettier mantendo o código seguro e padronizado.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Como Executar Localmente
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Para rodar o ambiente de desenvolvimento, o ideal é que o servidor da sua API Spring Boot já esteja ativo na porta configurada para receber as requisições.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone o repositório para a sua máquina local.
+2. Abra o terminal navegando até a pasta raiz do front-end.
+3. Instale todas as dependências rodando o comando `npm install`.
+4. Inicie o servidor de desenvolvimento com o comando `npm run dev`.
+5. Acesse a URL local fornecida pelo Vite no seu navegador.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
 
-```
+## 📋 Comandos Úteis (Scripts)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Os scripts do projeto foram configurados para facilitar o ciclo de vida da aplicação.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+| Comando | Ação Executada no Projeto |
+| :--- | :--- |
+| `npm run dev` | Inicia o servidor local com Hot Module Replacement (HMR). |
+| `npm run build` | Valida as tipagens (tsc) e gera o *bundle* otimizado para produção. |
+| `npm run lint` | Executa o ESLint para procurar erros de sintaxe ou formatação. |
