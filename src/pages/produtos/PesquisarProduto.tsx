@@ -88,7 +88,7 @@ export const PesquisarProduto = () => {
     | 'nome'
     | 'codigo'
     | 'codigoAdicional'
-    | 'categoria'
+    | 'categoriaId'
     | 'localizacao'
     | 'ativo'
   >('nome');
@@ -97,7 +97,7 @@ export const PesquisarProduto = () => {
     nome: 'Nome',
     codigo: 'Código',
     codigoAdicional: 'Código Adicional',
-    categoria: 'Categoria',
+    categoriaId: 'Categoria',
     localizacao: 'Localização',
     ativo: 'Ativo',
   };
@@ -211,7 +211,7 @@ export const PesquisarProduto = () => {
                 </Button>
                 <Button
                   appearance={'subtle'}
-                  onClick={() => setTipoFiltroAtivo('categoria')}
+                  onClick={() => setTipoFiltroAtivo('categoriaId')}
                 >
                   Filtrar por Categoria
                 </Button>

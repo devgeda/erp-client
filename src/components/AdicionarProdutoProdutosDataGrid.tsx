@@ -171,7 +171,7 @@ type AdicionarProdutoProdutosDataGridProps = {
     | 'nome'
     | 'codigo'
     | 'codigoAdicional'
-    | 'categoria'
+    | 'categoriaId'
     | 'localizacao'
     | 'ativo';
   termoBusca: string;

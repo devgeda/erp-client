@@ -27,17 +27,49 @@ export const produtoFormSchema = z.object({
   ativo: z.boolean('Defina o status do produto'),
   ncm: z
     .string()
-    .regex(/^\d{4}\.\d{2}\.\d{2}$/, 'Formato de NCM inválido. Use 0000.00.00'),
+    .regex(/^\d{4}\.\d{2}\.\d{2}$/, 'Formato de NCM inválido. Use 0000.00.00')
+    .or(z.literal(''))
+    .optional(),
   cest: z
     .string()
-    .regex(/^\d{2}\.\d{3}\.\d{2}$/, 'Formato de CEST inválido. Use 00.000.00'),
-  origemDoProduto: z.string().regex(/^\d{1}$/, 'O código deve ser válido'),
-  cfopInterno: z.string().regex(/^\d{4}$/, 'O código deve ser válido'),
-  cfopInterestadual: z.string().regex(/^\d{4}$/, 'O código deve ser válido'),
-  csosn: z.string().regex(/^\d{3}$/, 'O código deve ser válido'),
-  cstIcms: z.string().regex(/^\d{2}$/, 'O código deve ser válido'),
-  cstPis: z.string().regex(/^\d{2}$/, 'O código deve ser válido'),
-  cstCofins: z.string().regex(/^\d{2}$/, 'O código deve ser válido'),
+    .regex(/^\d{2}\.\d{3}\.\d{2}$/, 'Formato de CEST inválido. Use 00.000.00')
+    .or(z.literal(''))
+    .optional(),
+  origemDoProduto: z
+    .string()
+    .regex(/^\d$/, 'O código deve ser válido')
+    .or(z.literal(''))
+    .optional(),
+  cfopInterno: z
+    .string()
+    .regex(/^\d{4}$/, 'O código deve ser válido')
+    .or(z.literal(''))
+    .optional(),
+  cfopInterestadual: z
+    .string()
+    .regex(/^\d{4}$/, 'O código deve ser válido')
+    .or(z.literal(''))
+    .optional(),
+  csosn: z
+    .string()
+    .regex(/^\d{3}$/, 'O código deve ser válido')
+    .or(z.literal(''))
+    .optional(),
+  cstIcms: z
+    .string()
+    .regex(/^\d{2}$/, 'O código deve ser válido')
+    .or(z.literal(''))
+    .optional(),
+  cstPis: z
+    .string()
+    .regex(/^\d{2}$/, 'O código deve ser válido')
+    .or(z.literal(''))
+    .optional(),
+  cstCofins: z
+    .string()
+    .regex(/^\d{2}$/, 'O código deve ser válido')
+    .or(z.literal(''))
+    .optional(),
   aliquotaIcms: limitarAliquotaSchema,
   aliquotaPis: limitarAliquotaSchema,
   aliquotaCofins: limitarAliquotaSchema,

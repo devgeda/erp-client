@@ -188,6 +188,8 @@ export const AdicionarProduto = () => {
       categoriaId: '',
       ativo: true,
       origemDoProduto: '',
+      ncm: '',
+      csosn: '',
       cfopInterno: '',
     },
   });
@@ -203,7 +205,6 @@ export const AdicionarProduto = () => {
       valorPromocional: data.valorPromocional
         ? parseCurrencyToNumber(data.valorPromocional).toFixed(2)
         : '',
-
       ncm: data.ncm.replaceAll('.', ''),
       cest: data.cest.replaceAll('.', ''),
     };

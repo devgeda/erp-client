@@ -38,7 +38,6 @@ export const AdicionarProdutoFiscalSelect = ({
   const styles = useStyles();
   const [fiscal, setFiscal] = useState<ProdutoFiscalResponseDTO[]>([]);
   const [carregandoFiscal, setCarregandoFiscal] = useState(true);
-  const [isFiscalSelectOpen, setIsFiscalSelectOpen] = useState(false);
 
   useEffect(() => {
     async function carregarFiscal() {
@@ -55,7 +54,7 @@ export const AdicionarProdutoFiscalSelect = ({
       }
     }
     carregarFiscal();
-  }, [isFiscalSelectOpen, endPointPath]);
+  }, [endPointPath]);
 
   const fiscalAgrupado = fiscal.reduce<
     Record<string, ProdutoFiscalResponseDTO[]>
@@ -72,7 +71,6 @@ export const AdicionarProdutoFiscalSelect = ({
     <Controller
       name={nome}
       control={control}
-      defaultValue={'' as never}
       render={({ field, fieldState }) => (
         <Field
           id={`${nome}`}
@@ -92,13 +90,14 @@ export const AdicionarProdutoFiscalSelect = ({
           <Select
             style={{ width: '100%', minWidth: 0 }}
             disabled={carregandoFiscal}
+            value={(field.value as string) ?? ''}
             onChange={(_e, data) => {
               field.onChange(data.value);
             }}
-            onBlur={() => setIsFiscalSelectOpen(false)}
+            onBlur={field.onBlur}
           >
-            <option value={''}>
-              {carregandoFiscal ? 'Carregando...' : label}
+            <option value={''} disabled hidden>
+              {carregandoFiscal ? 'Carregando...' : `Selecione ${label}`}
             </option>
             {fiscal.find((value) => value.grupo)
               ? Object.entries(fiscalAgrupado).map(

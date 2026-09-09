@@ -8,19 +8,19 @@ export interface ProdutoRequestDTO {
   ativo: boolean;
   ncm: string;
   cest: string;
-  origemDoProduto: string;
-  cfopInterno: string;
-  cfopInterestadual: string;
-  cstIcms: string;
-  csosn: string;
-  cstPis: string;
-  cstCofins: string;
-  aliquotaIcms: string;
-  aliquotaPis: string;
-  aliquotaCofins: string;
-  aliquotaIpi: string;
-  aliquotaFcp: string;
-  ivaSt: string;
+  origemDoProduto?: string;
+  cfopInterno?: string;
+  cfopInterestadual?: string;
+  cstIcms?: string;
+  csosn?: string;
+  cstPis?: string;
+  cstCofins?: string;
+  aliquotaIcms?: string;
+  aliquotaPis?: string;
+  aliquotaCofins?: string;
+  aliquotaIpi?: string;
+  aliquotaFcp?: string;
+  ivaSt?: string;
 }
 
 export interface ProdutoResponseDTO {
