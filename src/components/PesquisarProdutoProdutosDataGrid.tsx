@@ -179,7 +179,7 @@ type AdicionarProdutoProdutosDataGridProps = {
   onSortChange: (nextSortState: DataGridProps['sortState']) => void;
 };
 
-export const AdicionarProdutoProdutosDataGrid = ({
+export const PesquisarProdutoProdutosDataGrid = ({
   tipoFiltro,
   termoBusca,
   sortState,

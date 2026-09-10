@@ -22,7 +22,7 @@ import {
   TextSortAscending24Regular,
   TextSortDescending24Regular,
 } from '@fluentui/react-icons';
-import { AdicionarProdutoProdutosDataGrid } from '@/components/AdicionarProdutoProdutosDataGrid.tsx';
+import { PesquisarProdutoProdutosDataGrid } from '@/components/PesquisarProdutoProdutosDataGrid.tsx';
 
 const useStyles = makeStyles({
   card: {
@@ -233,7 +233,7 @@ export const PesquisarProduto = () => {
         )}
       </div>
       <div className={styles.card}>
-        <AdicionarProdutoProdutosDataGrid
+        <PesquisarProdutoProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}
           termoBusca={termoBusca}
           sortState={sortState}

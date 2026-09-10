@@ -27,8 +27,8 @@ import type { CategoriaResponseDTO } from '@/api/categorias/categoria.types.tsx'
 import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
 import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCategoriaDialog.tsx';
 import {
-  formatInputCurrencyBRL,
   formatFiscalField,
+  formatInputCurrencyBRL,
   parseCurrencyToNumber,
 } from '@/utils/formatters.tsx';
 import { AdicionarProdutoFiscalSelect } from '@/components/AdicionarProdutoFiscalSelect.tsx';
