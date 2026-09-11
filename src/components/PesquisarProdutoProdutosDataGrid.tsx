@@ -1,23 +1,30 @@
 import {
+  Button,
   createTableColumn,
   DataGrid,
   DataGridBody,
   DataGridCell,
+  type DataGridCellFocusMode,
   DataGridHeader,
   DataGridHeaderCell,
   type DataGridProps,
   DataGridRow,
   type JSXElement,
+  OverlayDrawer,
   TableCellLayout,
   type TableColumnDefinition,
+  type TableColumnId,
   type TableRowId,
   Tooltip,
+  useRestoreFocusSource,
+  useRestoreFocusTarget,
 } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { ProdutoResponseDTO } from '@/api/produtos/produto.types.tsx';
 import { listarProdutos } from '@/api/produtos/produto.service.tsx';
 import { formatCurrencyBRL } from '@/utils/formatters.tsx';
 import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
+import { Edit24Regular, Eye24Regular } from '@fluentui/react-icons';
 
 type IdCell = { label: string };
 
@@ -53,7 +60,10 @@ type Item = {
   ativo: AtivoCell;
 };
 
-const columns: TableColumnDefinition<Item>[] = [
+const getColumns = (
+  onEditClick: (item: Item) => void,
+  onViewClick: (item: Item) => void
+): TableColumnDefinition<Item>[] => [
   createTableColumn<Item>({
     columnId: 'nome',
     compare: (a, b) => {
@@ -164,6 +174,28 @@ const columns: TableColumnDefinition<Item>[] = [
       return <TableCellLayout truncate>{item.ativo.label}</TableCellLayout>;
     },
   }),
+  createTableColumn<Item>({
+    columnId: 'acoes',
+    renderHeaderCell: () => {
+      return 'Ações';
+    },
+    renderCell: (item) => {
+      return (
+        <>
+          <Button
+            aria-label={'Editar'}
+            icon={<Edit24Regular />}
+            onClick={() => onEditClick(item)}
+          />
+          <Button
+            aria-label={'Visualizar'}
+            icon={<Eye24Regular />}
+            onClick={() => onViewClick(item)}
+          />
+        </>
+      );
+    },
+  }),
 ];
 
 type AdicionarProdutoProdutosDataGridProps = {
@@ -179,6 +211,15 @@ type AdicionarProdutoProdutosDataGridProps = {
   onSortChange: (nextSortState: DataGridProps['sortState']) => void;
 };
 
+const getCellFocusMode = (columnId: TableColumnId): DataGridCellFocusMode => {
+  switch (columnId) {
+    case 'acoes':
+      return 'group';
+    default:
+      return 'cell';
+  }
+};
+
 export const PesquisarProdutoProdutosDataGrid = ({
   tipoFiltro,
   termoBusca,
@@ -191,6 +232,13 @@ export const PesquisarProdutoProdutosDataGrid = ({
   );
   const [carregandoProdutos, setCarregandoProdutos] = useState(false);
   const [selectedRows, setSelectedRows] = useState(new Set<TableRowId>());
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
+  const [produtoAtivo, setProdutoAtivo] = useState<Item | null>(null);
+
+  const restoreFocusTargetAttributes = useRestoreFocusTarget();
+  const restoreFocusSourceAttributes = useRestoreFocusSource();
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
     setSelectedRows(data.selectedItems);
@@ -226,7 +274,7 @@ export const PesquisarProdutoProdutosDataGrid = ({
       codigo: (produto) => produto.codigo.includes(termoBusca),
       codigoAdicional: (produto) =>
         (produto.codigoAdicional || '').includes(termoBusca),
-      categoria: (produto) =>
+      categoriaId: (produto) =>
         (categoriasMap[produto.categoriaId] || '').includes(termoBusca),
       ativo: (produto) => (produto.ativo ? 'SIM' : 'NÃO').includes(termoBusca),
     };
@@ -259,52 +307,84 @@ export const PesquisarProdutoProdutosDataGrid = ({
     });
   }, [produtos, categoriasMap, termoBusca, tipoFiltro]);
 
-  return (
-    <DataGrid
-      items={items}
-      columns={columns}
-      selectionMode="single"
-      subtleSelection={true}
-      selectedItems={selectedRows}
-      onSelectionChange={onSelectionChange}
-      getRowId={(item) => item.id.label}
-      resizableColumns
+  const handleEditClick = (item: Item) => {
+    setProdutoAtivo(item);
+    setIsEditDialogOpen(true);
+  };
 
-      sortState={sortState}
-      onSortChange={(_e, nextSortState) => onSortChange(nextSortState)}
-      sortable
-    >
-      <DataGridHeader>
-        <DataGridRow
-          selectionCell={{
-            checkboxIndicator: {
-              'aria-label': 'Selecionar todas as linhas',
-            },
-          }}
-        >
-          {({ renderHeaderCell }) => (
-            <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
-          )}
-        </DataGridRow>
-      </DataGridHeader>
-      <DataGridBody<Item>>
-        {({ item, rowId }) =>
-          carregandoProdutos ? (
-            'Carregando produtos ...'
-          ) : (
-            <DataGridRow<Item>
-              key={rowId}
-              selectionCell={{
-                checkboxIndicator: { 'aria-label': 'Selecione a linha' },
-              }}
-            >
-              {({ renderCell }) => (
-                <DataGridCell>{renderCell(item)}</DataGridCell>
-              )}
-            </DataGridRow>
-          )
-        }
-      </DataGridBody>
-    </DataGrid>
+  const handleViewClick = (item: Item) => {
+    setProdutoAtivo(item);
+    setIsViewDrawerOpen(true);
+  };
+
+  const gridColumns = useMemo(
+    () => getColumns(handleEditClick, handleViewClick),
+    []
+  );
+
+  return (
+    <>
+      <DataGrid
+        items={items}
+        columns={gridColumns}
+        selectionMode="single"
+        subtleSelection={true}
+        selectedItems={selectedRows}
+        onSelectionChange={onSelectionChange}
+        getRowId={(item) => item.id.label}
+        resizableColumns
+        sortState={sortState}
+        onSortChange={(_e, nextSortState) => onSortChange(nextSortState)}
+        sortable
+      >
+        <DataGridHeader>
+          <DataGridRow
+            selectionCell={{
+              checkboxIndicator: {
+                'aria-label': 'Selecionar todas as linhas',
+              },
+            }}
+          >
+            {({ columnId, renderHeaderCell }) => (
+              <DataGridHeaderCell
+                focusMode={columnId === 'acoes' ? 'none' : undefined}
+              >
+                {renderHeaderCell()}
+              </DataGridHeaderCell>
+            )}
+          </DataGridRow>
+        </DataGridHeader>
+        <DataGridBody<Item>>
+          {({ item, rowId }) =>
+            carregandoProdutos ? (
+              'Carregando produtos ...'
+            ) : (
+              <DataGridRow<Item>
+                key={rowId}
+                selectionCell={{
+                  checkboxIndicator: { 'aria-label': 'Selecione a linha' },
+                }}
+              >
+                {({ columnId, renderCell }) => (
+                  <DataGridCell focusMode={getCellFocusMode(columnId)}>
+                    {renderCell(item)}
+                  </DataGridCell>
+                )}
+              </DataGridRow>
+            )
+          }
+        </DataGridBody>
+      </DataGrid>
+
+      {isEditDialogOpen && produtoAtivo && (
+        <OverlayDrawer
+          modalType={'modal'}
+          {...restoreFocusSourceAttributes}
+          open={isEditDialogOpen}
+          position={'end'}
+          onOpenChange={(_, { open }) => setIsEditDialogOpen(open)}
+        ></OverlayDrawer>
+      )}
+    </>
   );
 };

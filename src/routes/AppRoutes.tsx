@@ -7,8 +7,6 @@ import {
 import { AppLayout } from '@/layouts/AppLayout.tsx';
 import { ProdutosPage } from '@/pages/produtos/ProdutosPage.tsx';
 import { AdicionarProduto } from '@/pages/produtos/AdicionarProduto.tsx';
-import { VisualizarProduto } from '@/pages/produtos/VisualizarProduto.tsx';
-import { EditarProduto } from '@/pages/produtos/EditarProduto.tsx';
 import { HistoricoProduto } from '@/pages/produtos/HistoricoProduto.tsx';
 import { LoginPage } from '@/pages/autenticacao/LoginPage.tsx';
 import { SignupPage } from '@/pages/autenticacao/SignupPage.tsx';
@@ -67,20 +65,6 @@ const router = createBrowserRouter([
                 path: '/produtos/pesquisar',
                 element: <PesquisarProduto />,
                 handle: { pageTitle: 'Pesquisar Produto' },
-              },
-              {
-                path: '/produtos/visualizar',
-                element: <VisualizarProduto />,
-                handle: {
-                  pageTitle: 'Visualizar Produto',
-                },
-              },
-              {
-                path: '/produtos/editar',
-                element: <EditarProduto />,
-                handle: {
-                  pageTitle: 'Editar Produto',
-                },
               },
               {
                 path: '/produtos/historico',

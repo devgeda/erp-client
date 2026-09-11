@@ -1,10 +1,11 @@
 import {
   Button,
   Field,
-  type JSXElement,
+  Text,
   makeStyles,
   shorthands,
   tokens,
+  type JSXElement,
 } from '@fluentui/react-components';
 import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
 
@@ -111,7 +112,7 @@ const useStyles = makeStyles({
   buttonGroup: {
     display: 'flex',
     alignItems: 'center',
-    ...shorthands.gap('8px'), // Espaço entre os botões
+    ...shorthands.gap('8px'),
   },
 });
 

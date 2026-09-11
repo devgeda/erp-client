@@ -83,6 +83,14 @@ export const PesquisarProduto = () => {
   const styles = useStyles();
   const [mountNode, setMountNode] = React.useState<HTMLElement | null>(null);
   const [open, setOpen] = React.useState(false);
+  const [termoBusca, setTermoBusca] = useState('');
+  const estadoOrdenacaoInicial = {
+    sortColumn: 'nome',
+    sortDirection: 'ascending' as const,
+  };
+  const [sortState, setSortState] = useState<DataGridProps['sortState']>(
+    estadoOrdenacaoInicial
+  );
 
   const [tipoFiltroAtivo, setTipoFiltroAtivo] = useState<
     | 'nome'
@@ -101,17 +109,6 @@ export const PesquisarProduto = () => {
     localizacao: 'Localização',
     ativo: 'Ativo',
   };
-
-  const [termoBusca, setTermoBusca] = useState('');
-
-  const estadoOrdenacaoInicial = {
-    sortColumn: 'nome',
-    sortDirection: 'ascending' as const,
-  };
-
-  const [sortState, setSortState] = useState<DataGridProps['sortState']>(
-    estadoOrdenacaoInicial
-  );
 
   return (
     <>
@@ -181,7 +178,9 @@ export const PesquisarProduto = () => {
                   onClick={() => setOpen(!open)}
                   icon={<ChevronDown24Regular />}
                   appearance="transparent"
-                />
+                >
+                  Filtros
+                </ToolbarButton>
               </Toolbar>
             </div>
           </div>
