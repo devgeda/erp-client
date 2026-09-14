@@ -11,8 +11,6 @@ import {
 } from '@fluentui/react-components';
 import {
   Add24Regular,
-  Edit24Regular,
-  Eye24Regular,
   History24Regular,
   Search24Regular,
 } from '@fluentui/react-icons';
@@ -112,25 +110,19 @@ export const ProdutosPage = () => {
 
   // Pega a rota filha que está ativa no momento
   const currentMatch = matches[matches.length - 1];
-  const handle = currentMatch?.handle as any;
+  const handle = currentMatch?.handle as { pageTitle?: string };
 
   const currentTab = location.pathname.includes('adicionar')
     ? 'adicionar'
     : location.pathname.includes('pesquisar')
       ? 'pesquisar'
-      : location.pathname.includes('editar')
-        ? 'editar'
-        : location.pathname.includes('visualizar')
-          ? 'visualizar'
-          : location.pathname.includes('historico')
-            ? 'historico'
-            : 'adicionar';
+      : location.pathname.includes('historico')
+        ? 'historico'
+        : 'adicionar';
 
   const handleTabSelect = (_event: unknown, data: { value: unknown }) => {
     if (data.value === 'adicionar') navigate('/produtos/adicionar');
     if (data.value === 'pesquisar') navigate('/produtos/pesquisar');
-    if (data.value === 'visualizar') navigate('/produtos/visualizar');
-    if (data.value === 'editar') navigate('/produtos/editar');
     if (data.value === 'historico') navigate('/produtos/historico');
   };
 
@@ -164,12 +156,6 @@ export const ProdutosPage = () => {
             </Tab>
             <Tab value="pesquisar" icon={<Search24Regular />}>
               Pesquisar
-            </Tab>
-            <Tab value="visualizar" icon={<Eye24Regular />}>
-              Visualizar
-            </Tab>
-            <Tab value="editar" icon={<Edit24Regular />}>
-              Editar
             </Tab>
             <Tab value="historico" icon={<History24Regular />}>
               Histórico

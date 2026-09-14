@@ -17,7 +17,6 @@ import {
   type TableRowId,
   Tooltip,
   useRestoreFocusSource,
-  useRestoreFocusTarget,
 } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { ProdutoResponseDTO } from '@/api/produtos/produto.types.tsx';
@@ -25,6 +24,7 @@ import { listarProdutos } from '@/api/produtos/produto.service.tsx';
 import { formatCurrencyBRL } from '@/utils/formatters.tsx';
 import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
 import { Edit24Regular, Eye24Regular } from '@fluentui/react-icons';
+import { PesquisarProdutoVisualizar } from '@/components/PesquisarProdutoVisualizar.tsx';
 
 type IdCell = { label: string };
 
@@ -233,11 +233,10 @@ export const PesquisarProdutoProdutosDataGrid = ({
   const [carregandoProdutos, setCarregandoProdutos] = useState(false);
   const [selectedRows, setSelectedRows] = useState(new Set<TableRowId>());
 
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
   const [produtoAtivo, setProdutoAtivo] = useState<Item | null>(null);
 
-  const restoreFocusTargetAttributes = useRestoreFocusTarget();
   const restoreFocusSourceAttributes = useRestoreFocusSource();
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
@@ -309,7 +308,7 @@ export const PesquisarProdutoProdutosDataGrid = ({
 
   const handleEditClick = (item: Item) => {
     setProdutoAtivo(item);
-    setIsEditDialogOpen(true);
+    setIsEditDrawerOpen(true);
   };
 
   const handleViewClick = (item: Item) => {
@@ -332,7 +331,6 @@ export const PesquisarProdutoProdutosDataGrid = ({
         selectedItems={selectedRows}
         onSelectionChange={onSelectionChange}
         getRowId={(item) => item.id.label}
-        resizableColumns
         sortState={sortState}
         onSortChange={(_e, nextSortState) => onSortChange(nextSortState)}
         sortable
@@ -376,14 +374,26 @@ export const PesquisarProdutoProdutosDataGrid = ({
         </DataGridBody>
       </DataGrid>
 
-      {isEditDialogOpen && produtoAtivo && (
+      {isEditDrawerOpen && produtoAtivo && (
         <OverlayDrawer
           modalType={'modal'}
           {...restoreFocusSourceAttributes}
-          open={isEditDialogOpen}
+          open={isEditDrawerOpen}
           position={'end'}
-          onOpenChange={(_, { open }) => setIsEditDialogOpen(open)}
+          onOpenChange={(_, { open }) => setIsEditDrawerOpen(open)}
         ></OverlayDrawer>
+      )}
+
+      {isViewDrawerOpen && produtoAtivo && (
+        <OverlayDrawer
+          modalType={'modal'}
+          {...restoreFocusSourceAttributes}
+          open={isViewDrawerOpen}
+          position={'end'}
+          onOpenChange={(_, { open }) => setIsViewDrawerOpen(open)}
+        >
+          <PesquisarProdutoVisualizar />
+        </OverlayDrawer>
       )}
     </>
   );

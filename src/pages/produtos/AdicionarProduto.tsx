@@ -199,14 +199,21 @@ export const AdicionarProduto = () => {
       ...data,
 
       codigoAdicional: data.codigoAdicional ?? '',
-
       valor: data.valor ? parseCurrencyToNumber(data.valor).toFixed(2) : '',
-
       valorPromocional: data.valorPromocional
         ? parseCurrencyToNumber(data.valorPromocional).toFixed(2)
         : '',
-      ncm: data.ncm.replaceAll('.', ''),
-      cest: data.cest.replaceAll('.', ''),
+      ncm: data.ncm ? data.ncm.replaceAll('.', '') : '00000000',
+      cest: data.cest ? data.cest.replaceAll('.', '') : '0000000',
+      origemDoProduto: data.origemDoProduto ? data.origemDoProduto : '0',
+      cfopInterno: data.cfopInterno ? data.cfopInterno : '5101',
+      cfopInterestadual: data.cfopInterestadual
+        ? data.cfopInterestadual
+        : '6101',
+      cstIcms: data.cstIcms ? data.cstIcms : '00',
+      csosn: data.csosn ? data.csosn : '101',
+      cstPis: data.cstPis ? data.cstPis : '01',
+      cstCofins: data.cstCofins ? data.cstCofins : '01',
     };
 
     try {
