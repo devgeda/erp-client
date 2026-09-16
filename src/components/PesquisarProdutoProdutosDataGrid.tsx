@@ -48,7 +48,7 @@ type LocalizacaoCell = { label: string };
 
 type AtivoCell = { label: string };
 
-type Item = {
+export type Item = {
   id: IdCell;
   nome: NameCell;
   codigo: CodigoCell;
@@ -386,13 +386,14 @@ export const PesquisarProdutoProdutosDataGrid = ({
 
       {isViewDrawerOpen && produtoAtivo && (
         <OverlayDrawer
-          modalType={'modal'}
+          modalType={'alert'}
           {...restoreFocusSourceAttributes}
           open={isViewDrawerOpen}
           position={'end'}
+          size={'large'}
           onOpenChange={(_, { open }) => setIsViewDrawerOpen(open)}
         >
-          <PesquisarProdutoVisualizar />
+          <PesquisarProdutoVisualizar produtoAtivo={produtoAtivo.id.label} />
         </OverlayDrawer>
       )}
     </>

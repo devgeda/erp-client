@@ -13,7 +13,6 @@ import {
   ToolbarButton,
   ToolbarDivider,
 } from '@fluentui/react-components';
-import * as React from 'react';
 import { useState } from 'react';
 
 import {
@@ -81,8 +80,8 @@ const useStyles = makeStyles({
 
 export const PesquisarProduto = () => {
   const styles = useStyles();
-  const [mountNode, setMountNode] = React.useState<HTMLElement | null>(null);
-  const [open, setOpen] = React.useState(false);
+  const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
+  const [open, setOpen] = useState(false);
   const [termoBusca, setTermoBusca] = useState('');
   const estadoOrdenacaoInicial = {
     sortColumn: 'nome',

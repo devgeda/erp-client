@@ -17,6 +17,12 @@ export async function listarProdutos() {
   return response.data;
 }
 
+export async function obterProdutoById(id: string) {
+  const response = await api.get<ProdutoResponseDTO>(`produtos/${id}`);
+
+  return response.data;
+}
+
 export async function listarProdutoFiscal(path: string) {
   const response = await api.get<ProdutoFiscalResponseDTO[]>(path);
 
