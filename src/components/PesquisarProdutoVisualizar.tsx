@@ -12,10 +12,8 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
-import type { Item } from './PesquisarProdutoProdutosDataGrid';
 import type { ProdutoResponseDTO } from '@/api/produtos/produto.types.tsx';
-import { useEffect, useState } from 'react';
-import { obterProdutoById } from '@/api/produtos/produto.service.tsx';
+import { formatCurrencyBRL } from '@/utils/formatters.tsx';
 
 const useStyles = makeStyles({
   root: {
@@ -124,33 +122,15 @@ const useStyles = makeStyles({
   },
 });
 type PesquisarProdutoVisualizarProps = {
-  produtoAtivo: Item;
+  produto: ProdutoResponseDTO;
+  categoria: string;
 };
 
 export const PesquisarProdutoVisualizar = ({
-  produtoAtivo,
+  produto,
+  categoria,
 }: PesquisarProdutoVisualizarProps): JSXElement => {
   const styles = useStyles();
-  const [produto, setProduto] = useState<ProdutoResponseDTO>();
-  const [carregandoProduto, setCarregandoProduto] = useState(false);
-
-  useEffect(() => {
-    async function carregarProdutos() {
-      try {
-        const produtoData = await obterProdutoById(produtoAtivo.id.label);
-
-        setProduto(produtoData);
-      } catch (error) {
-        console.error(
-          `Error ao carregar os produto: ${produtoAtivo.id.label}, error: `,
-          error
-        );
-      } finally {
-        setCarregandoProduto(false);
-      }
-    }
-    carregarProdutos();
-  }, [produtoAtivo]);
 
   return (
     <>
@@ -160,6 +140,7 @@ export const PesquisarProdutoVisualizar = ({
           Visualizar Informações de {produto.nome}
         </DrawerHeaderTitle>
       </DrawerHeader>
+
       <DrawerBody>
         <div className={styles.root}>
           <div className={styles.card}>
@@ -168,22 +149,22 @@ export const PesquisarProdutoVisualizar = ({
                 Informações Gerais
               </Text>
 
-              <Field id={'ativo'} label={'Produto Ativo: '}>
-                <Text>{produto.ativo}</Text>
+              <Field id={'ativo'} label={'PRODUTO ATIVO:'}>
+                <Text>{produto.ativo ? 'SIM' : 'NÃO'}</Text>
               </Field>
             </div>
 
             <div className={styles.grid3}>
-              <Field id={'nome'} label="Nome do Produto">
-                <Text>{produto.nome.label}</Text>
+              <Field id={'nome'} label="NOME DO PRODUTO:">
+                <Text>{produto.nome}</Text>
               </Field>
 
-              <Field id={'codigo'} label="Código do Produto">
-                <Text>{produtoAtivo.codigo.label}</Text>
+              <Field id={'codigo'} label="CÓDIGO DO PRODUTO:">
+                <Text>{produto.codigo}</Text>
               </Field>
 
-              <Field id={'codigoAdicional'} label="Código Adicional">
-                <Text>{produtoAtivo.codigoAdicional.label}</Text>
+              <Field id={'codigoAdicional'} label="CÓDIGO ADICIONAL:">
+                <Text>{produto.codigoAdicional}</Text>
               </Field>
             </div>
           </div>
@@ -195,8 +176,8 @@ export const PesquisarProdutoVisualizar = ({
             </div>
 
             <div className={styles.grid3}>
-              <Field id={'categoriaId'} label="Categoria">
-                <Text>{produtoAtivo.categoriaId.label}</Text>
+              <Field id={'categoria'} label="CATEGORIA DO PRODUTO:">
+                <Text>{categoria}</Text>
               </Field>
             </div>
           </div>
@@ -206,12 +187,12 @@ export const PesquisarProdutoVisualizar = ({
             </Text>
 
             <div className={styles.grid2}>
-              <Field id={'valor'} label={'Valor (R$)'}>
-                <Text>{produtoAtivo.valor.label}</Text>
+              <Field id={'valor'} label={'VALOR:'}>
+                <Text>{formatCurrencyBRL(produto.valor)}</Text>
               </Field>
 
-              <Field id={'valorPromocional'} label={'Valor Promocional (R$)'}>
-                <Text>{produtoAtivo.valorPromocional.label}</Text>
+              <Field id={'valorPromocional'} label={'VALOR PROMOCIONAL:'}>
+                <Text>{formatCurrencyBRL(produto.valorPromocional)}</Text>
               </Field>
             </div>
           </div>
@@ -220,41 +201,41 @@ export const PesquisarProdutoVisualizar = ({
               Informações Fiscais
             </Text>
             <div className={styles.grid3}>
-              <Field id={'origemDoProduto'} label={'Origem do Produto'}>
-                <Text>{produtoAtivo.id.label}</Text>
+              <Field id={'origemDoProduto'} label={'ORIGEM DO PRODUTO:'}>
+                <Text>{produto.origemDoProduto}</Text>
               </Field>
 
-              <Field id={'ncm'} label={'NCM'}>
-                <Text>NCM DO PRODUTO (TESTE)</Text>
+              <Field id={'ncm'} label={'NCM:'}>
+                <Text>{produto.ncm}</Text>
               </Field>
 
-              <Field id={'cest'} label={'CEST'}>
-                <Text>CEST DO PRODUTO (TESTE)</Text>
+              <Field id={'cest'} label={'CEST:'}>
+                <Text>{produto.cest}</Text>
               </Field>
             </div>
             <div className={styles.grid6}>
-              <Field id={'cfopInterno'} label={'CFOP Interno'}>
-                <Text>CFOP INTERNO DO PRODUTO (TESTE)</Text>
+              <Field id={'cfopInterno'} label={'CFOP INTERNO:'}>
+                <Text>{produto.cfopInterno}</Text>
               </Field>
 
-              <Field id={'CFOP Interestadual'} label={'CFOP Interestadual'}>
-                <Text>CFOP INTERESTADUAL DO PRODUTO (TESTE)</Text>
+              <Field id={'cfopInterestadual'} label={'CFOP INTERESTADUAL:'}>
+                <Text>{produto.cfopInterestadual}</Text>
               </Field>
 
-              <Field id={'cstIcms'} label={'CST ICMS'}>
-                <Text>CST ICMS DO PRODUTO (TESTE)</Text>
+              <Field id={'cstIcms'} label={'CST ICMS:'}>
+                <Text>{produto.cstIcms}</Text>
               </Field>
 
-              <Field id={'csosn'} label={'CSOSN'}>
-                <Text>CSOSN DO PRODUTO (TESTE)</Text>
+              <Field id={'csosn'} label={'CSOSN:'}>
+                <Text>{produto.csosn}</Text>
               </Field>
 
-              <Field id={'cstPis'} label={'CST Pis'}>
-                <Text>CST PIS DO PRODUTO (TESTE)</Text>
+              <Field id={'cstPis'} label={'CST PIS:'}>
+                <Text>{produto.cstPis}</Text>
               </Field>
 
-              <Field id={'cstCofins'} label={'CST Cofins'}>
-                <Text>CST COFINS DO PRODUTO (TESTE)</Text>
+              <Field id={'cstCofins'} label={'CST COFINS:'}>
+                <Text>{produto.cstCofins}</Text>
               </Field>
             </div>
 
@@ -264,28 +245,28 @@ export const PesquisarProdutoVisualizar = ({
             </Text>
 
             <div className={styles.grid3}>
-              <Field id={'aliquotaIcms'} label={'ICMS'}>
-                <Text>ICMS DO PRODUTO (TESTE)</Text>
+              <Field id={'aliquotaIcms'} label={'ICMS:'}>
+                <Text>{produto.aliquotaIcms}</Text>
               </Field>
 
-              <Field id={'aliquotaPis'} label={'PIS'}>
-                <Text>PIS DO PRODUTO (TESTE)</Text>
+              <Field id={'aliquotaPis'} label={'PIS:'}>
+                <Text>{produto.aliquotaPis}</Text>
               </Field>
 
-              <Field id={'aliquotaCofins'} label={'COFINS'}>
-                <Text>CONFINS DO PRODUTO (TESTE)</Text>
+              <Field id={'aliquotaCofins'} label={'COFINS:'}>
+                <Text>{produto.aliquotaCofins}</Text>
               </Field>
 
-              <Field id={'aliquotaIpi'} label={'IPI'}>
-                <Text>IPI DO PRODUTO (TESTE)</Text>
+              <Field id={'aliquotaIpi'} label={'IPI:'}>
+                <Text>{produto.aliquotaIpi}</Text>
               </Field>
 
-              <Field id={'aliquotaFcp'} label={'FCP'}>
-                <Text>FCP DO PRODUTO (TESTE)</Text>
+              <Field id={'aliquotaFcp'} label={'FCP:'}>
+                <Text>{produto.aliquotaFcp}</Text>
               </Field>
 
-              <Field id={'ivaSt'} label={'IVA-ST'}>
-                <Text>IVA-ST DO PRODUTO (TESTE)</Text>
+              <Field id={'ivaSt'} label={'IVA-ST:'}>
+                <Text>{produto.ivaSt}</Text>
               </Field>
             </div>
           </div>

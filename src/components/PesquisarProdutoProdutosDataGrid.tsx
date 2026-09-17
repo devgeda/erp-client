@@ -11,6 +11,7 @@ import {
   DataGridRow,
   type JSXElement,
   OverlayDrawer,
+  Spinner,
   TableCellLayout,
   type TableColumnDefinition,
   type TableColumnId,
@@ -20,7 +21,10 @@ import {
 } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { ProdutoResponseDTO } from '@/api/produtos/produto.types.tsx';
-import { listarProdutos } from '@/api/produtos/produto.service.tsx';
+import {
+  listarProdutos,
+  obterProdutoById,
+} from '@/api/produtos/produto.service.tsx';
 import { formatCurrencyBRL } from '@/utils/formatters.tsx';
 import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
 import { Edit24Regular, Eye24Regular } from '@fluentui/react-icons';
@@ -237,6 +241,9 @@ export const PesquisarProdutoProdutosDataGrid = ({
   const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
   const [produtoAtivo, setProdutoAtivo] = useState<Item | null>(null);
 
+  const [produto, setProduto] = useState<ProdutoResponseDTO>();
+  const [carregandoProduto, setCarregandoProduto] = useState(true);
+
   const restoreFocusSourceAttributes = useRestoreFocusSource();
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
@@ -244,11 +251,13 @@ export const PesquisarProdutoProdutosDataGrid = ({
   };
 
   useEffect(() => {
-    async function carregarProdutos() {
+    async function carregarProdutosCategorias() {
       try {
+        setCarregandoProdutos(true);
         const produtosData = await listarProdutos();
         const categoriasData = await obterCategorias();
         const categoriasDictionay: Record<string, string> = {};
+
         categoriasData.forEach((cat) => {
           categoriasDictionay[cat.id] = cat.nome;
         });
@@ -261,8 +270,25 @@ export const PesquisarProdutoProdutosDataGrid = ({
         setCarregandoProdutos(false);
       }
     }
-    carregarProdutos();
-  }, [produtos, categoriasMap]);
+    carregarProdutosCategorias();
+  }, []);
+
+  useEffect(() => {
+    async function carregarProduto() {
+      if (!produtoAtivo) return;
+
+      try {
+        setCarregandoProduto(true);
+        const produtosData = await obterProdutoById(produtoAtivo.id.label);
+        setProduto(produtosData);
+      } catch (error) {
+        console.error(`Error ao carregar os produto, error: `, error);
+      } finally {
+        setCarregandoProduto(false);
+      }
+    }
+    carregarProduto();
+  }, [produtoAtivo]);
 
   const items: Item[] = useMemo(() => {
     const regrasFiltro: Record<
@@ -373,7 +399,6 @@ export const PesquisarProdutoProdutosDataGrid = ({
           }
         </DataGridBody>
       </DataGrid>
-
       {isEditDrawerOpen && produtoAtivo && (
         <OverlayDrawer
           modalType={'modal'}
@@ -383,7 +408,6 @@ export const PesquisarProdutoProdutosDataGrid = ({
           onOpenChange={(_, { open }) => setIsEditDrawerOpen(open)}
         ></OverlayDrawer>
       )}
-
       {isViewDrawerOpen && produtoAtivo && (
         <OverlayDrawer
           modalType={'alert'}
@@ -393,7 +417,14 @@ export const PesquisarProdutoProdutosDataGrid = ({
           size={'large'}
           onOpenChange={(_, { open }) => setIsViewDrawerOpen(open)}
         >
-          <PesquisarProdutoVisualizar produtoAtivo={produtoAtivo.id.label} />
+          {carregandoProduto || !produto ? (
+            <Spinner />
+          ) : (
+            <PesquisarProdutoVisualizar
+              produto={produto}
+              categoria={categoriasMap[produto.categoriaId] || 'Desconhecida'}
+            />
+          )}
         </OverlayDrawer>
       )}
     </>
