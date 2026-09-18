@@ -10,10 +10,7 @@ import {
   Field,
   Input,
   type JSXElement,
-  makeStyles,
-  shorthands,
   Switch,
-  tokens,
 } from '@fluentui/react-components';
 import { categoriaFormSchema } from '@/api/categorias/categoria.schemas.tsx';
 import { criarCategoria } from '@/api/categorias/categoria.service.tsx';
@@ -21,37 +18,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { CategoriaRequestDTO } from '@/api/categorias/categoria.types.tsx';
 import { onNestedSubmit } from '@/utils/nestedFormSubmit.tsx';
-
-const useStyles = makeStyles({
-  switch: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    verticalAlign: 'middle',
-  },
-  cardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  grid: {
-    display: 'grid',
-    justifyContent: 'center',
-    alignItems: 'start',
-    gridTemplateColumns: '1fr 1fr',
-  },
-  content: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  actionFooter: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    ...shorthands.gap('12px'),
-    borderTopColor: tokens.colorNeutralStroke2,
-  },
-});
+import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 
 interface AdicionarProdutoCategoriaDialogProps {
   isOpen: boolean;
@@ -62,7 +29,7 @@ export const AdicionarProdutoCategoriaDialog = ({
   isOpen,
   onClose,
 }: AdicionarProdutoCategoriaDialogProps): JSXElement => {
-  const styles = useStyles();
+  const styles = sharedStyles();
 
   const {
     handleSubmit,

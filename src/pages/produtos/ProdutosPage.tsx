@@ -1,108 +1,18 @@
 import { Outlet, useLocation, useMatches, useNavigate } from 'react-router-dom';
 
-import {
-  makeStyles,
-  shorthands,
-  Tab,
-  TabList,
-  Text,
-  Title3,
-  tokens,
-} from '@fluentui/react-components';
+import { Tab, TabList, Text, Title3, tokens } from '@fluentui/react-components';
 import {
   Add24Regular,
+  BoxSearch24Regular,
   History24Regular,
   Search24Regular,
 } from '@fluentui/react-icons';
-
-const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    ...shorthands.gap('24px'),
-    maxWidth: '1200px',
-    ...shorthands.margin('0', 'auto'),
-  },
-  headerGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    ...shorthands.gap('16px'),
-    marginBottom: '8px',
-  },
-  headerTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  tabContainer: {
-    borderBottomWidth: '1px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: tokens.colorNeutralStroke2,
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '8px',
-  },
-  card: {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('24px'),
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.gap('16px'),
-    boxShadow: tokens.shadow2,
-  },
-  grid2: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    ...shorthands.gap('16px'),
-  },
-  grid3: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    ...shorthands.gap('16px'),
-  },
-  colSpan2: {
-    gridColumnEnd: 'span 2',
-  },
-  actionFooter: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    ...shorthands.gap('12px'),
-    marginTop: '16px',
-    ...shorthands.padding('16px', '0'),
-    borderTopWidth: '1px',
-    borderTopStyle: 'solid',
-    borderTopColor: tokens.colorNeutralStroke2,
-  },
-  flexRowRight: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    ...shorthands.gap('8px'),
-  },
-  cardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '16px',
-  },
-  cardTitle: {
-    color: tokens.colorNeutralForeground1,
-  },
-  grid6: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
-    ...shorthands.gap('16px'),
-  },
-});
+import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 
 export const sectionTitle = 'ESTOQUE';
 
 export const ProdutosPage = () => {
-  const styles = useStyles();
+  const styles = sharedStyles();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -116,13 +26,16 @@ export const ProdutosPage = () => {
     ? 'adicionar'
     : location.pathname.includes('pesquisar')
       ? 'pesquisar'
-      : location.pathname.includes('historico')
-        ? 'historico'
-        : 'adicionar';
+      : location.pathname.includes('localizacoes')
+        ? 'localizacoes'
+        : location.pathname.includes('historico')
+          ? 'historico'
+          : 'adicionar';
 
   const handleTabSelect = (_event: unknown, data: { value: unknown }) => {
     if (data.value === 'adicionar') navigate('/produtos/adicionar');
     if (data.value === 'pesquisar') navigate('/produtos/pesquisar');
+    if (data.value === 'localizacoes') navigate('/produtos/localizacoes');
     if (data.value === 'historico') navigate('/produtos/historico');
   };
 
@@ -156,6 +69,9 @@ export const ProdutosPage = () => {
             </Tab>
             <Tab value="pesquisar" icon={<Search24Regular />}>
               Pesquisar
+            </Tab>
+            <Tab value="localizacoes" icon={<BoxSearch24Regular />}>
+              Localizações
             </Tab>
             <Tab value="historico" icon={<History24Regular />}>
               Histórico

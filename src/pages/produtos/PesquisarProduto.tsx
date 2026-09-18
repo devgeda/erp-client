@@ -4,11 +4,8 @@ import {
   Divider,
   Field,
   Input,
-  makeStyles,
   Portal,
-  shorthands,
   Text,
-  tokens,
   Toolbar,
   ToolbarButton,
   ToolbarDivider,
@@ -22,64 +19,10 @@ import {
   TextSortDescending24Regular,
 } from '@fluentui/react-icons';
 import { PesquisarProdutoProdutosDataGrid } from '@/components/PesquisarProdutoProdutosDataGrid.tsx';
-
-const useStyles = makeStyles({
-  card: {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('24px'),
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.gap('16px'),
-    boxShadow: tokens.shadow2,
-  },
-  cardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardTitle: {
-    color: tokens.colorNeutralForeground1,
-  },
-  toolbar: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
-    width: '100%',
-  },
-  toolbarBotoesDireita: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
-  },
-  fullWidth: {
-    width: '100%',
-    maxWidth: '100%',
-  },
-  toolbarSearchBox: { flexGrow: 1 },
-  toolbarSortersAndFilters: {
-    display: 'flex',
-    gap: '8px',
-    alignItems: 'center',
-  },
-  portalContainer: {
-    display: 'flex',
-    width: '100%',
-    marginTop: '8px',
-  },
-  filtersWrapper: {
-    display: 'flex',
-    width: '100%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: '8px',
-  },
-});
+import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 
 export const PesquisarProduto = () => {
-  const styles = useStyles();
+  const styles = sharedStyles();
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [termoBusca, setTermoBusca] = useState('');
@@ -130,7 +73,7 @@ export const PesquisarProduto = () => {
               />
             </Field>
           </div>
-          <div className={styles.toolbarBotoesDireita}>
+          <div className={styles.toolbarButtonsRight}>
             <Divider vertical={true} />
             <div className={styles.toolbarSortersAndFilters}>
               <Toolbar>

@@ -5,12 +5,9 @@ import {
   Input,
   Label,
   Link,
-  makeStyles,
   Select,
-  shorthands,
   Switch,
   Text,
-  tokens,
 } from '@fluentui/react-components';
 import {
   Add24Regular,
@@ -35,119 +32,13 @@ import { AdicionarProdutoFiscalSelect } from '@/components/AdicionarProdutoFisca
 import { criarProduto } from '@/api/produtos/produto.service.tsx';
 import { AdicionarProdutoAliquotaField } from '@/components/AdicionarProdutoAliquotaField.tsx';
 import { FISCAL_INFO } from '@/constants/fiscalInfo.ts';
-
-const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    ...shorthands.gap('24px'),
-    maxWidth: '1200px',
-    ...shorthands.margin('0', 'auto'),
-  },
-  switch: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    verticalAlign: 'middle',
-  },
-  headerGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    ...shorthands.gap('16px'),
-    marginBottom: '8px',
-  },
-  headerTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  tabContainer: {
-    borderBottomWidth: '1px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: tokens.colorNeutralStroke2,
-  },
-  label: {
-    marginBottom: '6px',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '8px',
-  },
-  card: {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('24px'),
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.gap('16px'),
-    boxShadow: tokens.shadow2,
-  },
-  grid2: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '16px',
-    alignItems: 'start',
-  },
-  grid3: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '16px',
-    alignItems: 'start',
-  },
-  grid4: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '16px',
-    alignItems: 'start',
-  },
-  grid6: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-    gap: '16px',
-    alignItems: 'start',
-  },
-  colSpan2: {
-    gridColumnEnd: 'span 2',
-  },
-  actionFooter: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    ...shorthands.gap('12px'),
-    marginTop: '16px',
-    ...shorthands.padding('16px', '0'),
-    borderTopWidth: '1px',
-    borderTopStyle: 'solid',
-    borderTopColor: tokens.colorNeutralStroke2,
-  },
-  flexRowRight: {
-    display: 'flex',
-
-    alignItems: 'flex-start',
-    ...shorthands.gap('8px'),
-  },
-  cardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardTitle: {
-    color: tokens.colorNeutralForeground1,
-  },
-  buttonGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    ...shorthands.gap('8px'), // Espaço entre os botões
-  },
-});
+import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 
 export type ProdutoFormInput = z.input<typeof produtoFormSchema>;
 export type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
 
 export const AdicionarProduto = () => {
-  const styles = useStyles();
+  const styles = sharedStyles();
   const [categorias, setCategorias] = useState<CategoriaResponseDTO[]>([]);
   const [carregandoCategorias, setCarregandoCategorias] = useState(true);
   const [updateCategorias, setUpdateCategorias] = useState(0);

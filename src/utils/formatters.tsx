@@ -49,10 +49,21 @@ export const formatFiscalField = (value: string, fieldType: string) => {
   return '';
 };
 
-export const formatPercent = (value: string) => {
+export const formatPercentField = (value: string) => {
   const onlyDigits = String(value).replace(/\D/g, '');
 
   const percent = Number(onlyDigits) / 100;
+  if (percent >= 500) {
+    return '500.00'; // Limita a 500.00%
+  }
+
+  return `${percent.toFixed(2)}`;
+};
+
+export const formatPercent = (value: string) => {
+  const onlyDigits = String(value).replace(/\D/g, '');
+
+  const percent = Number(onlyDigits);
   if (percent >= 500) {
     return '500.00'; // Limita a 500.00%
   }

@@ -3,7 +3,6 @@ import {
   InfoLabel,
   type JSXElement,
   Label,
-  makeStyles,
   Select,
 } from '@fluentui/react-components';
 import { type Control, Controller, type Path } from 'react-hook-form';
@@ -11,12 +10,7 @@ import type { ProdutoFormInput } from '@/pages/produtos/AdicionarProduto.tsx';
 import { type ReactElement, useEffect, useState } from 'react';
 import { listarProdutoFiscal } from '@/api/produtos/produto.service.tsx';
 import type { ProdutoFiscalResponseDTO } from '@/api/produtos/produto.types.tsx';
-
-const useStyles = makeStyles({
-  label: {
-    marginBottom: '6px',
-  },
-});
+import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 
 export interface AdicionarProdutoFiscalSelectProps {
   endPointPath: string;
@@ -35,7 +29,7 @@ export const AdicionarProdutoFiscalSelect = ({
   nome,
   control,
 }: AdicionarProdutoFiscalSelectProps): JSXElement => {
-  const styles = useStyles();
+  const styles = sharedStyles();
   const [fiscal, setFiscal] = useState<ProdutoFiscalResponseDTO[]>([]);
   const [carregandoFiscal, setCarregandoFiscal] = useState(true);
 
@@ -43,6 +37,7 @@ export const AdicionarProdutoFiscalSelect = ({
     async function carregarFiscal() {
       try {
         const fiscalData = await listarProdutoFiscal(endPointPath);
+        if (!fiscalData) return;
         setFiscal(fiscalData);
       } catch (error) {
         console.error(
@@ -56,7 +51,7 @@ export const AdicionarProdutoFiscalSelect = ({
     carregarFiscal();
   }, [endPointPath]);
 
-  const fiscalAgrupado = fiscal.reduce<
+  const fiscalAgrupado = (fiscal || []).reduce<
     Record<string, ProdutoFiscalResponseDTO[]>
   >((acc, atual) => {
     if (!acc[atual.grupo]) {

@@ -1,125 +1,18 @@
 import {
   Button,
   DrawerBody,
+  DrawerFooter,
   DrawerHeader,
   DrawerHeaderTitle,
   Field,
   type JSXElement,
-  makeStyles,
-  shorthands,
   Text,
-  tokens,
 } from '@fluentui/react-components';
 import { Dismiss24Regular } from '@fluentui/react-icons';
 import type { ProdutoResponseDTO } from '@/api/produtos/produto.types.tsx';
 import { formatCurrencyBRL, formatPercent } from '@/utils/formatters.tsx';
+import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 
-const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    marginBottom: '16px',
-    marginTop: '16px',
-  },
-  switch: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    verticalAlign: 'middle',
-  },
-  headerGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    ...shorthands.gap('16px'),
-    marginBottom: '8px',
-  },
-  headerTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  tabContainer: {
-    borderBottomWidth: '1px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: tokens.colorNeutralStroke2,
-  },
-  label: {
-    marginBottom: '6px',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '8px',
-  },
-  card: {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('24px'),
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.gap('16px'),
-    boxShadow: tokens.shadow2,
-  },
-  grid2: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '16px',
-    alignItems: 'start',
-  },
-  grid3: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '16px',
-    alignItems: 'start',
-  },
-  grid4: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '16px',
-    alignItems: 'start',
-  },
-  grid6: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-    gap: '16px',
-    alignItems: 'start',
-  },
-  colSpan2: {
-    gridColumnEnd: 'span 2',
-  },
-  actionFooter: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    ...shorthands.gap('12px'),
-    marginTop: '16px',
-    ...shorthands.padding('16px', '0'),
-    borderTopWidth: '1px',
-    borderTopStyle: 'solid',
-    borderTopColor: tokens.colorNeutralStroke2,
-  },
-  flexRowRight: {
-    display: 'flex',
-
-    alignItems: 'flex-start',
-    ...shorthands.gap('8px'),
-  },
-  cardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cardTitle: {
-    color: tokens.colorNeutralForeground1,
-  },
-  buttonGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    ...shorthands.gap('8px'),
-  },
-});
 type PesquisarProdutoVisualizarProps = {
   produto: ProdutoResponseDTO;
   categoria: string;
@@ -131,11 +24,11 @@ export const PesquisarProdutoVisualizar = ({
   categoria,
   onClose,
 }: PesquisarProdutoVisualizarProps): JSXElement => {
-  const styles = useStyles();
+  const styles = sharedStyles();
 
   return (
     <>
-      <DrawerHeader>
+      <DrawerHeader className={styles.cardTitle}>
         <Button
           appearance={'subtle'}
           icon={<Dismiss24Regular />}
@@ -251,23 +144,23 @@ export const PesquisarProdutoVisualizar = ({
 
             <div className={styles.grid3}>
               <Field id={'aliquotaIcms'} label={'ICMS:'}>
-                <Text>{`${produto.aliquotaIcms} %`}</Text>
+                <Text>{`${formatPercent(produto.aliquotaIcms)} %`}</Text>
               </Field>
 
               <Field id={'aliquotaPis'} label={'PIS:'}>
-                <Text>{produto.aliquotaPis}</Text>
+                <Text>{`${formatPercent(produto.aliquotaPis)} %`}</Text>
               </Field>
 
               <Field id={'aliquotaCofins'} label={'COFINS:'}>
-                <Text>{produto.aliquotaCofins}</Text>
+                <Text>{`${formatPercent(produto.aliquotaCofins)} %`}</Text>
               </Field>
 
               <Field id={'aliquotaIpi'} label={'IPI:'}>
-                <Text>{produto.aliquotaIpi}</Text>
+                <Text>{`${formatPercent(produto.aliquotaIpi)} %`}</Text>
               </Field>
 
               <Field id={'aliquotaFcp'} label={'FCP:'}>
-                <Text>{produto.aliquotaFcp}</Text>
+                <Text>{`${formatPercent(produto.aliquotaFcp)} %`}</Text>
               </Field>
 
               <Field id={'ivaSt'} label={'IVA-ST:'}>
@@ -277,6 +170,11 @@ export const PesquisarProdutoVisualizar = ({
           </div>
         </div>
       </DrawerBody>
+      <DrawerFooter>
+        <Button onClick={() => console.log(produto)}>
+          console.log(produto)
+        </Button>
+      </DrawerFooter>
     </>
   );
 };

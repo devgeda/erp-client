@@ -354,7 +354,7 @@ export const PesquisarProdutoProdutosDataGrid = ({
       <DataGrid
         items={items}
         columns={gridColumns}
-        selectionMode="single"
+        selectionMode={'single'}
         subtleSelection={true}
         selectedItems={selectedRows}
         onSelectionChange={onSelectionChange}
@@ -417,7 +417,6 @@ export const PesquisarProdutoProdutosDataGrid = ({
           open={isViewDrawerOpen}
           position={'end'}
           size={'large'}
-          onOpenChange={(_, { open }) => setIsViewDrawerOpen(open)}
         >
           {carregandoProduto || !produto ? (
             <Spinner />
