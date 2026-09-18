@@ -186,16 +186,18 @@ const getColumns = (
     renderCell: (item) => {
       return (
         <>
-          <Button
-            aria-label={'Editar'}
-            icon={<Edit24Regular />}
-            onClick={() => onEditClick(item)}
-          />
-          <Button
-            aria-label={'Visualizar'}
-            icon={<Eye24Regular />}
-            onClick={() => onViewClick(item)}
-          />
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button
+              aria-label={'Editar'}
+              icon={<Edit24Regular />}
+              onClick={() => onEditClick(item)}
+            />
+            <Button
+              aria-label={'Visualizar'}
+              icon={<Eye24Regular />}
+              onClick={() => onViewClick(item)}
+            />
+          </div>
         </>
       );
     },
@@ -423,6 +425,7 @@ export const PesquisarProdutoProdutosDataGrid = ({
             <PesquisarProdutoVisualizar
               produto={produto}
               categoria={categoriasMap[produto.categoriaId] || 'Desconhecida'}
+              onClose={() => setIsViewDrawerOpen(false)}
             />
           )}
         </OverlayDrawer>

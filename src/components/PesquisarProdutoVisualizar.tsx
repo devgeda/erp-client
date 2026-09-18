@@ -1,7 +1,6 @@
 import {
   Button,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
   DrawerHeaderTitle,
   Field,
@@ -11,17 +10,17 @@ import {
   Text,
   tokens,
 } from '@fluentui/react-components';
-import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
+import { Dismiss24Regular } from '@fluentui/react-icons';
 import type { ProdutoResponseDTO } from '@/api/produtos/produto.types.tsx';
-import { formatCurrencyBRL } from '@/utils/formatters.tsx';
+import { formatCurrencyBRL, formatPercent } from '@/utils/formatters.tsx';
 
 const useStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    ...shorthands.gap('24px'),
-    maxWidth: '1200px',
-    ...shorthands.margin('0', 'auto'),
+    gap: '16px',
+    marginBottom: '16px',
+    marginTop: '16px',
   },
   switch: {
     display: 'flex',
@@ -124,18 +123,24 @@ const useStyles = makeStyles({
 type PesquisarProdutoVisualizarProps = {
   produto: ProdutoResponseDTO;
   categoria: string;
+  onClose: () => void;
 };
 
 export const PesquisarProdutoVisualizar = ({
   produto,
   categoria,
+  onClose,
 }: PesquisarProdutoVisualizarProps): JSXElement => {
   const styles = useStyles();
 
   return (
     <>
       <DrawerHeader>
-        <Button appearance={'subtle'} icon={<Dismiss24Regular />} />
+        <Button
+          appearance={'subtle'}
+          icon={<Dismiss24Regular />}
+          onClick={onClose}
+        />
         <DrawerHeaderTitle className={styles.cardTitle}>
           Visualizar Informações de {produto.nome}
         </DrawerHeaderTitle>
@@ -246,7 +251,7 @@ export const PesquisarProdutoVisualizar = ({
 
             <div className={styles.grid3}>
               <Field id={'aliquotaIcms'} label={'ICMS:'}>
-                <Text>{produto.aliquotaIcms}</Text>
+                <Text>{`${produto.aliquotaIcms} %`}</Text>
               </Field>
 
               <Field id={'aliquotaPis'} label={'PIS:'}>
@@ -266,27 +271,12 @@ export const PesquisarProdutoVisualizar = ({
               </Field>
 
               <Field id={'ivaSt'} label={'IVA-ST:'}>
-                <Text>{produto.ivaSt}</Text>
+                <Text>{`${formatPercent(produto.ivaSt)} %`}</Text>
               </Field>
             </div>
           </div>
         </div>
       </DrawerBody>
-      {/* RODAPÉ DE AÇÕES */}
-      <DrawerFooter>
-        <div className={styles.actionFooter}>
-          <Button
-            appearance="secondary"
-            icon={<Dismiss24Regular />}
-            onClick={() => {}}
-          >
-            Cancelar
-          </Button>
-          <Button appearance="primary" icon={<Save24Regular />}>
-            Adicionar Produto
-          </Button>
-        </div>
-      </DrawerFooter>
     </>
   );
 };

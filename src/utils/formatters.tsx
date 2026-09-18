@@ -17,6 +17,7 @@ export const formatCurrencyBRL = (value: string | number) => {
     currency: 'BRL',
   });
 };
+
 export const parseCurrencyToNumber = (value: string): number => {
   const onlyDigits = value.replace(/\D/g, '');
   if (!onlyDigits) return 0;
