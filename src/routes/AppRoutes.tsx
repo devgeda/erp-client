@@ -11,7 +11,7 @@ import { HistoricoProduto } from '@/pages/produtos/HistoricoProduto.tsx';
 import { LoginPage } from '@/pages/autenticacao/LoginPage.tsx';
 import { SignupPage } from '@/pages/autenticacao/SignupPage.tsx';
 import { PesquisarProduto } from '@/pages/produtos/PesquisarProduto.tsx';
-import { LocalizacoesProduto } from '@/pages/estoque/LocalizacoesProduto.tsx';
+import { Localizacoes } from '@/pages/estoque/Localizacoes.tsx';
 
 export function ProtectedRoute() {
   const token = localStorage.getItem('token');
@@ -69,7 +69,7 @@ const router = createBrowserRouter([
               },
               {
                 path: '/produtos/localizacoes',
-                element: <LocalizacoesProduto />,
+                element: <Localizacoes />,
                 handle: { pageTitle: 'Localizações' },
               },
               {

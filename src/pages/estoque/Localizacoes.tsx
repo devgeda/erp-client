@@ -1,5 +1,6 @@
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 import {
+  Button,
   createTableColumn,
   DataGrid,
   DataGridBody,
@@ -9,10 +10,13 @@ import {
   DataGridRow,
   TableCellLayout,
   type TableColumnDefinition,
+  Text,
 } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { LocalizacaoResponseDTO } from '@/api/estoque/localizacao.types.tsx';
 import { obterLocalizacoes } from '@/api/estoque/localizacao.service.tsx';
+import { Add24Regular, ArrowRepeatAll20Regular } from '@fluentui/react-icons';
+import { LocalizacoesAdicionarLocalizacaoDialog } from '@/components/LocalizacoesAdicionarLocalizacaoDialog.tsx';
 
 type CodigoCell = { label: string };
 type PrateleiraCell = { label: string };
@@ -106,13 +110,17 @@ const columns: TableColumnDefinition<Item>[] = [
     },
   }),
 ];
-export const LocalizacoesProduto = () => {
+export const Localizacoes = () => {
   const styles = sharedStyles();
 
   const [localizacoes, setLocalizacoes] = useState<LocalizacaoResponseDTO[]>(
     []
   );
   const [carregandoLocalizacoes, setCarregandoLocalizacoes] = useState(false);
+
+  const [updateLocalizacoes, setUpdateLocalizacoes] = useState(0);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     async function carregarLocalizacoes() {
@@ -145,17 +153,45 @@ export const LocalizacoesProduto = () => {
   return (
     <>
       <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <Text size={500} weight="semibold" className={styles.cardTitle}>
+            LOCALIZAÇÕES
+          </Text>
+          <div className={styles.buttonGroup}>
+            <Button
+              icon={<Add24Regular />}
+              aria-label="Adicionar Categoria"
+              onClick={() => setIsDialogOpen(true)}
+            >
+              Adicionar Categoria
+            </Button>
+            <Button
+              icon={<ArrowRepeatAll20Regular />}
+              onClick={() => {
+                setUpdateLocalizacoes((prev) => prev + 1);
+              }}
+            />
+            <LocalizacoesAdicionarLocalizacaoDialog
+              isOpen={isDialogOpen}
+              onClose={() => {
+                setIsDialogOpen(false);
+                setUpdateLocalizacoes((prev) => prev + 1);
+              }}
+            />
+          </div>
+        </div>
         <DataGrid
           items={items}
           columns={columns}
           selectionMode={'single'}
           getRowId={(item) => item.id.label}
-          sortable
         >
           <DataGridHeader>
             <DataGridRow>
               {({ renderHeaderCell }) => (
-                <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
+                <DataGridHeaderCell focusMode={'none'}>
+                  {renderHeaderCell()}
+                </DataGridHeaderCell>
               )}
             </DataGridRow>
           </DataGridHeader>
