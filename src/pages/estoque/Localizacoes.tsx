@@ -14,10 +14,11 @@ import {
 } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { LocalizacaoResponseDTO } from '@/api/estoque/localizacao.types.tsx';
-import { obterLocalizacoes } from '@/api/estoque/localizacao.service.tsx';
 import { Add24Regular, ArrowRepeatAll20Regular } from '@fluentui/react-icons';
 import { LocalizacoesAdicionarLocalizacaoDialog } from '@/components/LocalizacoesAdicionarLocalizacaoDialog.tsx';
+import { listarLocalizacao } from '@/api/estoque/localizacao.service.tsx';
 
+type IdCell = { label: string };
 type CodigoCell = { label: string };
 type PrateleiraCell = { label: string };
 type FileiraCell = { label: string };
@@ -26,6 +27,7 @@ type CaixaCell = { label: string };
 type AtivoCell = { label: string };
 
 type Item = {
+  id: IdCell;
   codigo: CodigoCell;
   prateleira: PrateleiraCell;
   fileira: FileiraCell;
@@ -126,7 +128,7 @@ export const Localizacoes = () => {
     async function carregarLocalizacoes() {
       try {
         setCarregandoLocalizacoes(true);
-        const localizacoesData = await obterLocalizacoes();
+        const localizacoesData = await listarLocalizacao();
         setLocalizacoes(localizacoesData);
       } catch (error) {
         console.error('Error ao carregar as localizações, error: ', error);
@@ -135,16 +137,17 @@ export const Localizacoes = () => {
       }
     }
     carregarLocalizacoes();
-  }, []);
+  }, [updateLocalizacoes]);
 
   const items: Item[] = useMemo(() => {
     return localizacoes.map((localizacao) => {
       return {
+        id: { label: localizacao.id },
         codigo: { label: localizacao.codigo },
         prateleira: { label: localizacao.prateleira },
         fileira: { label: localizacao.fileira },
         coluna: { label: localizacao.fileira },
-        caixa: { label: localizacao.caixa },
+        caixa: { label: localizacao.caixa ? localizacao.caixa : '' },
         ativo: { label: localizacao.ativo ? 'SIM' : 'NÃO' },
       };
     });
@@ -160,10 +163,10 @@ export const Localizacoes = () => {
           <div className={styles.buttonGroup}>
             <Button
               icon={<Add24Regular />}
-              aria-label="Adicionar Categoria"
+              aria-label="Adicionar Localização"
               onClick={() => setIsDialogOpen(true)}
             >
-              Adicionar Categoria
+              Adicionar Localização
             </Button>
             <Button
               icon={<ArrowRepeatAll20Regular />}

@@ -470,14 +470,12 @@ export const AdicionarProduto = () => {
             infoLabelText={FISCAL_INFO.ICMS}
             control={control}
           />
-
           <AdicionarProdutoAliquotaField
             nome={'aliquotaPis'}
             label={'PIS'}
             infoLabelText={FISCAL_INFO.PIS}
             control={control}
           />
-
           <AdicionarProdutoAliquotaField
             nome={'aliquotaCofins'}
             label={'COFINS'}
@@ -515,8 +513,6 @@ export const AdicionarProduto = () => {
           />
         </div>
       </div>
-
-      {/* RODAPÉ DE AÇÕES */}
       <div className={styles.actionFooter}>
         <Button
           type={'reset'}

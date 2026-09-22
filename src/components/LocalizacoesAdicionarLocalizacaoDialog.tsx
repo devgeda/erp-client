@@ -12,20 +12,23 @@ import {
   type JSXElement,
   Switch,
 } from '@fluentui/react-components';
-import { categoriaFormSchema } from '@/api/categorias/categoria.schemas.tsx';
-import { criarCategoria } from '@/api/categorias/categoria.service.tsx';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { CategoriaRequestDTO } from '@/api/categorias/categoria.types.tsx';
-import { onNestedSubmit } from '@/utils/nestedFormSubmit.tsx';
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 import { localizacaoFormSchema } from '@/api/estoque/localizacao.schemas.tsx';
 import type { LocalizacaoRequestDTO } from '@/api/estoque/localizacao.types.tsx';
+
+import { z } from 'zod';
+import { useState } from 'react';
+import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
+import { criarLocalizacao } from '@/api/estoque/localizacao.service.tsx';
 
 interface LocalizacoesAdicionarLocalizacaoDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+export type LocalizacaoFormInput = z.input<typeof localizacaoFormSchema>;
 
 export const LocalizacoesAdicionarLocalizacaoDialog = ({
   isOpen,
@@ -33,33 +36,66 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
 }: LocalizacoesAdicionarLocalizacaoDialogProps): JSXElement => {
   const styles = sharedStyles();
 
+  const [prateleira, setPrateleira] = useState('');
+  const [fileira, setFileira] = useState('');
+  const [coluna, setColuna] = useState('');
+  const [caixa, setCaixa] = useState('');
+  const [codigoAcc, setCodigoAcc] = useState('');
+
   const {
     handleSubmit,
     register,
     control,
     reset,
-    resetField,
+    setValue,
     formState: { errors },
-  } = useForm<LocalizacaoRequestDTO>({
+  } = useForm<LocalizacaoFormInput>({
     resolver: zodResolver(localizacaoFormSchema),
     mode: 'onChange',
   });
 
-  async function onCategoriaFormSubmit(data: CategoriaRequestDTO) {
+  async function onLocalizacaoFormSubmit(data: LocalizacaoRequestDTO) {
+    const payload = {
+      ...data,
+      caixa: data.caixa?.trim() ? data.caixa : undefined,
+      ativo: data.ativo,
+    };
     try {
-      await criarCategoria(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      console.log(data);
+      await criarLocalizacao(payload);
+    } catch (error) {
+      console.error('Error ao criar a localização, error: ', error);
     }
-    reset();
+
+    dialogOnClose();
   }
 
-  const onInnerSubmit = onNestedSubmit({
-    handleSubmit,
-    submitFunction: onCategoriaFormSubmit,
-  });
+  const gerarCodigoLocalizacao = () => {
+    if (!prateleira || !fileira || !coluna) {
+      return;
+    }
+
+    let codigo = `${prateleira}-${fileira}-${coluna}`;
+
+    if (caixa.trim() !== '') {
+      codigo += `-${caixa}`;
+    }
+
+    setCodigoAcc(codigo);
+    setValue('codigo', codigoAcc, {
+      shouldValidate: true,
+    });
+  };
+
+  const dialogOnClose = () => {
+    setPrateleira('');
+    setFileira('');
+    setColuna('');
+    setCaixa('');
+    setCodigoAcc('');
+
+    reset();
+    onClose();
+  };
 
   return (
     <Dialog
@@ -68,54 +104,141 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
       modalType="modal"
     >
       <DialogSurface>
-        <form id={'form-dialog-categoria'} onSubmit={onInnerSubmit} noValidate>
+        <form
+          id={'form-dialog-localizacao'}
+          onSubmit={handleSubmit(onLocalizacaoFormSubmit, (errosInvalidos) =>
+            console.log('O Zod bloqueou a submissão! Erros:', errosInvalidos)
+          )}
+          noValidate
+        >
           <DialogBody className={styles.content}>
             <div className={styles.cardHeader}>
-              <DialogTitle>Adicionar Categoria</DialogTitle>
+              <DialogTitle>Adicionar Localização</DialogTitle>
               <Field
-                id={'ativo'}
-                label={'Categoria Ativa'}
+                id={''}
+                label={'Localização Ativa'}
                 className={styles.switch}
                 required
               >
                 <Switch {...register('ativo')} defaultChecked />
               </Field>
             </div>
-            <DialogContent className={styles.grid}>
+            <DialogContent className={styles.grid4}>
               <Controller
-                name={'nome'}
+                name={'prateleira'}
                 control={control}
                 defaultValue={''}
                 render={({ field }) => (
                   <Field
-                    id={'nome'}
-                    label={'Nome da Categoria'}
-                    validationState={errors.nome ? 'error' : 'none'}
-                    validationMessage={errors.nome?.message}
+                    id={'prateleira'}
+                    label={'Prateleira'}
+                    validationState={errors.prateleira ? 'error' : 'none'}
+                    validationMessage={errors.prateleira?.message}
                     required
                   >
                     <Input
                       {...field}
                       value={field.value || ''}
-                      onChange={(e) => {
+                      onChange={(e, data) => {
                         field.onChange(e.target.value.toUpperCase());
+                        setPrateleira(data.value.toUpperCase());
                       }}
                     />
                   </Field>
                 )}
               />
+              <Controller
+                name={'fileira'}
+                control={control}
+                defaultValue={''}
+                render={({ field }) => (
+                  <Field
+                    id={'fileira'}
+                    label={'Fileira'}
+                    validationState={errors.fileira ? 'error' : 'none'}
+                    validationMessage={errors.fileira?.message}
+                    required
+                  >
+                    <Input
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e, data) => {
+                        field.onChange(e.target.value.toUpperCase());
+                        setFileira(data.value.toUpperCase());
+                      }}
+                    />
+                  </Field>
+                )}
+              />
+              <Controller
+                name={'coluna'}
+                control={control}
+                defaultValue={''}
+                render={({ field }) => (
+                  <Field
+                    id={'coluna'}
+                    label={'Coluna'}
+                    validationState={errors.coluna ? 'error' : 'none'}
+                    validationMessage={errors.coluna?.message}
+                    required
+                  >
+                    <Input
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e, data) => {
+                        field.onChange(e.target.value.toUpperCase());
+                        setColuna(data.value.toUpperCase());
+                      }}
+                    />
+                  </Field>
+                )}
+              />
+              <Controller
+                name={'caixa'}
+                control={control}
+                defaultValue={''}
+                render={({ field }) => (
+                  <Field
+                    id={'caixa'}
+                    label={'Caixa'}
+                    validationState={errors.caixa ? 'error' : 'none'}
+                    validationMessage={errors.caixa?.message}
+                    required
+                  >
+                    <Input
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e, data) => {
+                        field.onChange(e.target.value.toUpperCase());
+                        setCaixa(data.value.toUpperCase());
+                      }}
+                    />
+                  </Field>
+                )}
+              />
+              <Field
+                id={'codigo'}
+                label={'Código da prateleira: '}
+                className={styles.grid2}
+                {...register('codigo')}
+              >
+                {codigoAcc ? codigoAcc : 'Preencha os campos.'}
+              </Field>
+              <Button onClick={gerarCodigoLocalizacao}>Gerar Código</Button>
             </DialogContent>
             <DialogActions className={styles.actionFooter}>
-              <Button appearance={'primary'} type={'submit'}>
+              <Button
+                type={'submit'}
+                appearance={'primary'}
+                icon={<Save24Regular />}
+              >
                 Salvar
               </Button>
               <DialogTrigger disableButtonEnhancement>
                 <Button
                   appearance={'secondary'}
-                  onClick={() => {
-                    onClose();
-                    resetField('nome');
-                  }}
+                  icon={<Dismiss24Regular />}
+                  onClick={dialogOnClose}
                 >
                   Fechar
                 </Button>

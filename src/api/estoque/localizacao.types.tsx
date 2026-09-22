@@ -3,7 +3,7 @@ export interface LocalizacaoRequestDTO {
   prateleira: string;
   fileira: string;
   coluna: string;
-  caixa: string;
+  caixa?: string;
   ativo: boolean;
 }
 
@@ -13,7 +13,7 @@ export interface LocalizacaoResponseDTO {
   prateleira: string;
   fileira: string;
   coluna: string;
-  caixa: string;
+  caixa?: string;
   ativo: boolean;
 }
 
