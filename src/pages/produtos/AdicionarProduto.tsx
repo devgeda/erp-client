@@ -33,6 +33,7 @@ import { criarProduto } from '@/api/produtos/produto.service.tsx';
 import { AdicionarProdutoAliquotaField } from '@/components/AdicionarProdutoAliquotaField.tsx';
 import { FISCAL_INFO } from '@/constants/fiscalInfo.ts';
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
+import { useAppToast } from '@/api/context/ToastContext.tsx';
 
 export type ProdutoFormInput = z.input<typeof produtoFormSchema>;
 export type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
@@ -44,6 +45,8 @@ export const AdicionarProduto = () => {
   const [updateCategorias, setUpdateCategorias] = useState(0);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const notify = useAppToast();
 
   useEffect(() => {
     async function carregarCategorias() {
@@ -58,7 +61,7 @@ export const AdicionarProduto = () => {
         setCarregandoCategorias(false);
       }
     }
-    carregarCategorias();
+    void carregarCategorias().catch(console.error);
   }, [updateCategorias]);
 
   const {
@@ -109,10 +112,24 @@ export const AdicionarProduto = () => {
 
     try {
       await criarProduto(payloadParaBackend);
-    } catch (error) {
+      notify({
+        intent: 'success',
+        title: 'Adicionar produto',
+        body: `Produto  adicionado com sucesso.`,
+        subtitle: `Código: ${data.codigo}, Descrição: ${data.nome}`,
+      });
+    } catch (error: any) {
+      if (error.type === 'ERROR_SISTEMA') {
+        notify({
+          intent: 'error',
+          title: 'Error',
+          body: 'Não foi possível adicionar o produto.',
+          subtitle: error.message,
+        });
+        return;
+      }
+
       console.log(error);
-    } finally {
-      console.log(payloadParaBackend);
     }
   }
 

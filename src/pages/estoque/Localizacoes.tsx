@@ -157,8 +157,8 @@ export const Localizacoes = () => {
     <>
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          <Text size={500} weight="semibold" className={styles.cardTitle}>
-            LOCALIZAÇÕES
+          <Text weight="semibold" className={styles.cardTitle}>
+            LOCALIZAÇÕES CADASTRADAS
           </Text>
           <div className={styles.buttonGroup}>
             <Button
@@ -174,20 +174,20 @@ export const Localizacoes = () => {
                 setUpdateLocalizacoes((prev) => prev + 1);
               }}
             />
-            <LocalizacoesAdicionarLocalizacaoDialog
-              isOpen={isDialogOpen}
-              onClose={() => {
-                setIsDialogOpen(false);
-                setUpdateLocalizacoes((prev) => prev + 1);
-              }}
-            />
           </div>
         </div>
+        <LocalizacoesAdicionarLocalizacaoDialog
+          isOpen={isDialogOpen}
+          onClose={() => {
+            setIsDialogOpen(false);
+            setUpdateLocalizacoes((prev) => prev + 1);
+          }}
+        />
         <DataGrid
           items={items}
           columns={columns}
-          selectionMode={'single'}
           getRowId={(item) => item.id.label}
+          sortable
         >
           <DataGridHeader>
             <DataGridRow>

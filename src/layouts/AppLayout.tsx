@@ -192,7 +192,10 @@ export const AppLayout = () => {
               <MenuPopover>
                 <MenuList>
                   <MenuItem icon={<PersonCircle24Regular />}>Perfil</MenuItem>
-                  <MenuItem icon={<Settings24Regular />}>
+                  <MenuItem
+                    icon={<Settings24Regular />}
+                    onClick={() => localStorage.removeItem('token')}
+                  >
                     Configurações
                   </MenuItem>
                   <Divider />

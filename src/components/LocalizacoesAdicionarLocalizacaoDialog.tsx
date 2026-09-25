@@ -19,7 +19,7 @@ import { localizacaoFormSchema } from '@/api/estoque/localizacao.schemas.tsx';
 import type { LocalizacaoRequestDTO } from '@/api/estoque/localizacao.types.tsx';
 
 import { z } from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
 import { criarLocalizacao } from '@/api/estoque/localizacao.service.tsx';
 
@@ -54,6 +54,17 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
     mode: 'onChange',
   });
 
+  useEffect(() => {
+    register('codigo');
+
+    if (codigoAcc) {
+      setValue('codigo', codigoAcc, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [codigoAcc, register, setValue]);
+
   async function onLocalizacaoFormSubmit(data: LocalizacaoRequestDTO) {
     const payload = {
       ...data,
@@ -74,16 +85,13 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
       return;
     }
 
-    let codigo = `${prateleira}-${fileira}-${coluna}`;
+    let codigo = `${prateleira.trim()}-${fileira.trim()}-${coluna.trim()}`;
 
     if (caixa.trim() !== '') {
-      codigo += `-${caixa}`;
+      codigo += `-${caixa.trim()}`;
     }
 
     setCodigoAcc(codigo);
-    setValue('codigo', codigoAcc, {
-      shouldValidate: true,
-    });
   };
 
   const dialogOnClose = () => {
@@ -220,7 +228,6 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
                 id={'codigo'}
                 label={'Código da prateleira: '}
                 className={styles.grid2}
-                {...register('codigo')}
               >
                 {codigoAcc ? codigoAcc : 'Preencha os campos.'}
               </Field>

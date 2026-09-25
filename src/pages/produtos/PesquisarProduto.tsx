@@ -5,7 +5,6 @@ import {
   Field,
   Input,
   Portal,
-  Text,
   Toolbar,
   ToolbarButton,
   ToolbarDivider,
@@ -55,11 +54,6 @@ export const PesquisarProduto = () => {
   return (
     <>
       <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <Text size={500} weight="semibold" className={styles.cardTitle}>
-            PESQUISAR PRODUTO
-          </Text>
-        </div>
         <div className={styles.toolbar}>
           <div className={styles.toolbarSearchBox}>
             <Field className={styles.fullWidth}>
@@ -172,8 +166,6 @@ export const PesquisarProduto = () => {
             </div>
           </Portal>
         )}
-      </div>
-      <div className={styles.card}>
         <PesquisarProdutoProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}
           termoBusca={termoBusca}

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
 
 export const api = axios.create({
   baseURL: 'http://localhost:8080',
@@ -19,14 +18,27 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    if (error.response && error.response.status === 403) {
+    const status = error.response?.status;
+
+    if (error.response && (status === 401 || status === 403)) {
       localStorage.removeItem('token');
-      return <Navigate to="/log-in" />;
+      window.location.href = '/log-in';
+      return new Promise(() => {});
     }
-    return Promise.reject(error);
+
+    if (error.response && (!status || status >= 500)) {
+      return Promise.reject({
+        type: 'ERROR_SISTEMA',
+        message: error.response?.data?.message,
+      });
+    }
+
+    return Promise.reject({
+      type: 'ERROR_NEGOCIO',
+      status: status,
+      message: error.response?.data?.message || 'Verifique os dados enviados.',
+    });
   }
 );
