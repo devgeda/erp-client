@@ -19,14 +19,14 @@ export const ToastContextProvider = ({ children }: { children: ReactNode }) => {
         <ToastTitle>{title}</ToastTitle>
         {body && <ToastBody subtitle={subtitle || ''}>{body}</ToastBody>}
       </Toast>,
-      { position: 'bottom-start', intent }
+      { position: 'bottom-start', timeout: 5000, intent }
     );
   };
 
   return (
     <ToastContext.Provider value={notify}>
       {children}
-      <Toaster toasterId={toasterId}></Toaster>
+      <Toaster toasterId={toasterId} limit={3}></Toaster>
     </ToastContext.Provider>
   );
 };

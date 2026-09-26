@@ -170,11 +170,7 @@ export const PesquisarProdutoVisualizar = ({
           </div>
         </div>
       </DrawerBody>
-      <DrawerFooter>
-        <Button onClick={() => console.log(produto)}>
-          console.log(produto)
-        </Button>
-      </DrawerFooter>
+      <DrawerFooter></DrawerFooter>
     </>
   );
 };

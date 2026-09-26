@@ -34,6 +34,7 @@ import { AdicionarProdutoAliquotaField } from '@/components/AdicionarProdutoAliq
 import { FISCAL_INFO } from '@/constants/fiscalInfo.ts';
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 import { useAppToast } from '@/api/context/ToastContext.tsx';
+import type { AppError } from '@/api/client.tsx';
 
 export type ProdutoFormInput = z.input<typeof produtoFormSchema>;
 export type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
@@ -116,18 +117,16 @@ export const AdicionarProduto = () => {
         intent: 'success',
         title: 'Adicionar produto',
         body: `Produto  adicionado com sucesso.`,
-        subtitle: `Código: ${data.codigo}, Descrição: ${data.nome}`,
+        subtitle: `Código: ${data.codigo}, Descrição: ${data.nome}.`,
       });
-    } catch (error: any) {
-      if (error.type === 'ERROR_SISTEMA') {
-        notify({
-          intent: 'error',
-          title: 'Error',
-          body: 'Não foi possível adicionar o produto.',
-          subtitle: error.message,
-        });
-        return;
-      }
+    } catch (error) {
+      const err = error as AppError;
+
+      notify({
+        intent: err.intent || 'error',
+        title: 'Adicionar produto',
+        body: err.message || 'Falha ao processar a requisição.',
+      });
 
       console.log(error);
     }
@@ -146,17 +145,15 @@ export const AdicionarProduto = () => {
           <Text size={500} weight="semibold" className={styles.cardTitle}>
             Informações Gerais
           </Text>
-
           <Field
             id={'ativo'}
+            label={'Produto Ativo'}
+            className={styles.switch}
             validationState={errors.ativo ? 'error' : 'none'}
             validationMessage={errors.ativo?.message}
+            required
           >
-            <Switch
-              label={'Produto Ativo'}
-              {...register('ativo')}
-              defaultChecked
-            />
+            <Switch {...register('ativo')} defaultChecked />
           </Field>
         </div>
 

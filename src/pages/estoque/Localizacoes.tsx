@@ -17,6 +17,8 @@ import type { LocalizacaoResponseDTO } from '@/api/estoque/localizacao.types.tsx
 import { Add24Regular, ArrowRepeatAll20Regular } from '@fluentui/react-icons';
 import { LocalizacoesAdicionarLocalizacaoDialog } from '@/components/LocalizacoesAdicionarLocalizacaoDialog.tsx';
 import { listarLocalizacao } from '@/api/estoque/localizacao.service.tsx';
+import type { AppError } from '@/api/client.tsx';
+import { useAppToast } from '@/api/context/ToastContext.tsx';
 
 type IdCell = { label: string };
 type CodigoCell = { label: string };
@@ -124,6 +126,8 @@ export const Localizacoes = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const notify = useAppToast();
+
   useEffect(() => {
     async function carregarLocalizacoes() {
       try {
@@ -131,6 +135,15 @@ export const Localizacoes = () => {
         const localizacoesData = await listarLocalizacao();
         setLocalizacoes(localizacoesData);
       } catch (error) {
+        const err = error as AppError;
+        setLocalizacoes([]);
+
+        notify({
+          intent: err.intent || 'error',
+          title: 'Localizações',
+          body: err.message || 'Falha ao processar a requisição.',
+        });
+
         console.error('Error ao carregar as localizações, error: ', error);
       } finally {
         setCarregandoLocalizacoes(false);
@@ -140,6 +153,10 @@ export const Localizacoes = () => {
   }, [updateLocalizacoes]);
 
   const items: Item[] = useMemo(() => {
+    if (!Array.isArray(localizacoes)) {
+      return [];
+    }
+
     return localizacoes.map((localizacao) => {
       return {
         id: { label: localizacao.id },

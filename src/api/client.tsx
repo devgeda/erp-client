@@ -1,5 +1,18 @@
 import axios from 'axios';
 
+interface ErrorResponseDTO {
+  timestamp: string;
+  status: number;
+  error: string;
+  message: string;
+  path: string;
+}
+
+export interface AppError {
+  intent: 'error' | 'warning' | 'info';
+  message: string;
+}
+
 export const api = axios.create({
   baseURL: 'http://localhost:8080',
   headers: {
@@ -19,26 +32,32 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    const status = error.response?.status;
+  (error: ErrorResponseDTO) => {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+      const message = error.response?.data.message;
 
-    if (error.response && (status === 401 || status === 403)) {
-      localStorage.removeItem('token');
-      window.location.href = '/log-in';
-      return new Promise(() => {});
+      if (status === 401 || status === 403) {
+        localStorage.removeItem('token');
+        window.location.href = '/log-in';
+        return new Promise(() => {});
+      }
+
+      if (status === 400) {
+        return Promise.reject({
+          intent: 'warning',
+          message: message || 'Verifique os dados enviados.',
+        } as AppError);
+      }
+
+      if (!status || status >= 500) {
+        return Promise.reject({
+          intent: 'warning',
+          message: message || 'Verifique os dados enviados.',
+        } as AppError);
+      }
+
+      return Promise.reject(error.response?.data);
     }
-
-    if (error.response && (!status || status >= 500)) {
-      return Promise.reject({
-        type: 'ERROR_SISTEMA',
-        message: error.response?.data?.message,
-      });
-    }
-
-    return Promise.reject({
-      type: 'ERROR_NEGOCIO',
-      status: status,
-      message: error.response?.data?.message || 'Verifique os dados enviados.',
-    });
   }
 );

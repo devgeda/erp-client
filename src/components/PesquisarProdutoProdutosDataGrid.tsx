@@ -29,6 +29,8 @@ import { formatCurrencyBRL } from '@/utils/formatters.tsx';
 import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
 import { Edit24Regular, Eye24Regular } from '@fluentui/react-icons';
 import { PesquisarProdutoVisualizar } from '@/components/PesquisarProdutoVisualizar.tsx';
+import { useAppToast } from '@/api/context/ToastContext.tsx';
+import type { AppError } from '@/api/client.tsx';
 
 type IdCell = { label: string };
 
@@ -215,6 +217,7 @@ type AdicionarProdutoProdutosDataGridProps = {
   termoBusca: string;
   sortState: DataGridProps['sortState'];
   onSortChange: (nextSortState: DataGridProps['sortState']) => void;
+  updateProdutosTrigger: number;
 };
 
 const getCellFocusMode = (columnId: TableColumnId): DataGridCellFocusMode => {
@@ -231,6 +234,7 @@ export const PesquisarProdutoProdutosDataGrid = ({
   termoBusca,
   sortState,
   onSortChange,
+  updateProdutosTrigger,
 }: AdicionarProdutoProdutosDataGridProps): JSXElement => {
   const [produtos, setProdutos] = useState<ProdutoResponseDTO[]>([]);
   const [categoriasMap, setCategoriasMap] = useState<Record<string, string>>(
@@ -247,6 +251,8 @@ export const PesquisarProdutoProdutosDataGrid = ({
   const [carregandoProduto, setCarregandoProduto] = useState(true);
 
   const restoreFocusSourceAttributes = useRestoreFocusSource();
+
+  const notify = useAppToast();
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
     setSelectedRows(data.selectedItems);
@@ -267,13 +273,21 @@ export const PesquisarProdutoProdutosDataGrid = ({
         setCategoriasMap(categoriasDictionay);
         setProdutos(produtosData);
       } catch (error) {
+        const err = error as AppError;
+        setProdutos([]);
+        notify({
+          intent: err.intent || 'error',
+          title: 'Carregar produtos',
+          body: err.message || 'Falha ao processar a requisição.',
+        });
+
         console.error(`Error ao carregar os produtos, error: `, error);
       } finally {
         setCarregandoProdutos(false);
       }
     }
     carregarProdutosCategorias();
-  }, []);
+  }, [updateProdutosTrigger]);
 
   useEffect(() => {
     async function carregarProduto() {
@@ -283,6 +297,12 @@ export const PesquisarProdutoProdutosDataGrid = ({
         setCarregandoProduto(true);
         const produtosData = await obterProdutoById(produtoAtivo.id.label);
         setProduto(produtosData);
+        notify({
+          intent: 'success',
+          title: 'Carregar produto',
+          body: 'Produto carregado com sucesso.',
+          subtitle: `Código: ${produtoAtivo.codigo.label}, Descrição: ${produtoAtivo.nome.label}.`,
+        });
       } catch (error) {
         console.error(`Error ao carregar os produto, error: `, error);
       } finally {
@@ -293,6 +313,10 @@ export const PesquisarProdutoProdutosDataGrid = ({
   }, [produtoAtivo]);
 
   const items: Item[] = useMemo(() => {
+    if (!Array.isArray(produtos)) {
+      return [];
+    }
+
     const regrasFiltro: Record<
       string,
       (produto: ProdutoResponseDTO) => boolean

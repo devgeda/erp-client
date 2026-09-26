@@ -19,6 +19,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { CategoriaRequestDTO } from '@/api/categorias/categoria.types.tsx';
 import { onNestedSubmit } from '@/utils/nestedFormSubmit.tsx';
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
+import { useAppToast } from '@/api/context/ToastContext.tsx';
+import type { AppError } from '@/api/client.tsx';
 
 interface AdicionarProdutoCategoriaDialogProps {
   isOpen: boolean;
@@ -30,6 +32,7 @@ export const AdicionarProdutoCategoriaDialog = ({
   onClose,
 }: AdicionarProdutoCategoriaDialogProps): JSXElement => {
   const styles = sharedStyles();
+  const notify = useAppToast();
 
   const {
     handleSubmit,
@@ -46,10 +49,22 @@ export const AdicionarProdutoCategoriaDialog = ({
   async function onCategoriaFormSubmit(data: CategoriaRequestDTO) {
     try {
       await criarCategoria(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      console.log(data);
+      notify({
+        intent: 'success',
+        title: 'Adicionar categoria',
+        body: 'Categoria adicionada com sucesso.',
+        subtitle: `Nome: ${data.nome}.`,
+      });
+    } catch (error) {
+      const err = error as AppError;
+
+      notify({
+        intent: err.intent || 'error',
+        title: 'Adicionar categoria',
+        body: err.message || 'Falha ao processar a requisição.',
+      });
+
+      console.error(error);
     }
     reset();
   }

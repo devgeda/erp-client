@@ -12,13 +12,16 @@ import {
 import { useState } from 'react';
 
 import {
+  ArrowRepeatAll20Regular,
   ArrowReset24Regular,
   ChevronDown24Regular,
+  ChevronUp24Regular,
   TextSortAscending24Regular,
   TextSortDescending24Regular,
 } from '@fluentui/react-icons';
 import { PesquisarProdutoProdutosDataGrid } from '@/components/PesquisarProdutoProdutosDataGrid.tsx';
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
+import { useAppToast } from '@/api/context/ToastContext.tsx';
 
 export const PesquisarProduto = () => {
   const styles = sharedStyles();
@@ -32,6 +35,8 @@ export const PesquisarProduto = () => {
   const [sortState, setSortState] = useState<DataGridProps['sortState']>(
     estadoOrdenacaoInicial
   );
+  const [updateProdutosTrigger, setUpdateProdutosTrigger] = useState(0);
+  const notify = useAppToast();
 
   const [tipoFiltroAtivo, setTipoFiltroAtivo] = useState<
     | 'nome'
@@ -104,7 +109,15 @@ export const PesquisarProduto = () => {
                   Decrescente
                 </ToolbarButton>
                 <ToolbarButton
-                  onClick={() => setSortState(estadoOrdenacaoInicial)}
+                  onClick={() => {
+                    setSortState(estadoOrdenacaoInicial);
+                    notify({
+                      intent: 'info',
+                      title: 'Redefinir ordenação',
+                      body: 'A ordenação foi redefinida.',
+                      subtitle: `Coluna: ${estadoOrdenacaoInicial.sortColumn}, Direção: ${estadoOrdenacaoInicial.sortDirection === 'ascending' ? 'crescente' : 'decrescente'}.`,
+                    });
+                  }}
                   icon={<ArrowReset24Regular />}
                 >
                   Redefinir Ordenação
@@ -112,12 +125,22 @@ export const PesquisarProduto = () => {
                 <ToolbarDivider />
                 <ToolbarButton
                   onClick={() => setOpen(!open)}
-                  icon={<ChevronDown24Regular />}
+                  icon={
+                    open ? <ChevronUp24Regular /> : <ChevronDown24Regular />
+                  }
                   appearance="transparent"
                 >
                   Filtros
                 </ToolbarButton>
               </Toolbar>
+              <div className={styles.buttonGroup}>
+                <Button
+                  icon={<ArrowRepeatAll20Regular />}
+                  onClick={() => {
+                    setUpdateProdutosTrigger((prev) => prev + 1);
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -168,6 +191,7 @@ export const PesquisarProduto = () => {
         )}
         <PesquisarProdutoProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}
+          updateProdutosTrigger={updateProdutosTrigger}
           termoBusca={termoBusca}
           sortState={sortState}
           onSortChange={setSortState}

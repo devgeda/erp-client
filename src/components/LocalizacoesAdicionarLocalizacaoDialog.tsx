@@ -22,6 +22,8 @@ import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
 import { criarLocalizacao } from '@/api/estoque/localizacao.service.tsx';
+import { useAppToast } from '@/api/context/ToastContext.tsx';
+import type { AppError } from '@/api/client.tsx';
 
 interface LocalizacoesAdicionarLocalizacaoDialogProps {
   isOpen: boolean;
@@ -35,6 +37,7 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
   onClose,
 }: LocalizacoesAdicionarLocalizacaoDialogProps): JSXElement => {
   const styles = sharedStyles();
+  const notify = useAppToast();
 
   const [prateleira, setPrateleira] = useState('');
   const [fileira, setFileira] = useState('');
@@ -73,8 +76,21 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
     };
     try {
       await criarLocalizacao(payload);
+      notify({
+        intent: 'success',
+        title: 'Adicionar localização',
+        body: 'Localização adicionada com sucesso.',
+        subtitle: `Código: ${data.codigo}.`,
+      });
     } catch (error) {
-      console.error('Error ao criar a localização, error: ', error);
+      const err = error as AppError;
+
+      notify({
+        intent: err.intent || 'error',
+        title: 'Adicionar localização',
+        body: err.message || 'Falha ao processar a requisição.',
+      });
+      console.error(error);
     }
 
     dialogOnClose();
