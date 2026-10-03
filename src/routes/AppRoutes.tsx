@@ -5,12 +5,12 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { AppLayout } from '@/layouts/AppLayout.tsx';
-import { ProdutosPage } from '@/pages/produtos/ProdutosPage.tsx';
-import { AdicionarProduto } from '@/pages/produtos/AdicionarProduto.tsx';
-import { HistoricoProduto } from '@/pages/produtos/HistoricoProduto.tsx';
+import { ProdutosPage } from '@/pages/estoque/produtos/ProdutosPage.tsx';
+import { AdicionarProduto } from '@/pages/estoque/produtos/AdicionarProduto.tsx';
+import { HistoricoProduto } from '@/pages/estoque/produtos/HistoricoProduto.tsx';
 import { LoginPage } from '@/pages/autenticacao/LoginPage.tsx';
 import { SignupPage } from '@/pages/autenticacao/SignupPage.tsx';
-import { PesquisarProduto } from '@/pages/produtos/PesquisarProduto.tsx';
+import { PesquisarProduto } from '@/pages/estoque/produtos/PesquisarProduto.tsx';
 import { Localizacoes } from '@/pages/estoque/Localizacoes.tsx';
 
 export function ProtectedRoute() {

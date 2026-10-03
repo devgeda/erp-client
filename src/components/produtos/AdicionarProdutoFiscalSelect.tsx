@@ -6,7 +6,7 @@ import {
   Select,
 } from '@fluentui/react-components';
 import { type Control, Controller, type Path } from 'react-hook-form';
-import type { ProdutoFormInput } from '@/pages/produtos/AdicionarProduto.tsx';
+import type { ProdutoFormInput } from '@/pages/estoque/produtos/AdicionarProduto.tsx';
 import { type ReactElement, useEffect, useState } from 'react';
 import { listarProdutoFiscal } from '@/api/produtos/produto.service.tsx';
 import type { ProdutoFiscalResponseDTO } from '@/api/produtos/produto.types.tsx';
@@ -19,6 +19,7 @@ export interface AdicionarProdutoFiscalSelectProps {
   infoLabelAddon?: ReactElement;
   nome: Path<ProdutoFormInput>;
   control: Control<ProdutoFormInput>;
+  disabled: boolean;
 }
 
 export const AdicionarProdutoFiscalSelect = ({
@@ -28,6 +29,7 @@ export const AdicionarProdutoFiscalSelect = ({
   infoLabelAddon,
   nome,
   control,
+  disabled,
 }: AdicionarProdutoFiscalSelectProps): JSXElement => {
   const styles = sharedStyles();
   const [fiscal, setFiscal] = useState<ProdutoFiscalResponseDTO[]>([]);
@@ -84,7 +86,7 @@ export const AdicionarProdutoFiscalSelect = ({
           </div>
           <Select
             style={{ width: '100%', minWidth: 0 }}
-            disabled={carregandoFiscal}
+            disabled={carregandoFiscal || disabled}
             value={(field.value as string) ?? ''}
             onChange={(_e, data) => {
               field.onChange(data.value);

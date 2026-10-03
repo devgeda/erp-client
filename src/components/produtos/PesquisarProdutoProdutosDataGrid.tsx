@@ -28,9 +28,11 @@ import {
 import { formatCurrencyBRL } from '@/utils/formatters.tsx';
 import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
 import { Edit24Regular, Eye24Regular } from '@fluentui/react-icons';
-import { PesquisarProdutoVisualizar } from '@/components/PesquisarProdutoVisualizar.tsx';
+import { PesquisarProdutoVisualizar } from '@/components/produtos/PesquisarProdutoVisualizar.tsx';
 import { useAppToast } from '@/api/context/ToastContext.tsx';
 import type { AppError } from '@/api/client.tsx';
+import { listarEstoquesPorProdutoId } from '@/api/estoque/estoque.service.tsx';
+import type { EstoqueResponseDTO } from '@/api/estoque/estoque.types.tsx';
 
 type IdCell = { label: string };
 
@@ -160,7 +162,7 @@ const getColumns = (
       return a.localizacao.label.localeCompare(b.localizacao.label);
     },
     renderHeaderCell: () => {
-      return 'Localizacao';
+      return 'Localização';
     },
     renderCell: (item) => {
       return (
@@ -250,6 +252,8 @@ export const PesquisarProdutoProdutosDataGrid = ({
   const [produto, setProduto] = useState<ProdutoResponseDTO>();
   const [carregandoProduto, setCarregandoProduto] = useState(true);
 
+  const [estoques, setEstoques] = useState<EstoqueResponseDTO[]>([]);
+
   const restoreFocusSourceAttributes = useRestoreFocusSource();
 
   const notify = useAppToast();
@@ -264,6 +268,16 @@ export const PesquisarProdutoProdutosDataGrid = ({
         setCarregandoProdutos(true);
         const produtosData = await listarProdutos();
         const categoriasData = await obterCategorias();
+
+        if (produtoAtivo?.id) {
+          const estoqueData = await listarEstoquesPorProdutoId(
+            produtoAtivo.id.label
+          );
+          return setEstoques(estoqueData);
+        } else {
+          setEstoques([]);
+        }
+
         const categoriasDictionay: Record<string, string> = {};
 
         categoriasData.forEach((cat) => {
@@ -286,8 +300,8 @@ export const PesquisarProdutoProdutosDataGrid = ({
         setCarregandoProdutos(false);
       }
     }
-    carregarProdutosCategorias();
-  }, [updateProdutosTrigger]);
+    void carregarProdutosCategorias().catch(console.error);
+  }, [updateProdutosTrigger, notify, produtoAtivo?.id]);
 
   useEffect(() => {
     async function carregarProduto() {
@@ -310,7 +324,7 @@ export const PesquisarProdutoProdutosDataGrid = ({
       }
     }
     carregarProduto();
-  }, [produtoAtivo]);
+  }, [notify, produtoAtivo]);
 
   const items: Item[] = useMemo(() => {
     if (!Array.isArray(produtos)) {
@@ -447,6 +461,7 @@ export const PesquisarProdutoProdutosDataGrid = ({
           ) : (
             <PesquisarProdutoVisualizar
               produto={produto}
+              estoques={estoques}
               categoria={categoriasMap[produto.categoriaId] || 'Desconhecida'}
               onClose={() => setIsViewDrawerOpen(false)}
             />

@@ -13,10 +13,10 @@ import {
   Text,
 } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
-import type { LocalizacaoResponseDTO } from '@/api/estoque/localizacao.types.tsx';
+import type { LocalizacaoResponseDTO } from '@/api/localizacao/localizacao.types.tsx';
 import { Add24Regular, ArrowRepeatAll20Regular } from '@fluentui/react-icons';
 import { LocalizacoesAdicionarLocalizacaoDialog } from '@/components/LocalizacoesAdicionarLocalizacaoDialog.tsx';
-import { listarLocalizacao } from '@/api/estoque/localizacao.service.tsx';
+import { listarLocalizacoes } from '@/api/localizacao/localizacao.service.tsx';
 import type { AppError } from '@/api/client.tsx';
 import { useAppToast } from '@/api/context/ToastContext.tsx';
 
@@ -132,10 +132,11 @@ export const Localizacoes = () => {
     async function carregarLocalizacoes() {
       try {
         setCarregandoLocalizacoes(true);
-        const localizacoesData = await listarLocalizacao();
+        const localizacoesData = await listarLocalizacoes();
         setLocalizacoes(localizacoesData);
       } catch (error) {
         const err = error as AppError;
+
         setLocalizacoes([]);
 
         notify({
@@ -149,7 +150,7 @@ export const Localizacoes = () => {
         setCarregandoLocalizacoes(false);
       }
     }
-    carregarLocalizacoes();
+    void carregarLocalizacoes();
   }, [updateLocalizacoes]);
 
   const items: Item[] = useMemo(() => {
@@ -163,7 +164,7 @@ export const Localizacoes = () => {
         codigo: { label: localizacao.codigo },
         prateleira: { label: localizacao.prateleira },
         fileira: { label: localizacao.fileira },
-        coluna: { label: localizacao.fileira },
+        coluna: { label: localizacao.coluna },
         caixa: { label: localizacao.caixa ? localizacao.caixa : '' },
         ativo: { label: localizacao.ativo ? 'SIM' : 'NÃO' },
       };

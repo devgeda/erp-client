@@ -16,11 +16,3 @@ export interface LocalizacaoResponseDTO {
   caixa?: string;
   ativo: boolean;
 }
-
-export interface EstoqueResponseDTO {
-  id: string;
-  produtoId: string;
-  localizacaoId: string;
-  quantidade: number;
-  ativo: boolean;
-}

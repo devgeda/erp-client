@@ -23,7 +23,7 @@ export const produtoFormSchema = z.object({
     .optional(),
   valor: z.string().min(1, 'O valor precisa ser válido.'),
   valorPromocional: z.string().min(1, 'O valor precisa ser válido.'),
-  categoriaId: z.string().uuid('Id de categoria inválido.'),
+  categoriaId: z.uuid('Id de categoria inválido.'),
   ativo: z.boolean('Defina o status do produto'),
   ncm: z
     .string()

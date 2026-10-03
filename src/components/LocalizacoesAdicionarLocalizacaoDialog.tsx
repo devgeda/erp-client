@@ -15,13 +15,13 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
-import { localizacaoFormSchema } from '@/api/estoque/localizacao.schemas.tsx';
-import type { LocalizacaoRequestDTO } from '@/api/estoque/localizacao.types.tsx';
+import { localizacaoFormSchema } from '@/api/localizacao/localizacao.schemas.tsx';
+import type { LocalizacaoRequestDTO } from '@/api/localizacao/localizacao.types.tsx';
 
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
-import { criarLocalizacao } from '@/api/estoque/localizacao.service.tsx';
+import { criarLocalizacao } from '@/api/localizacao/localizacao.service.tsx';
 import { useAppToast } from '@/api/context/ToastContext.tsx';
 import type { AppError } from '@/api/client.tsx';
 
@@ -76,6 +76,7 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
     };
     try {
       await criarLocalizacao(payload);
+
       notify({
         intent: 'success',
         title: 'Adicionar localização',
@@ -130,8 +131,14 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
       <DialogSurface>
         <form
           id={'form-dialog-localizacao'}
-          onSubmit={handleSubmit(onLocalizacaoFormSubmit, (errosInvalidos) =>
-            console.log('O Zod bloqueou a submissão! Erros:', errosInvalidos)
+          onSubmit={handleSubmit(onLocalizacaoFormSubmit, (zodValidation) =>
+            zodValidation.codigo?.type == 'invalid_type'
+              ? notify({
+                  intent: 'warning',
+                  title: 'Adicionar localização',
+                  body: 'Gere um código usando o botão "Gerar Código" antes de salvar a localização.',
+                })
+              : ''
           )}
           noValidate
         >
@@ -139,7 +146,7 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
             <div className={styles.cardHeader}>
               <DialogTitle>Adicionar Localização</DialogTitle>
               <Field
-                id={''}
+                id={'localizacaoAtiva'}
                 label={'Localização Ativa'}
                 className={styles.switch}
                 required

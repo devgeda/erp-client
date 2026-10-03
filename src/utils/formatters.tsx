@@ -70,3 +70,9 @@ export const formatPercent = (value: string) => {
 
   return `${percent.toFixed(2)}`;
 };
+
+export const formatNumber = (value: string) => {
+  const onlyDigits = String(value).replace(/\D/g, '');
+
+  return Number(onlyDigits);
+};

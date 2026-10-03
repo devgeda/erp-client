@@ -15,128 +15,53 @@ import {
   Dismiss24Regular,
   Save24Regular,
 } from '@fluentui/react-icons';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useEffect, useState } from 'react';
-import type { CategoriaResponseDTO } from '@/api/categorias/categoria.types.tsx';
-import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
-import { AdicionarProdutoCategoriaDialog } from '@/components/AdicionarProdutoCategoriaDialog.tsx';
+import { AdicionarProdutoCategoriaDialog } from '@/components/produtos/AdicionarProdutoCategoriaDialog.tsx';
 import {
   formatFiscalField,
   formatInputCurrencyBRL,
-  parseCurrencyToNumber,
 } from '@/utils/formatters.tsx';
-import { AdicionarProdutoFiscalSelect } from '@/components/AdicionarProdutoFiscalSelect.tsx';
-import { criarProduto } from '@/api/produtos/produto.service.tsx';
-import { AdicionarProdutoAliquotaField } from '@/components/AdicionarProdutoAliquotaField.tsx';
+import { AdicionarProdutoFiscalSelect } from '@/components/produtos/AdicionarProdutoFiscalSelect.tsx';
+import { AdicionarProdutoAliquotaField } from '@/components/produtos/AdicionarProdutoAliquotaField.tsx';
 import { FISCAL_INFO } from '@/constants/fiscalInfo.ts';
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
-import { useAppToast } from '@/api/context/ToastContext.tsx';
-import type { AppError } from '@/api/client.tsx';
+import { EstoqueDialog } from '@/components/produtos/EstoqueDialog.tsx';
+import { useAdicionarProduto } from '@/api/hooks/estoque/produtos/useAdicionarProduto.ts';
 
 export type ProdutoFormInput = z.input<typeof produtoFormSchema>;
 export type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
 
 export const AdicionarProduto = () => {
   const styles = sharedStyles();
-  const [categorias, setCategorias] = useState<CategoriaResponseDTO[]>([]);
-  const [carregandoCategorias, setCarregandoCategorias] = useState(true);
-  const [updateCategorias, setUpdateCategorias] = useState(0);
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const notify = useAppToast();
-
-  useEffect(() => {
-    async function carregarCategorias() {
-      try {
-        setCarregandoCategorias(true);
-        const categoriasData = await obterCategorias();
-        categoriasData.sort((a, b) => a.nome.localeCompare(b.nome));
-        setCategorias(categoriasData);
-      } catch (error) {
-        console.error('Erro ao carregar categorias:', error);
-      } finally {
-        setCarregandoCategorias(false);
-      }
-    }
-    void carregarCategorias().catch(console.error);
-  }, [updateCategorias]);
 
   const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm<ProdutoFormInput>({
-    mode: 'onChange',
-    resolver: zodResolver(produtoFormSchema),
-    defaultValues: {
-      nome: '',
-      codigo: '',
-      codigoAdicional: '',
-      valor: '',
-      valorPromocional: '',
-      categoriaId: '',
-      ativo: true,
-      origemDoProduto: '',
-      ncm: '',
-      csosn: '',
-      cfopInterno: '',
+    produtoCriadoId,
+    categorias,
+    carregandoCategorias,
+    isCategoriaDialogOpen,
+    setIsCategoriaDialogOpen,
+    estoques,
+    isEstoqueDialogOpen,
+    setIsEstoqueDialogOpen,
+    localizacaoMap,
+    form: {
+      register,
+      control,
+      formState: { errors },
+      reset,
     },
-  });
-
-  async function onProdutoFormSubmit(data: ProdutoFormOutput) {
-    const payloadParaBackend = {
-      ...data,
-
-      codigoAdicional: data.codigoAdicional ?? '',
-      valor: data.valor ? parseCurrencyToNumber(data.valor).toFixed(2) : '',
-      valorPromocional: data.valorPromocional
-        ? parseCurrencyToNumber(data.valorPromocional).toFixed(2)
-        : '',
-      ncm: data.ncm ? data.ncm.replaceAll('.', '') : '00000000',
-      cest: data.cest ? data.cest.replaceAll('.', '') : '0000000',
-      origemDoProduto: data.origemDoProduto ? data.origemDoProduto : '0',
-      cfopInterno: data.cfopInterno ? data.cfopInterno : '5101',
-      cfopInterestadual: data.cfopInterestadual
-        ? data.cfopInterestadual
-        : '6101',
-      cstIcms: data.cstIcms ? data.cstIcms : '00',
-      csosn: data.csosn ? data.csosn : '101',
-      cstPis: data.cstPis ? data.cstPis : '01',
-      cstCofins: data.cstCofins ? data.cstCofins : '01',
-    };
-
-    try {
-      await criarProduto(payloadParaBackend);
-      notify({
-        intent: 'success',
-        title: 'Adicionar produto',
-        body: `Produto  adicionado com sucesso.`,
-        subtitle: `Código: ${data.codigo}, Descrição: ${data.nome}.`,
-      });
-    } catch (error) {
-      const err = error as AppError;
-
-      notify({
-        intent: err.intent || 'error',
-        title: 'Adicionar produto',
-        body: err.message || 'Falha ao processar a requisição.',
-      });
-
-      console.log(error);
-    }
-  }
+    onSubmit,
+    atualizarCategorias,
+    atualizarEstoques,
+  } = useAdicionarProduto();
 
   return (
     <form
       id="form-adicionar-produto"
       className={styles.root}
-      onSubmit={handleSubmit(onProdutoFormSubmit)}
+      onSubmit={onSubmit}
       noValidate
     >
       {/* INFORMAÇÕES */}
@@ -153,7 +78,11 @@ export const AdicionarProduto = () => {
             validationMessage={errors.ativo?.message}
             required
           >
-            <Switch {...register('ativo')} defaultChecked />
+            <Switch
+              disabled={!!produtoCriadoId}
+              {...register('ativo')}
+              defaultChecked
+            />
           </Field>
         </div>
 
@@ -172,6 +101,7 @@ export const AdicionarProduto = () => {
               >
                 <Input
                   {...field}
+                  disabled={!!produtoCriadoId}
                   value={field.value || ''}
                   onChange={(e) => {
                     field.onChange(e.target.value.toUpperCase());
@@ -195,6 +125,7 @@ export const AdicionarProduto = () => {
               >
                 <Input
                   {...field}
+                  disabled={!!produtoCriadoId}
                   value={field.value || ''}
                   onChange={(e) => {
                     field.onChange(e.target.value.toUpperCase());
@@ -217,6 +148,7 @@ export const AdicionarProduto = () => {
               >
                 <Input
                   {...field}
+                  disabled={!!produtoCriadoId}
                   value={field.value || ''}
                   onChange={(e) => {
                     field.onChange(e.target.value.toUpperCase());
@@ -236,17 +168,21 @@ export const AdicionarProduto = () => {
           </Text>
           <div className={styles.buttonGroup}>
             <Button
+              disabled={!!produtoCriadoId}
               icon={<Add24Regular />}
-              aria-label="Adicionar Categoria"
-              onClick={() => setIsDialogOpen(true)}
+              aria-label={'Adicionar Categoria'}
+              onClick={() => {
+                setIsCategoriaDialogOpen(true);
+                atualizarCategorias();
+              }}
             >
               Adicionar Categoria
             </Button>
             <Button
+              disabled={!!produtoCriadoId}
               icon={<ArrowRepeatAll20Regular />}
-              onClick={() => {
-                setUpdateCategorias((prev) => prev + 1);
-              }}
+              aria-label={'Recarregar Categorias'}
+              onClick={() => atualizarCategorias}
             />
           </div>
         </div>
@@ -265,7 +201,7 @@ export const AdicionarProduto = () => {
                 required
               >
                 <Select
-                  disabled={carregandoCategorias}
+                  disabled={carregandoCategorias || !!produtoCriadoId}
                   value={field.value || ''}
                   onChange={(_e, data) => field.onChange(data.value)}
                 >
@@ -280,22 +216,22 @@ export const AdicionarProduto = () => {
                     </option>
                   ))}
                 </Select>
-                <AdicionarProdutoCategoriaDialog
-                  isOpen={isDialogOpen}
-                  onClose={() => {
-                    setIsDialogOpen(false);
-                    setUpdateCategorias((prev) => prev + 1);
-                  }}
-                />
               </Field>
             )}
           ></Controller>
         </div>
+        <AdicionarProdutoCategoriaDialog
+          isOpen={isCategoriaDialogOpen}
+          onClose={() => {
+            setIsCategoriaDialogOpen(false);
+            atualizarEstoques();
+          }}
+        />
       </div>
 
       {/* PRECIFICAÇÃO */}
       <div className={styles.card}>
-        <Text size={500} weight="semibold" className={styles.cardTitle}>
+        <Text size={500} weight={'semibold'} className={styles.cardTitle}>
           Precificação
         </Text>
 
@@ -314,6 +250,7 @@ export const AdicionarProduto = () => {
               >
                 <Input
                   {...field}
+                  disabled={!!produtoCriadoId}
                   placeholder={'R$ 0,00'}
                   value={field.value.toString() || ''}
                   onChange={(e) => {
@@ -337,6 +274,7 @@ export const AdicionarProduto = () => {
               >
                 <Input
                   {...field}
+                  disabled={!!produtoCriadoId}
                   placeholder={'R$ 0,00'}
                   value={field.value.toString() || ''}
                   onChange={(e) => {
@@ -357,6 +295,7 @@ export const AdicionarProduto = () => {
         </Text>
         <div className={styles.grid3}>
           <AdicionarProdutoFiscalSelect
+            disabled={!!produtoCriadoId}
             endPointPath={'/produtos/origem-do-produto'}
             label={'Origem do Produto'}
             infoLabelText={FISCAL_INFO.ORIGEM_DO_PRODUTO}
@@ -390,6 +329,7 @@ export const AdicionarProduto = () => {
                 </div>
                 <Input
                   {...field}
+                  disabled={!!produtoCriadoId}
                   placeholder={'0000.00.00'}
                   value={field.value || ''}
                   onChange={(e) => {
@@ -416,6 +356,7 @@ export const AdicionarProduto = () => {
                 </div>
                 <Input
                   {...field}
+                  disabled={!!produtoCriadoId}
                   value={field.value || ''}
                   placeholder={'00.000.00'}
                   onChange={(e) => {
@@ -434,6 +375,7 @@ export const AdicionarProduto = () => {
             endPointPath={'/produtos/cfop-interno'}
             label={'CFOP Interno'}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/cfop-interestadual'}
@@ -441,6 +383,7 @@ export const AdicionarProduto = () => {
             infoLabelText={FISCAL_INFO.CFOP_INTERESTADUAL}
             nome={'cfopInterestadual'}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/cst-icms'}
@@ -448,6 +391,7 @@ export const AdicionarProduto = () => {
             infoLabelText={FISCAL_INFO.CST_ICMS}
             nome={'cstIcms'}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/csosn'}
@@ -455,6 +399,7 @@ export const AdicionarProduto = () => {
             infoLabelText={FISCAL_INFO.CSOSN}
             nome={'csosn'}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/cst-pis'}
@@ -462,6 +407,7 @@ export const AdicionarProduto = () => {
             infoLabelText={FISCAL_INFO.CST_PIS}
             nome={'cstPis'}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoFiscalSelect
             endPointPath={'/produtos/cst-cofins'}
@@ -469,6 +415,7 @@ export const AdicionarProduto = () => {
             infoLabelText={FISCAL_INFO.CST_COFINS}
             nome={'cstCofins'}
             control={control}
+            disabled={!!produtoCriadoId}
           />
         </div>
 
@@ -483,18 +430,21 @@ export const AdicionarProduto = () => {
             label={'ICMS'}
             infoLabelText={FISCAL_INFO.ICMS}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoAliquotaField
             nome={'aliquotaPis'}
             label={'PIS'}
             infoLabelText={FISCAL_INFO.PIS}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoAliquotaField
             nome={'aliquotaCofins'}
             label={'COFINS'}
             infoLabelText={FISCAL_INFO.COFINS}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoAliquotaField
             nome={'aliquotaIpi'}
@@ -512,18 +462,21 @@ export const AdicionarProduto = () => {
               </Link>
             }
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoAliquotaField
             nome={'aliquotaFcp'}
             label={'FCP'}
             infoLabelText={FISCAL_INFO.FCP}
             control={control}
+            disabled={!!produtoCriadoId}
           />
           <AdicionarProdutoAliquotaField
             nome={'ivaSt'}
             label={'IVA-ST'}
             infoLabelText={FISCAL_INFO.IVA_ST}
             control={control}
+            disabled={!!produtoCriadoId}
           />
         </div>
       </div>
@@ -533,13 +486,77 @@ export const AdicionarProduto = () => {
           appearance="secondary"
           icon={<Dismiss24Regular />}
           onClick={() => reset()}
+          disabled={!!produtoCriadoId}
         >
           Cancelar
         </Button>
-        <Button type={'submit'} appearance="primary" icon={<Save24Regular />}>
+        <Button
+          type={'submit'}
+          appearance="primary"
+          icon={<Save24Regular />}
+          disabled={!!produtoCriadoId}
+        >
           Adicionar Produto
         </Button>
       </div>
+
+      {/* LOCALIZAÇÃO */}
+      {produtoCriadoId && (
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <Text size={500} weight={'semibold'} className={styles.cardTitle}>
+              Localização
+            </Text>
+            <div className={styles.buttonGroup}>
+              <Button
+                icon={<Add24Regular />}
+                aria-label={'Adicionar Localização'}
+                onClick={() => {
+                  setIsEstoqueDialogOpen(true);
+                  atualizarEstoques();
+                }}
+              >
+                Adicionar Localização
+              </Button>
+              <Button
+                icon={<ArrowRepeatAll20Regular />}
+                aria-label={'Recarregar Localizações'}
+                onClick={() => atualizarEstoques()}
+              />
+            </div>
+          </div>
+          <div className={styles.content}>
+            {estoques?.length === 0 ? (
+              <Text>
+                Nenhum produto em estoque encontrado, cadastre a partir de
+                "Adicionar Localização" ou atualize através do botão recarregar.
+              </Text>
+            ) : (
+              estoques?.map((e) => (
+                <div key={e.id} className={styles.list}>
+                  <Text>
+                    Localização:{' '}
+                    {localizacaoMap[e.localizacaoId] || 'Carregando...'}
+                  </Text>
+                  <Text>Quantidade: {e.quantidade}</Text>
+                  <Text>Criado por: {e.criadoPor}</Text>
+                  <Text>Data da criação: {e.dataCriacao}</Text>
+                  <Text>Ativo: {e.ativo ? 'SIM' : 'NÃO'}</Text>
+                </div>
+              ))
+            )}
+          </div>
+          <EstoqueDialog
+            produtoCriadoId={produtoCriadoId}
+            isOpen={isEstoqueDialogOpen}
+            onClose={() => {
+              setIsEstoqueDialogOpen(false);
+              atualizarEstoques();
+            }}
+            updateLocalizacoesTrigger={atualizarEstoques}
+          />
+        </div>
+      )}
     </form>
   );
 };

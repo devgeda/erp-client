@@ -150,4 +150,10 @@ export const sharedStyles = makeStyles({
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
+  list: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '8px 0',
+    borderBottom: '1px solid #e0e0e0',
+  },
 });
