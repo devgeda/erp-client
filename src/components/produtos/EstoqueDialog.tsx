@@ -21,14 +21,14 @@ import { useEstoqueDialog } from '@/api/hooks/estoque/produtos/useEstoqueDialog.
 interface AdicionarProdutoEstoqueDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  updateLocalizacoesTrigger: () => void;
+  updateEstoquesTrigger: () => void;
   produtoCriadoId: string;
 }
 
 export const EstoqueDialog = ({
   isOpen,
   onClose,
-  updateLocalizacoesTrigger,
+  updateEstoquesTrigger,
   produtoCriadoId,
 }: AdicionarProdutoEstoqueDialogProps): JSXElement => {
   const styles = sharedStyles();
@@ -45,7 +45,7 @@ export const EstoqueDialog = ({
     onSubmit,
   } = useEstoqueDialog({
     produtoCriadoId: produtoCriadoId,
-    updateLocalizacoesTrigger: updateLocalizacoesTrigger,
+    updateEstoquesTrigger: updateEstoquesTrigger,
   });
 
   return (

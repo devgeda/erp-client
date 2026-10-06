@@ -13,25 +13,25 @@ import type { LocalizacaoResponseDTO } from '@/api/localizacao/localizacao.types
 /** Interface para parâmetros do hook. */
 interface useEstoqueDialogProps {
   produtoCriadoId: string;
-  updateLocalizacoesTrigger: () => void;
+  updateEstoquesTrigger: () => void;
 }
 
 /**
  * Hook customizado para a lógica do componente de criação de estoque.
  *
- * -> Gerencia o estado do componente.
+ * 1. Gestor de estados: Gerencia o estado do componente.
  *
- * -> Busca de localizações.
+ * 2. Buscar/fetch: Busca de localizações.
  *
- * -> Validação do formulário de criação.
+ * 3. Validar: Validação do formulário de criação.
  *
- * -> Gerencia o evento de envio para o backend.
+ * 4. EventHandler: Gerencia o evento de envio para o backend.
  * */
 export const useEstoqueDialog = ({
   produtoCriadoId,
-  updateLocalizacoesTrigger,
+  updateEstoquesTrigger,
 }: useEstoqueDialogProps) => {
-  /** Implementa o hook useAppToast para gerenciar as notificações via Toast. */
+  // Implementa o hook useAppToast para gerenciar as notificações via Toast.
   const notify = useAppToast();
 
   // Estados das localizacoes.
@@ -49,6 +49,7 @@ export const useEstoqueDialog = ({
   /** Extrai os métodos para no hook. */
   const { setValue, handleSubmit } = form;
 
+  // Use Effect de carregamento de localizações.
   useEffect(() => {
     async function carregarLocalizacoes() {
       try {
@@ -69,7 +70,7 @@ export const useEstoqueDialog = ({
       }
     }
     void carregarLocalizacoes().catch(console.error);
-  }, [updateLocalizacoesTrigger, setValue, notify]);
+  }, [updateEstoquesTrigger, setValue, notify]);
 
   /** onSubmit para enviar ao backend.
    *
@@ -84,6 +85,8 @@ export const useEstoqueDialog = ({
 
     try {
       await criarEstoque(payloadParaBackend);
+
+      updateEstoquesTrigger();
 
       notify({
         intent: 'success',

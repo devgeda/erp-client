@@ -20,6 +20,7 @@ import { produtoFormSchema } from '@/api/produtos/produto.schemas.tsx';
 import { z } from 'zod';
 import { AdicionarProdutoCategoriaDialog } from '@/components/produtos/AdicionarProdutoCategoriaDialog.tsx';
 import {
+  formatDate,
   formatFiscalField,
   formatInputCurrencyBRL,
 } from '@/utils/formatters.tsx';
@@ -535,12 +536,12 @@ export const AdicionarProduto = () => {
               estoques?.map((e) => (
                 <div key={e.id} className={styles.list}>
                   <Text>
-                    Localização:{' '}
+                    Localização:
                     {localizacaoMap[e.localizacaoId] || 'Carregando...'}
                   </Text>
                   <Text>Quantidade: {e.quantidade}</Text>
                   <Text>Criado por: {e.criadoPor}</Text>
-                  <Text>Data da criação: {e.dataCriacao}</Text>
+                  <Text>Data da criação: {formatDate(e.dataCriacao)}</Text>
                   <Text>Ativo: {e.ativo ? 'SIM' : 'NÃO'}</Text>
                 </div>
               ))
@@ -553,7 +554,7 @@ export const AdicionarProduto = () => {
               setIsEstoqueDialogOpen(false);
               atualizarEstoques();
             }}
-            updateLocalizacoesTrigger={atualizarEstoques}
+            updateEstoquesTrigger={atualizarEstoques}
           />
         </div>
       )}

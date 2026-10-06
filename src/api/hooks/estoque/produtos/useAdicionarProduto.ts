@@ -47,7 +47,7 @@ export const useAdicionarProduto = () => {
   );
   const [carregandoEstoques, setCarregandoEstoques] = useState(true);
   const [isEstoqueDialogOpen, setIsEstoqueDialogOpen] = useState(false);
-  const [updateEstoqueTrigger, setUpdateEstoqueTrigger] = useState(0);
+  const [updateEstoquesTrigger, setUpdateEstoqueTrigger] = useState(0);
 
   /** Condiguração do formulário. */
   const form = useForm<ProdutoFormInput>({
@@ -55,6 +55,7 @@ export const useAdicionarProduto = () => {
     resolver: zodResolver(produtoFormSchema),
   });
 
+  // Use Effect de carregamento de categorias.
   useEffect(() => {
     async function carregarCategorias() {
       try {
@@ -80,6 +81,7 @@ export const useAdicionarProduto = () => {
     void carregarCategorias().catch(console.error);
   }, [updateCategoriasTrigger, notify]);
 
+  // Use Effect de carregamento de estoques.
   useEffect(() => {
     if (!produtoCriadoId) return;
 
@@ -119,11 +121,8 @@ export const useAdicionarProduto = () => {
       }
     }
 
-    console.log('Lista de estoques []: ', estoques);
-    console.log('Lista de nomes de localização {} :', localizacaoMap);
-
     void carregarEstoques().catch(console.error);
-  }, [updateEstoqueTrigger, notify]);
+  }, [updateEstoquesTrigger, notify]);
 
   /**
    * onSubmit para enviar ao backend.

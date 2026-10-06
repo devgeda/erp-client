@@ -156,4 +156,8 @@ export const sharedStyles = makeStyles({
     padding: '8px 0',
     borderBottom: '1px solid #e0e0e0',
   },
+  gridPequeno: {
+    fontSize: tokens.fontSizeBase200,
+    '& *': { fontSize: 'inherit' },
+  },
 });

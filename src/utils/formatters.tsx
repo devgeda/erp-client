@@ -11,7 +11,7 @@ export const formatInputCurrencyBRL = (value: string | number) => {
 export const formatCurrencyBRL = (value: string | number) => {
   const onlyDigits = String(value).replace(/\D/g, '');
 
-  const numberValue = Number(onlyDigits);
+  const numberValue = Number(onlyDigits) / 100;
   return numberValue.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -75,4 +75,18 @@ export const formatNumber = (value: string) => {
   const onlyDigits = String(value).replace(/\D/g, '');
 
   return Number(onlyDigits);
+};
+
+export const formatDate = (value: string | undefined) => {
+  if (!value) return '-';
+
+  const data = new Date(value);
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(data);
 };

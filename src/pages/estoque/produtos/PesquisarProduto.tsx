@@ -19,7 +19,7 @@ import {
   TextSortAscending24Regular,
   TextSortDescending24Regular,
 } from '@fluentui/react-icons';
-import { PesquisarProdutoProdutosDataGrid } from '@/components/produtos/PesquisarProdutoProdutosDataGrid.tsx';
+import { ProdutosDataGrid } from '@/components/produtos/ProdutosDataGrid.tsx';
 import { sharedStyles } from '@/syles/shared/sharedStyles.ts';
 import { useAppToast } from '@/api/context/ToastContext.tsx';
 
@@ -189,7 +189,7 @@ export const PesquisarProduto = () => {
             </div>
           </Portal>
         )}
-        <PesquisarProdutoProdutosDataGrid
+        <ProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}
           updateProdutosTrigger={updateProdutosTrigger}
           termoBusca={termoBusca}

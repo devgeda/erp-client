@@ -11,6 +11,6 @@ export interface EstoqueResponseDTO {
   localizacaoId: string;
   quantidade: number;
   criadoPor: string;
-  dataCriacao: ;
+  dataCriacao: string;
   ativo: boolean;
 }

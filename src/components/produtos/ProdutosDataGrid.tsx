@@ -15,24 +15,13 @@ import {
   TableCellLayout,
   type TableColumnDefinition,
   type TableColumnId,
-  type TableRowId,
+  Tag,
   Tooltip,
-  useRestoreFocusSource,
 } from '@fluentui/react-components';
-import { useEffect, useMemo, useState } from 'react';
-import type { ProdutoResponseDTO } from '@/api/produtos/produto.types.tsx';
-import {
-  listarProdutos,
-  obterProdutoById,
-} from '@/api/produtos/produto.service.tsx';
-import { formatCurrencyBRL } from '@/utils/formatters.tsx';
-import { obterCategorias } from '@/api/categorias/categoria.service.tsx';
+import { useMemo } from 'react';
 import { Edit24Regular, Eye24Regular } from '@fluentui/react-icons';
 import { PesquisarProdutoVisualizar } from '@/components/produtos/PesquisarProdutoVisualizar.tsx';
-import { useAppToast } from '@/api/context/ToastContext.tsx';
-import type { AppError } from '@/api/client.tsx';
-import { listarEstoquesPorProdutoId } from '@/api/estoque/estoque.service.tsx';
-import type { EstoqueResponseDTO } from '@/api/estoque/estoque.types.tsx';
+import { useProdutosDataGrid } from '@/api/hooks/estoque/produtos/pesquisa/useProdutosDataGrid.ts';
 
 type IdCell = { label: string };
 
@@ -54,6 +43,8 @@ type CategoriaIdCell = { label: string };
 
 type LocalizacaoCell = { label: string };
 
+type QuantidadeCell = { label: string };
+
 type AtivoCell = { label: string };
 
 export type Item = {
@@ -65,6 +56,7 @@ export type Item = {
   valorPromocional: ValorPromocionalCell;
   categoriaId: CategoriaIdCell;
   localizacao: LocalizacaoCell;
+  quantidade: QuantidadeCell;
   ativo: AtivoCell;
 };
 
@@ -152,21 +144,33 @@ const getColumns = (
     },
     renderCell: (item) => {
       return (
-        <TableCellLayout truncate>{item.categoriaId.label}</TableCellLayout>
+        <Tooltip content={item.categoriaId.label} relationship="label">
+          <TableCellLayout truncate>{item.categoriaId.label}</TableCellLayout>
+        </Tooltip>
       );
     },
   }),
   createTableColumn<Item>({
     columnId: 'localizacao',
-    compare: (a, b) => {
-      return a.localizacao.label.localeCompare(b.localizacao.label);
-    },
     renderHeaderCell: () => {
       return 'Localização';
     },
     renderCell: (item) => {
       return (
-        <TableCellLayout truncate>{item.localizacao.label}</TableCellLayout>
+        <TableCellLayout truncate>
+          <Tag>{item.localizacao.label}</Tag>
+        </TableCellLayout>
+      );
+    },
+  }),
+  createTableColumn<Item>({
+    columnId: 'quantidade',
+    renderHeaderCell: () => {
+      return 'Quantidade';
+    },
+    renderCell: (item) => {
+      return (
+        <TableCellLayout truncate>{item.quantidade.label}</TableCellLayout>
       );
     },
   }),
@@ -215,6 +219,7 @@ type AdicionarProdutoProdutosDataGridProps = {
     | 'codigoAdicional'
     | 'categoriaId'
     | 'localizacao'
+    | 'quantidade'
     | 'ativo';
   termoBusca: string;
   sortState: DataGridProps['sortState'];
@@ -231,160 +236,51 @@ const getCellFocusMode = (columnId: TableColumnId): DataGridCellFocusMode => {
   }
 };
 
-export const PesquisarProdutoProdutosDataGrid = ({
+const columnSizeOptions = {
+  nome: { minWidth: 300, defaulWidth: 300 },
+  codigo: { minWidth: 80, defaulWidth: 80 },
+  codigoAdicional: { minWidth: 80, defaulWidth: 80 },
+  valor: { minWidth: 80, defaulWidth: 80 },
+  valorPromocional: { minWidth: 80, defaulWidth: 80 },
+  categoriaId: { minWidth: 120, defaulWidth: 120 },
+  localizacao: { minWidth: 120, defaulWidth: 120 },
+  quantidade: { minWidth: 80, defaulWidth: 80 },
+  ativo: { minWidth: 80, defaulWidth: 80 },
+};
+
+export const ProdutosDataGrid = ({
   tipoFiltro,
   termoBusca,
+  updateProdutosTrigger,
   sortState,
   onSortChange,
-  updateProdutosTrigger,
 }: AdicionarProdutoProdutosDataGridProps): JSXElement => {
-  const [produtos, setProdutos] = useState<ProdutoResponseDTO[]>([]);
-  const [categoriasMap, setCategoriasMap] = useState<Record<string, string>>(
-    {}
-  );
-  const [carregandoProdutos, setCarregandoProdutos] = useState(false);
-  const [selectedRows, setSelectedRows] = useState(new Set<TableRowId>());
-
-  const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
-  const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
-  const [produtoAtivo, setProdutoAtivo] = useState<Item | null>(null);
-
-  const [produto, setProduto] = useState<ProdutoResponseDTO>();
-  const [carregandoProduto, setCarregandoProduto] = useState(true);
-
-  const [estoques, setEstoques] = useState<EstoqueResponseDTO[]>([]);
-
-  const restoreFocusSourceAttributes = useRestoreFocusSource();
-
-  const notify = useAppToast();
-
-  const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
-    setSelectedRows(data.selectedItems);
-  };
-
-  useEffect(() => {
-    async function carregarProdutosCategorias() {
-      try {
-        setCarregandoProdutos(true);
-        const produtosData = await listarProdutos();
-        const categoriasData = await obterCategorias();
-
-        if (produtoAtivo?.id) {
-          const estoqueData = await listarEstoquesPorProdutoId(
-            produtoAtivo.id.label
-          );
-          return setEstoques(estoqueData);
-        } else {
-          setEstoques([]);
-        }
-
-        const categoriasDictionay: Record<string, string> = {};
-
-        categoriasData.forEach((cat) => {
-          categoriasDictionay[cat.id] = cat.nome;
-        });
-
-        setCategoriasMap(categoriasDictionay);
-        setProdutos(produtosData);
-      } catch (error) {
-        const err = error as AppError;
-        setProdutos([]);
-        notify({
-          intent: err.intent || 'error',
-          title: 'Carregar produtos',
-          body: err.message || 'Falha ao processar a requisição.',
-        });
-
-        console.error(`Error ao carregar os produtos, error: `, error);
-      } finally {
-        setCarregandoProdutos(false);
-      }
-    }
-    void carregarProdutosCategorias().catch(console.error);
-  }, [updateProdutosTrigger, notify, produtoAtivo?.id]);
-
-  useEffect(() => {
-    async function carregarProduto() {
-      if (!produtoAtivo) return;
-
-      try {
-        setCarregandoProduto(true);
-        const produtosData = await obterProdutoById(produtoAtivo.id.label);
-        setProduto(produtosData);
-        notify({
-          intent: 'success',
-          title: 'Carregar produto',
-          body: 'Produto carregado com sucesso.',
-          subtitle: `Código: ${produtoAtivo.codigo.label}, Descrição: ${produtoAtivo.nome.label}.`,
-        });
-      } catch (error) {
-        console.error(`Error ao carregar os produto, error: `, error);
-      } finally {
-        setCarregandoProduto(false);
-      }
-    }
-    carregarProduto();
-  }, [notify, produtoAtivo]);
-
-  const items: Item[] = useMemo(() => {
-    if (!Array.isArray(produtos)) {
-      return [];
-    }
-
-    const regrasFiltro: Record<
-      string,
-      (produto: ProdutoResponseDTO) => boolean
-    > = {
-      nome: (produto) => produto.nome.includes(termoBusca),
-      codigo: (produto) => produto.codigo.includes(termoBusca),
-      codigoAdicional: (produto) =>
-        (produto.codigoAdicional || '').includes(termoBusca),
-      categoriaId: (produto) =>
-        (categoriasMap[produto.categoriaId] || '').includes(termoBusca),
-      ativo: (produto) => (produto.ativo ? 'SIM' : 'NÃO').includes(termoBusca),
-    };
-
-    const produtosFiltrados = produtos.filter((produto) => {
-      if (!termoBusca.trim()) return true;
-
-      const regra = regrasFiltro[tipoFiltro];
-      return regra(produto);
-    });
-
-    return produtosFiltrados.map((produto) => {
-      return {
-        id: { label: produto.id },
-        nome: { label: produto.nome },
-        codigo: { label: produto.codigo },
-        codigoAdicional: {
-          label: produto.codigoAdicional ?? '',
-        },
-        valor: { label: formatCurrencyBRL(produto.valor) },
-        valorPromocional: {
-          label: formatCurrencyBRL(produto.valorPromocional),
-        },
-        categoriaId: {
-          label: categoriasMap[produto.categoriaId] ?? 'DESCONHECIDA',
-        },
-        localizacao: { label: '' },
-        ativo: { label: produto.ativo ? 'SIM' : 'NÃO' },
-      };
-    });
-  }, [produtos, categoriasMap, termoBusca, tipoFiltro]);
-
-  const handleEditClick = (item: Item) => {
-    setProdutoAtivo(item);
-    setIsEditDrawerOpen(true);
-  };
-
-  const handleViewClick = (item: Item) => {
-    setProdutoAtivo(item);
-    setIsViewDrawerOpen(true);
-  };
+  const {
+    items,
+    produto,
+    produtoAtivo,
+    carregandoProduto,
+    carregandoProdutos,
+    estoques,
+    categoriasMap,
+    onSelectionChange,
+    selectedRows,
+    isEditDrawerOpen,
+    setIsEditDrawerOpen,
+    isViewDrawerOpen,
+    setIsViewDrawerOpen,
+    handleViewClick,
+    handleEditClick,
+    restoreFocusSourceAttributes,
+  } = useProdutosDataGrid({
+    tipoFiltro,
+    termoBusca,
+    updateProdutosTrigger,
+  });
 
   const gridColumns = useMemo(
     () => getColumns(handleEditClick, handleViewClick),
-    []
+    [handleEditClick, handleViewClick]
   );
 
   return (
@@ -394,6 +290,8 @@ export const PesquisarProdutoProdutosDataGrid = ({
         columns={gridColumns}
         selectionMode={'single'}
         subtleSelection={true}
+        resizableColumns
+        columnSizingOptions={columnSizeOptions}
         selectedItems={selectedRows}
         onSelectionChange={onSelectionChange}
         getRowId={(item) => item.id.label}
