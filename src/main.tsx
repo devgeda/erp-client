@@ -1,8 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
-import App from './App.tsx';
-import { ToastContextProvider } from '@/api/context/ToastContextProvider.tsx';
+import App from './app/App.tsx';
+import { ToastContextProvider } from '@/app/providers/ToastContextProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

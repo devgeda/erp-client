@@ -1,0 +1,202 @@
+import {
+  Button,
+  type DataGridProps,
+  Divider,
+  Field,
+  Input,
+  Portal,
+  Toolbar,
+  ToolbarButton,
+  ToolbarDivider,
+} from '@fluentui/react-components';
+import { useState } from 'react';
+
+import {
+  ArrowRepeatAll20Regular,
+  ArrowReset24Regular,
+  ChevronDown24Regular,
+  ChevronUp24Regular,
+  TextSortAscending24Regular,
+  TextSortDescending24Regular,
+} from '@fluentui/react-icons';
+import { ProdutosDataGrid } from '@/shared/components/ProdutosDataGrid.tsx';
+import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
+import { useAppToast } from '@/app/context/ToastContext.tsx';
+
+export const PesquisarProduto = () => {
+  const styles = sharedStyles();
+  const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [termoBusca, setTermoBusca] = useState('');
+  const estadoOrdenacaoInicial = {
+    sortColumn: 'nome',
+    sortDirection: 'ascending' as const,
+  };
+  const [sortState, setSortState] = useState<DataGridProps['sortState']>(
+    estadoOrdenacaoInicial
+  );
+  const [updateProdutosTrigger, setUpdateProdutosTrigger] = useState(0);
+  const notify = useAppToast();
+
+  const [tipoFiltroAtivo, setTipoFiltroAtivo] = useState<
+    | 'nome'
+    | 'codigo'
+    | 'codigoAdicional'
+    | 'categoriaId'
+    | 'localizacao'
+    | 'ativo'
+  >('nome');
+
+  const placeholders: Record<string, string> = {
+    nome: 'Nome',
+    codigo: 'Código',
+    codigoAdicional: 'Código Adicional',
+    categoriaId: 'Categoria',
+    localizacao: 'Localização',
+    ativo: 'Ativo',
+  };
+
+  return (
+    <>
+      <div className={styles.card}>
+        <div className={styles.toolbar}>
+          <div className={styles.toolbarSearchBox}>
+            <Field className={styles.fullWidth}>
+              <Input
+                className={styles.fullWidth}
+                type="text"
+                style={{ textTransform: 'uppercase' }}
+                placeholder={`Pesquisar por ${placeholders[tipoFiltroAtivo] || 'Nome'} ...`}
+                value={termoBusca}
+                onChange={(e) => setTermoBusca(e.target.value.toUpperCase())}
+              />
+            </Field>
+          </div>
+          <div className={styles.toolbarButtonsRight}>
+            <Divider vertical={true} />
+            <div className={styles.toolbarSortersAndFilters}>
+              <Toolbar>
+                <ToolbarButton
+                  onClick={() =>
+                    setSortState((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            sortColumn: tipoFiltroAtivo,
+                            sortDirection: 'ascending',
+                          }
+                        : estadoOrdenacaoInicial
+                    )
+                  }
+                  icon={<TextSortAscending24Regular />}
+                >
+                  Crescente
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() =>
+                    setSortState((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            sortColumn: tipoFiltroAtivo,
+                            sortDirection: 'descending',
+                          }
+                        : estadoOrdenacaoInicial
+                    )
+                  }
+                  icon={<TextSortDescending24Regular />}
+                >
+                  Decrescente
+                </ToolbarButton>
+                <ToolbarButton
+                  onClick={() => {
+                    setSortState(estadoOrdenacaoInicial);
+                    notify({
+                      intent: 'info',
+                      title: 'Redefinir ordenação',
+                      body: 'A ordenação foi redefinida.',
+                      subtitle: `Coluna: ${estadoOrdenacaoInicial.sortColumn}, Direção: ${estadoOrdenacaoInicial.sortDirection === 'ascending' ? 'crescente' : 'decrescente'}.`,
+                    });
+                  }}
+                  icon={<ArrowReset24Regular />}
+                >
+                  Redefinir Ordenação
+                </ToolbarButton>
+                <ToolbarDivider />
+                <ToolbarButton
+                  onClick={() => setOpen(!open)}
+                  icon={
+                    open ? <ChevronUp24Regular /> : <ChevronDown24Regular />
+                  }
+                  appearance="transparent"
+                >
+                  Filtros
+                </ToolbarButton>
+              </Toolbar>
+              <div className={styles.buttonGroup}>
+                <Button
+                  icon={<ArrowRepeatAll20Regular />}
+                  onClick={() => {
+                    setUpdateProdutosTrigger((prev) => prev + 1);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ref={setMountNode} />
+        {open && mountNode && (
+          <Portal mountNode={mountNode}>
+            <div className={styles.portalContainer}>
+              <div className={styles.filtersWrapper}>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('nome')}
+                >
+                  Filtrar por Nome
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('codigo')}
+                >
+                  Filtrar por Código
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('codigoAdicional')}
+                >
+                  Filtrar por Código Adicional
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('categoriaId')}
+                >
+                  Filtrar por Categoria
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('localizacao')}
+                >
+                  Filtrar por Localização
+                </Button>
+                <Button
+                  appearance={'subtle'}
+                  onClick={() => setTipoFiltroAtivo('ativo')}
+                >
+                  Filtrar por Ativo
+                </Button>
+              </div>
+            </div>
+          </Portal>
+        )}
+        <ProdutosDataGrid
+          tipoFiltro={tipoFiltroAtivo}
+          updateProdutosTrigger={updateProdutosTrigger}
+          termoBusca={termoBusca}
+          sortState={sortState}
+          onSortChange={setSortState}
+        />
+      </div>
+    </>
+  );
+};
