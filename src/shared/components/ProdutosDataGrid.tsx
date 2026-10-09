@@ -224,7 +224,6 @@ type AdicionarProdutoProdutosDataGridProps = {
   termoBusca: string;
   sortState: DataGridProps['sortState'];
   onSortChange: (nextSortState: DataGridProps['sortState']) => void;
-  updateProdutosTrigger: number;
 };
 
 const getCellFocusMode = (columnId: TableColumnId): DataGridCellFocusMode => {
@@ -251,7 +250,6 @@ const columnSizeOptions = {
 export const ProdutosDataGrid = ({
   tipoFiltro,
   termoBusca,
-  updateProdutosTrigger,
   sortState,
   onSortChange,
 }: AdicionarProdutoProdutosDataGridProps): JSXElement => {
@@ -275,7 +273,6 @@ export const ProdutosDataGrid = ({
   } = useProdutosDataGrid({
     tipoFiltro,
     termoBusca,
-    updateProdutosTrigger,
   });
 
   const gridColumns = useMemo(

@@ -2,7 +2,7 @@ import { useAppToast } from '@/app/context/ToastContext.tsx';
 import { useEffect, useState } from 'react';
 import type { CategoriaResponseDTO } from '@/features/categorias/categoria.types.tsx';
 import type { EstoqueResponseDTO } from '@/features/estoque/estoque.types.tsx';
-import { produtoFormSchema } from '@/features/produtos/produto.schemas.tsx';
+import { produtoFormSchema } from '@/features/estoque/produto.schemas.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type {
   ProdutoFormInput,
@@ -13,7 +13,7 @@ import type { AppError } from '@/shared/api/client.tsx';
 import { obterCategorias } from '@/features/categorias/categoria.service.tsx';
 import { obterLocalizacaoPorId } from '@/features/localizacao/localizacao.service.tsx';
 import { obterEstoques } from '@/features/estoque/estoque.service.tsx';
-import { criarProduto } from '@/features/produtos/produto.service.tsx';
+import { criarProduto } from '@/features/estoque/produto.service.tsx';
 import { parseCurrencyToNumber } from '@/shared/utils/formatters.tsx';
 
 /**

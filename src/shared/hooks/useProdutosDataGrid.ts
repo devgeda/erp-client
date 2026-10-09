@@ -7,19 +7,16 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   listarProdutos,
   obterProdutoById,
-} from '@/features/produtos/produto.service.tsx';
-import { obterCategorias } from '@/features/categorias/categoria.service.tsx';
-import {
-  listarEstoquesPorProdutoId,
-  obterEstoques,
-} from '@/features/estoque/estoque.service.tsx';
+} from '@/features/estoque/produto.service.tsx';
+import { obterEstoques } from '@/features/estoque/estoque.service.tsx';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
-import type { ProdutoResponseDTO } from '@/features/produtos/produto.types.tsx';
+import type { ProdutoResponseDTO } from '@/features/estoque/produto.types.tsx';
 import type { Item } from '@/shared/components/ProdutosDataGrid.tsx';
 import type { EstoqueResponseDTO } from '@/features/estoque/estoque.types.tsx';
 import type { AppError } from '@/shared/api/client.tsx';
 import { formatCurrencyBRL } from '@/shared/utils/formatters.tsx';
 import { obterLocalizacaoPorId } from '@/features/localizacao/localizacao.service.tsx';
+import { useQuery } from '@tanstack/react-query';
 
 interface useProdutosDataGridProps {
   tipoFiltro:
@@ -31,23 +28,17 @@ interface useProdutosDataGridProps {
     | 'quantidade'
     | 'ativo';
   termoBusca: string;
-  updateProdutosTrigger: number;
 }
 
 export const useProdutosDataGrid = ({
   tipoFiltro,
   termoBusca,
-  updateProdutosTrigger,
 }: useProdutosDataGridProps) => {
   // Implementa o hook useAppToast para gerenciar as notificações via Toast.
   const notify = useAppToast();
 
   // RestoreFocusSourceAttributes para os drawers.
   const restoreFocusSourceAttributes = useRestoreFocusSource();
-
-  // Estados dos produtos.
-  const [produtos, setProdutos] = useState<ProdutoResponseDTO[]>([]);
-  const [carregandoProdutos, setCarregandoProdutos] = useState(false);
 
   // Estados do produto.
   const [produto, setProduto] = useState<ProdutoResponseDTO>();
@@ -77,6 +68,23 @@ export const useProdutosDataGrid = ({
   // Estados dos Drawers.
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
+
+  const { data: produtos = [], isLoading: carregandoProdutos } = useQuery({
+    queryKey: ['produtos'],
+    queryFn: async () => await listarProdutos(),
+  });
+
+  const {
+    data,
+    isLoading: carregandoEstoques,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['carregandoEstoques', produto?.id],
+    queryFn: async () => {
+      const estoques = await obterEstoques();
+    },
+  });
 
   // Use Effect de carregamento de estoques.
   useEffect(() => {
@@ -120,48 +128,6 @@ export const useProdutosDataGrid = ({
 
     void carregarEstoques().catch(console.error);
   }, [notify]);
-
-  // Use Effect de carregamento de produtos.
-  useEffect(() => {
-    async function carregarProdutosCategorias() {
-      try {
-        setCarregandoProdutos(true);
-        const produtosData = await listarProdutos();
-        const categoriasData = await obterCategorias();
-
-        if (produtoAtivo?.id) {
-          const estoqueData = await listarEstoquesPorProdutoId(
-            produtoAtivo.id.label
-          );
-          return setEstoques(estoqueData);
-        } else {
-          setEstoques([]);
-        }
-
-        const categoriasDictionay: Record<string, string> = {};
-
-        categoriasData.forEach((cat) => {
-          categoriasDictionay[cat.id] = cat.nome;
-        });
-
-        setCategoriasMap(categoriasDictionay);
-        setProdutos(produtosData);
-      } catch (error) {
-        const err = error as AppError;
-        setProdutos([]);
-        notify({
-          intent: err.intent || 'error',
-          title: 'Carregar produtos',
-          body: err.message || 'Falha ao processar a requisição.',
-        });
-
-        console.error(`Error ao carregar os produtos, error: `, error);
-      } finally {
-        setCarregandoProdutos(false);
-      }
-    }
-    void carregarProdutosCategorias().catch(console.error);
-  }, [updateProdutosTrigger, notify, produtoAtivo?.id]);
 
   // Use Effect de carregamento do produto.
   useEffect(() => {
@@ -257,11 +223,11 @@ export const useProdutosDataGrid = ({
 
   return {
     items,
-    produtos,
-    carregandoProdutos,
     produto,
+    produtos,
     produtoAtivo,
     carregandoProduto,
+    carregandoProdutos,
 
     estoques,
 

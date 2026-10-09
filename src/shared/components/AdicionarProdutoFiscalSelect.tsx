@@ -8,8 +8,8 @@ import {
 import { type Control, Controller, type Path } from 'react-hook-form';
 import type { ProdutoFormInput } from '@/features/estoque/AdicionarProduto.tsx';
 import { type ReactElement, useEffect, useState } from 'react';
-import { listarProdutoFiscal } from '@/features/produtos/produto.service.tsx';
-import type { ProdutoFiscalResponseDTO } from '@/features/produtos/produto.types.tsx';
+import { listarProdutoFiscal } from '@/features/estoque/produto.service.tsx';
+import type { ProdutoFiscalResponseDTO } from '@/features/estoque/produto.types.tsx';
 import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
 
 export interface AdicionarProdutoFiscalSelectProps {

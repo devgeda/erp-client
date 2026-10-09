@@ -191,7 +191,6 @@ export const PesquisarProduto = () => {
         )}
         <ProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}
-          updateProdutosTrigger={updateProdutosTrigger}
           termoBusca={termoBusca}
           sortState={sortState}
           onSortChange={setSortState}

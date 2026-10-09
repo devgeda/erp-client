@@ -2,7 +2,7 @@ import type {
   ProdutoFiscalResponseDTO,
   ProdutoRequestDTO,
   ProdutoResponseDTO,
-} from '@/features/produtos/produto.types.tsx';
+} from '@/features/estoque/produto.types.tsx';
 import { api } from '@/shared/api/client.tsx';
 
 export async function criarProduto(data: ProdutoRequestDTO) {

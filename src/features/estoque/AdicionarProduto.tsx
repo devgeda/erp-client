@@ -16,7 +16,7 @@ import {
   Save24Regular,
 } from '@fluentui/react-icons';
 import { Controller } from 'react-hook-form';
-import { produtoFormSchema } from '@/features/produtos/produto.schemas.tsx';
+import { produtoFormSchema } from '@/features/estoque/produto.schemas.tsx';
 import { z } from 'zod';
 import { AdicionarProdutoCategoriaDialog } from '@/shared/components/AdicionarProdutoCategoriaDialog.tsx';
 import {

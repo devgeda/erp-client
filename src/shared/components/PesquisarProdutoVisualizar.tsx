@@ -9,7 +9,7 @@ import {
   Text,
 } from '@fluentui/react-components';
 import { Dismiss24Regular } from '@fluentui/react-icons';
-import type { ProdutoResponseDTO } from '@/features/produtos/produto.types.tsx';
+import type { ProdutoResponseDTO } from '@/features/estoque/produto.types.tsx';
 import {
   formatCurrencyBRL,
   formatPercent,
