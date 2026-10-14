@@ -47,7 +47,6 @@ export const useProdutosDataGrid = ({
 
   // Estados dos estoques.
   const [estoques, setEstoques] = useState<EstoqueResponseDTO[]>([]);
-  const [carregandoEstoques, setCarregandoEstoques] = useState(true);
 
   // Estados de localização.
   const [localizacaoMap, setLocalizacaoMap] = useState<Record<string, string>>(
