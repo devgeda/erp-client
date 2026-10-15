@@ -19,7 +19,7 @@ import {
   TextSortAscending24Regular,
   TextSortDescending24Regular,
 } from '@fluentui/react-icons';
-import { ProdutosDataGrid } from '@/shared/components/ProdutosDataGrid.tsx';
+import { ProdutosDataGrid } from '@/features/estoque/pesquisa/ProdutosDataGrid.tsx';
 import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
 

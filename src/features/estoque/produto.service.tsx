@@ -11,7 +11,7 @@ export async function criarProduto(data: ProdutoRequestDTO) {
   return response.data;
 }
 
-export async function listarProdutos() {
+export async function getProdutos() {
   const response = await api.get<ProdutoResponseDTO[]>('/produtos');
 
   return response.data;

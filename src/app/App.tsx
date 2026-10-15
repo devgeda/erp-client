@@ -1,4 +1,4 @@
-import '@/App.css';
+import '@/index.css';
 import { AppRoutes } from '@/shared/routes/AppRoutes.tsx';
 
 function App() {

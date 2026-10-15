@@ -9,7 +9,7 @@ export async function criarEstoque(data: EstoqueRequestDTO) {
   return response.data;
 }
 
-export async function obterEstoques() {
+export async function getEstoques() {
   const response = await api.get<EstoqueResponseDTO[]>('/estoques');
   return response.data;
 }

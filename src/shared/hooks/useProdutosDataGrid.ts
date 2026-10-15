@@ -3,20 +3,18 @@ import {
   type TableRowId,
   useRestoreFocusSource,
 } from '@fluentui/react-components';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
-  listarProdutos,
+  getProdutos,
   obterProdutoById,
 } from '@/features/estoque/produto.service.tsx';
-import { obterEstoques } from '@/features/estoque/estoque.service.tsx';
+import { getEstoques } from '@/features/estoque/estoque.service.tsx';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
 import type { ProdutoResponseDTO } from '@/features/estoque/produto.types.tsx';
-import type { Item } from '@/shared/components/ProdutosDataGrid.tsx';
-import type { EstoqueResponseDTO } from '@/features/estoque/estoque.types.tsx';
-import type { AppError } from '@/shared/api/client.tsx';
 import { formatCurrencyBRL } from '@/shared/utils/formatters.tsx';
 import { obterLocalizacaoPorId } from '@/features/localizacao/localizacao.service.tsx';
 import { useQuery } from '@tanstack/react-query';
+import { getCategorias } from '@/features/categorias/categoria.service.tsx';
 
 interface useProdutosDataGridProps {
   tipoFiltro:
@@ -37,26 +35,13 @@ export const useProdutosDataGrid = ({
   // Implementa o hook useAppToast para gerenciar as notificações via Toast.
   const notify = useAppToast();
 
+  // Implementa o estado do produto ativo.
+  const [produtoAtivo, setProdutoAtivo] = useState<ProdutoResponseDTO | null>(
+    null
+  );
+
   // RestoreFocusSourceAttributes para os drawers.
   const restoreFocusSourceAttributes = useRestoreFocusSource();
-
-  // Estados do produto.
-  const [produto, setProduto] = useState<ProdutoResponseDTO>();
-  const [produtoAtivo, setProdutoAtivo] = useState<Item | null>(null);
-  const [carregandoProduto, setCarregandoProduto] = useState(true);
-
-  // Estados dos estoques.
-  const [estoques, setEstoques] = useState<EstoqueResponseDTO[]>([]);
-
-  // Estados de localização.
-  const [localizacaoMap, setLocalizacaoMap] = useState<Record<string, string>>(
-    {}
-  );
-
-  // Estados das categorias.
-  const [categoriasMap, setCategoriasMap] = useState<Record<string, string>>(
-    {}
-  );
 
   // Estados da selectedRow.
   const [selectedRows, setSelectedRows] = useState(new Set<TableRowId>());
@@ -68,91 +53,85 @@ export const useProdutosDataGrid = ({
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
 
+  // useQuery de listagem de produtos.
   const { data: produtos = [], isLoading: carregandoProdutos } = useQuery({
-    queryKey: ['produtos'],
-    queryFn: async () => await listarProdutos(),
+    queryKey: ['produtos', { tipoFiltro, termoBusca }],
+    queryFn: async () => await getProdutos(),
   });
 
-  const {
-    data,
-    isLoading: carregandoEstoques,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['carregandoEstoques', produto?.id],
+  // useQuery de listagem de categorias.
+  const { data: categoriasData = [] } = useQuery({
+    queryKey: ['categoriaId'],
+    queryFn: async () => await getCategorias(),
+    staleTime: 1000 * 60 * 5, // 5 minutos.
+  });
+
+  // useQuery de produto.
+  const { data: produto, isLoading: carregandoProduto } = useQuery({
+    queryKey: ['produto', produtoAtivo?.id],
     queryFn: async () => {
-      const estoques = await obterEstoques();
+      const prod = await obterProdutoById(produtoAtivo!.id);
+      notify({
+        intent: 'success',
+        title: 'Carregar produto',
+        body: 'Produto carregado com sucesso.',
+        subtitle: `Código: ${produtoAtivo!.codigo}, Descrição: ${produtoAtivo!.nome}.`,
+      });
+      return prod;
     },
+    enabled: !!produtoAtivo, // Só roda se o drawer for aberto (produtoAtivo preenchido)
   });
 
-  // Use Effect de carregamento de estoques.
-  useEffect(() => {
-    if (!produto?.id) return;
+  // useQuery de listagem de estoques e localizações.
+  const { data: estoquesData, isLoading: carregandoEstoques } = useQuery({
+    queryKey: ['estoques-localizacoes', produto?.id],
+    queryFn: async () => {
+      const estoques = await getEstoques();
 
-    async function carregarEstoques() {
-      try {
-        setCarregandoEstoques(true);
+      const estoquesDoProduto = estoques.filter(
+        (est) => est.produtoId === produto?.id
+      );
 
-        const estoques = await obterEstoques();
+      const localizacoesDictionary: Record<string, string> = {};
 
-        const localizacoesDictionary: Record<string, string> = {};
+      await Promise.all(
+        estoquesDoProduto.map(async (est) => {
+          if (!localizacoesDictionary[est.localizacaoId]) {
+            const loc = await obterLocalizacaoPorId(est.localizacaoId);
+            localizacoesDictionary[est.localizacaoId] = loc.codigo;
+          }
+        })
+      );
+      return {
+        lista: estoquesDoProduto,
+        localizacoesMap: localizacoesDictionary,
+      };
+    },
+    enabled: !!produto?.id,
+  });
 
-        const estoquesDoProduto = estoques.filter(
-          (est) => est.produtoId === produto?.id
-        );
+  // Dados da tabela de pesquisa de produtos.
+  const estoques = useMemo(
+    () => estoquesData?.lista || [],
+    [estoquesData?.lista]
+  );
 
-        await Promise.all(
-          estoquesDoProduto.map(async (est) => {
-            if (!localizacoesDictionary[est.localizacaoId]) {
-              const loc = await obterLocalizacaoPorId(est.localizacaoId);
-              localizacoesDictionary[est.localizacaoId] = loc.codigo;
-            }
-          })
-        );
+  const localizacaoMap = useMemo(
+    () => estoquesData?.localizacoesMap || {},
+    [estoquesData?.localizacoesMap]
+  );
 
-        setLocalizacaoMap(localizacoesDictionary);
-        setEstoques(estoquesDoProduto);
-      } catch (e) {
-        const error = e as AppError;
-        notify({
-          intent: error.intent || 'error',
-          title: 'Carregar estoques',
-          body: error.message || 'Falha ao processar a requisição.',
-        });
-        console.error('Erro ao carregar estoques:', error);
-      } finally {
-        setCarregandoEstoques(false);
-      }
-    }
+  // Mapeia o array de categorias para um dicionário
+  const categoriasMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    categoriasData.forEach((cat) => {
+      map[cat.id] = cat.nome;
+    });
+    return map;
+  }, [categoriasData]);
 
-    void carregarEstoques().catch(console.error);
-  }, [notify]);
-
-  // Use Effect de carregamento do produto.
-  useEffect(() => {
-    async function carregarProduto() {
-      if (!produtoAtivo) return;
-
-      try {
-        setCarregandoProduto(true);
-        const produtosData = await obterProdutoById(produtoAtivo.id.label);
-        setProduto(produtosData);
-        notify({
-          intent: 'success',
-          title: 'Carregar produto',
-          body: 'Produto carregado com sucesso.',
-          subtitle: `Código: ${produtoAtivo.codigo.label}, Descrição: ${produtoAtivo.nome.label}.`,
-        });
-      } catch (error) {
-        console.error(`Error ao carregar os produto, error: `, error);
-      } finally {
-        setCarregandoProduto(false);
-      }
-    }
-    carregarProduto();
-  }, [notify, produtoAtivo]);
-
-  const items: Item[] = useMemo(() => {
+  // Regras de filtragem e mapeamento dos itens.
+  const items = useMemo(() => {
     if (!Array.isArray(produtos)) {
       return [];
     }
@@ -179,24 +158,17 @@ export const useProdutosDataGrid = ({
 
     return produtosFiltrados.map((produto) => {
       return {
-        id: { label: produto.id },
-        nome: { label: produto.nome },
-        codigo: { label: produto.codigo },
-        codigoAdicional: {
-          label: produto.codigoAdicional ?? '',
-        },
-        valor: { label: formatCurrencyBRL(produto.valor) },
-        valorPromocional: {
-          label: formatCurrencyBRL(produto.valorPromocional),
-        },
-        categoriaId: {
-          label: categoriasMap[produto.categoriaId] ?? 'DESCONHECIDA',
-        },
-        localizacao: {
-          label: '',
-        },
-        quantidade: { label: '0' },
-        ativo: { label: produto.ativo ? 'SIM' : 'NÃO' },
+        id: produto.id,
+        nome: produto.nome,
+        codigo: produto.codigo,
+        codigoAdicional: produto.codigoAdicional ?? '',
+        valor: formatCurrencyBRL(produto.valor),
+        valorPromocional: formatCurrencyBRL(produto.valorPromocional),
+        categoriaId: categoriasMap[produto.categoriaId] ?? 'Sem Categoria',
+        localizacao:
+          estoques.map((e) => localizacaoMap[e.localizacaoId]) || 'Sem estoque',
+        quantidade: '0',
+        ativo: produto.ativo ? 'Sim' : 'Não',
       };
     });
   }, [
@@ -209,19 +181,20 @@ export const useProdutosDataGrid = ({
   ]);
 
   // Handler do trigger do drawer de edição de produto.
-  const handleEditClick = (item: Item) => {
+  const handleEditClick = (item: ProdutoResponseDTO) => {
     setProdutoAtivo(item);
     setIsEditDrawerOpen(true);
   };
 
   // Handler do trigger do drawer de visualização de produto.
-  const handleViewClick = (item: Item) => {
+  const handleViewClick = (item: ProdutoResponseDTO) => {
     setProdutoAtivo(item);
     setIsViewDrawerOpen(true);
   };
 
   return {
     items,
+
     produto,
     produtos,
     produtoAtivo,
@@ -229,6 +202,7 @@ export const useProdutosDataGrid = ({
     carregandoProdutos,
 
     estoques,
+    carregandoEstoques,
 
     categoriasMap,
 

@@ -16,7 +16,7 @@ export async function obterCategoriaPorId(id: string) {
   return response.data;
 }
 
-export async function obterCategorias() {
+export async function getCategorias() {
   const response = await api.get<CategoriaResponseDTO[]>(`/categorias`);
 
   return response.data;

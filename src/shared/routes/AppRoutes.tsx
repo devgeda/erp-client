@@ -10,7 +10,7 @@ import { AdicionarProduto } from '@/features/estoque/AdicionarProduto.tsx';
 import { HistoricoProduto } from '@/features/estoque/HistoricoProduto.tsx';
 import { LoginPage } from '@/features/autenticacao/LoginPage.tsx';
 import { SignupPage } from '@/features/autenticacao/SignupPage.tsx';
-import { PesquisarProduto } from '@/features/estoque/PesquisarProduto.tsx';
+import { PesquisarProduto } from '@/features/estoque/pesquisa/PesquisarProduto.tsx';
 import { Localizacoes } from '@/features/estoque/Localizacoes.tsx';
 
 export function ProtectedRoute() {

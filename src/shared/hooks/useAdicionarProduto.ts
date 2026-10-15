@@ -10,9 +10,9 @@ import type {
 } from '@/features/estoque/AdicionarProduto.tsx';
 import { useForm } from 'react-hook-form';
 import type { AppError } from '@/shared/api/client.tsx';
-import { obterCategorias } from '@/features/categorias/categoria.service.tsx';
+import { getCategorias } from '@/features/categorias/categoria.service.tsx';
 import { obterLocalizacaoPorId } from '@/features/localizacao/localizacao.service.tsx';
-import { obterEstoques } from '@/features/estoque/estoque.service.tsx';
+import { getEstoques } from '@/features/estoque/estoque.service.tsx';
 import { criarProduto } from '@/features/estoque/produto.service.tsx';
 import { parseCurrencyToNumber } from '@/shared/utils/formatters.tsx';
 
@@ -61,7 +61,7 @@ export const useAdicionarProduto = () => {
       try {
         setCarregandoCategorias(true);
 
-        const categoriasData = await obterCategorias();
+        const categoriasData = await getCategorias();
 
         categoriasData.sort((a, b) => a.nome.localeCompare(b.nome));
 
@@ -89,7 +89,7 @@ export const useAdicionarProduto = () => {
       try {
         setCarregandoEstoques(true);
 
-        const estoques = await obterEstoques();
+        const estoques = await getEstoques();
 
         const localizacoesDictionary: Record<string, string> = {};
 
