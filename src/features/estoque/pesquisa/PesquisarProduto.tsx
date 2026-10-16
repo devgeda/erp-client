@@ -1,6 +1,12 @@
 import { useState } from 'react';
+
+// Pages.
 import { ProdutosDataGrid } from '@/features/estoque/pesquisa/ProdutosDataGrid.tsx';
+
+// Hooks.
 import { useAppToast } from '@/app/context/ToastContext.tsx';
+
+// Components shascn/ui.
 import { Input } from '@/components/ui/input.tsx';
 
 export const PesquisarProduto = () => {
@@ -33,7 +39,7 @@ export const PesquisarProduto = () => {
 
   return (
     <>
-      <div className={styles.card}>
+      <Card>
         <div className={styles.toolbar}>
           <div className={styles.toolbarSearchBox}>
             <Field className={styles.fullWidth}>
