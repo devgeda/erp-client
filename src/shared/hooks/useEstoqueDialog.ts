@@ -1,14 +1,14 @@
 import { useForm } from 'react-hook-form';
-import type { EstoqueRequestDTO } from '@/features/estoque/estoque.types.tsx';
+import type { EstoqueRequestDTO } from '@/features/estoque/pesquisa/estoque.types.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { estoqueFormSchema } from '@/features/estoque/estoque.schemas.tsx';
+import { estoqueFormSchema } from '@/features/estoque/localizacao/estoque.schemas.tsx';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
 import { useEffect, useState } from 'react';
-import { listarLocalizacoes } from '@/features/localizacao/localizacao.service.tsx';
+import { listarLocalizacoes } from '@/features/estoque/localizacao/localizacao.service.tsx';
 import type { AppError } from '@/shared/api/client.tsx';
-import { criarEstoque } from '@/features/estoque/estoque.service.tsx';
+import { criarEstoque } from '@/features/estoque/pesquisa/estoque.service.tsx';
 import { onNestedSubmit } from '@/shared/utils/nestedFormSubmit.tsx';
-import type { LocalizacaoResponseDTO } from '@/features/localizacao/localizacao.types.tsx';
+import type { LocalizacaoResponseDTO } from '@/features/estoque/localizacao/localizacao.types.tsx';
 
 /** Interface para parâmetros do hook. */
 interface useEstoqueDialogProps {

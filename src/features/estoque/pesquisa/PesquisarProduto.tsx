@@ -1,30 +1,9 @@
-import {
-  Button,
-  type DataGridProps,
-  Divider,
-  Field,
-  Input,
-  Portal,
-  Toolbar,
-  ToolbarButton,
-  ToolbarDivider,
-} from '@fluentui/react-components';
 import { useState } from 'react';
-
-import {
-  ArrowRepeatAll20Regular,
-  ArrowReset24Regular,
-  ChevronDown24Regular,
-  ChevronUp24Regular,
-  TextSortAscending24Regular,
-  TextSortDescending24Regular,
-} from '@fluentui/react-icons';
 import { ProdutosDataGrid } from '@/features/estoque/pesquisa/ProdutosDataGrid.tsx';
-import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
+import { Input } from '@/components/ui/input.tsx';
 
 export const PesquisarProduto = () => {
-  const styles = sharedStyles();
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [termoBusca, setTermoBusca] = useState('');
@@ -32,10 +11,6 @@ export const PesquisarProduto = () => {
     sortColumn: 'nome',
     sortDirection: 'ascending' as const,
   };
-  const [sortState, setSortState] = useState<DataGridProps['sortState']>(
-    estadoOrdenacaoInicial
-  );
-  const [updateProdutosTrigger, setUpdateProdutosTrigger] = useState(0);
   const notify = useAppToast();
 
   const [tipoFiltroAtivo, setTipoFiltroAtivo] = useState<
@@ -64,7 +39,7 @@ export const PesquisarProduto = () => {
             <Field className={styles.fullWidth}>
               <Input
                 className={styles.fullWidth}
-                type="text"
+                type={'text'}
                 style={{ textTransform: 'uppercase' }}
                 placeholder={`Pesquisar por ${placeholders[tipoFiltroAtivo] || 'Nome'} ...`}
                 value={termoBusca}
@@ -128,7 +103,7 @@ export const PesquisarProduto = () => {
                   icon={
                     open ? <ChevronUp24Regular /> : <ChevronDown24Regular />
                   }
-                  appearance="transparent"
+                  appearance={'transparent'}
                 >
                   Filtros
                 </ToolbarButton>
@@ -192,8 +167,6 @@ export const PesquisarProduto = () => {
         <ProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}
           termoBusca={termoBusca}
-          sortState={sortState}
-          onSortChange={setSortState}
         />
       </div>
     </>

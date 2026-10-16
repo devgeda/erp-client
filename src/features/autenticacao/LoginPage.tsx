@@ -1,11 +1,14 @@
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import {
-  Button,
   Card,
-  Field,
-  Input,
-  Link,
-  makeStyles,
-} from '@fluentui/react-components';
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
 import {
   login,
@@ -15,7 +18,9 @@ import {
 } from '@/features/autenticacao/auth.service.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
+import { Input } from '@/components/ui/input.tsx';
 
+/*
 const useStyles = makeStyles({
   root: {
     display: 'flex',
@@ -37,16 +42,13 @@ const useStyles = makeStyles({
     gap: '6px',
   },
 });
+*/
 
 export const LoginPage = () => {
-  const styles = useStyles();
+  // const styles = useStyles(); > implementado tailwindcss (v4).
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginRequestDTO>({
+  const { handleSubmit } = useForm<LoginRequestDTO>({
     resolver: zodResolver(loginFormSchema),
     mode: 'onChange',
   });
@@ -62,55 +64,64 @@ export const LoginPage = () => {
   }
 
   return (
-    <div className={styles.root}>
+    <div
+      className={
+        'flex h-screen w-full items-center justify-center box-border p-1.5'
+      }
+    >
       <Card>
-        <header>
-          <h1>Entrar na conta business.name</h1>
-          <h3>Insira um email e senha para acessar sua conta business.name.</h3>
-        </header>
+        <CardHeader>
+          <CardTitle>Entrar na conta business.name</CardTitle>
+          <CardDescription>
+            Insira um email e senha para acessar sua conta business.name.
+          </CardDescription>
+          <CardAction>
+            <Button variant={'link'}>Cadastrar-se</Button>
+          </CardAction>
+        </CardHeader>
 
-        <form id={'form-log-in'} onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className={styles.flexCol}>
-            <div>
-              <Field
-                label={'Email'}
-                validationState={errors.email ? 'error' : 'none'}
-                validationMessage={errors.email?.message}
-                required
-              >
+        <CardContent>
+          <form id={'form-log-in'} onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className={'flex flex-col gap-6'}>
+              <div className={'grid gap-2'}>
+                <Label htmlFor={'email'}>Email</Label>
                 <Input
-                  {...register('email')}
-                  id="email"
-                  type="email"
-                  placeholder="email@exemplo.com"
-                  autoComplete="off"
+                  id={'email'}
+                  type={'email'}
+                  placeholder={'email@exemplo.com'}
+                  required
                 />
-              </Field>
+              </div>
+              <div className={'grid gap-2'}>
+                <div className={'flex items-center'}>
+                  <Label htmlFor={'senha'}>Senha</Label>
+                  <a
+                    href={'#'}
+                    className={
+                      'ml-auto inline-block text-sm underline-offset-4 hover:underline'
+                    }
+                  >
+                    Esqueceu a senha?
+                  </a>
+                </div>
+                <Input id={'password'} type={'password'} required />
+              </div>{' '}
             </div>
-            <div>
-              <Field
-                label={'Senha'}
-                validationState={errors.senha ? 'error' : 'none'}
-                validationMessage={errors.senha?.message}
-                required
-              >
-                <Input {...register('senha')} type="password" />
-              </Field>
-              <Link href="#" className={styles.link}>
-                Esqueceu a senha?
-              </Link>
-            </div>
-          </div>
-          <Field>
-            <Button type={'submit'} appearance={'primary'}>
-              Entrar
-            </Button>
-          </Field>
-          <div className={styles.link}>
+          </form>
+        </CardContent>
+        <CardFooter>
+          <Button type={'submit'} variant={'default'}>
+            Entrar
+          </Button>
+          <a
+            className={
+              'ml-auto inline-block text-sm underline-offset-4 hover:underline'
+            }
+          >
             Não tem uma conta?
-            <Link href={'/sign-up'}>Cadastrar-se</Link>
-          </div>
-        </form>
+            <a href={'/sign-up'}>Cadastrar-se</a>
+          </a>
+        </CardFooter>
       </Card>
     </div>
   );

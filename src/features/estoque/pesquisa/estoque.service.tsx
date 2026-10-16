@@ -2,7 +2,7 @@ import { api } from '@/shared/api/client.tsx';
 import type {
   EstoqueRequestDTO,
   EstoqueResponseDTO,
-} from '@/features/estoque/estoque.types.tsx';
+} from '@/features/estoque/pesquisa/estoque.types.tsx';
 
 export async function criarEstoque(data: EstoqueRequestDTO) {
   const response = await api.post<EstoqueResponseDTO>('/estoques', data);

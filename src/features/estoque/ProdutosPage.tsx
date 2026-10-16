@@ -48,7 +48,7 @@ export const ProdutosPage = () => {
           <div>
             <Text
               size={300}
-              weight="semibold"
+              weight={"semibold"}
               style={{ color: tokens.colorBrandForeground1 }}
             >
               {sectionTitle}
@@ -62,18 +62,18 @@ export const ProdutosPage = () => {
           <TabList
             selectedValue={currentTab}
             onTabSelect={handleTabSelect}
-            size="medium"
+            size={"medium"}
           >
-            <Tab value="adicionar" icon={<Add24Regular />}>
+            <Tab value={"adicionar"} icon={<Add24Regular />}>
               Adicionar
             </Tab>
-            <Tab value="pesquisar" icon={<Search24Regular />}>
+            <Tab value={"pesquisar"} icon={<Search24Regular />}>
               Pesquisar
             </Tab>
-            <Tab value="localizacoes" icon={<BoxSearch24Regular />}>
+            <Tab value={"localizacoes"} icon={<BoxSearch24Regular />}>
               Localizações
             </Tab>
-            <Tab value="historico" icon={<History24Regular />}>
+            <Tab value={"historico"} icon={<History24Regular />}>
               Histórico
             </Tab>
           </TabList>

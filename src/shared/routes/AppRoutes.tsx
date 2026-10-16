@@ -4,20 +4,20 @@ import {
   Outlet,
   RouterProvider,
 } from 'react-router-dom';
-import { AppLayout } from '@/shared/components/layouts/AppLayout.tsx';
+import { AppLayout } from '@/app/layouts/AppLayout.tsx';
 import { ProdutosPage } from '@/features/estoque/ProdutosPage.tsx';
 import { AdicionarProduto } from '@/features/estoque/AdicionarProduto.tsx';
 import { HistoricoProduto } from '@/features/estoque/HistoricoProduto.tsx';
 import { LoginPage } from '@/features/autenticacao/LoginPage.tsx';
 import { SignupPage } from '@/features/autenticacao/SignupPage.tsx';
 import { PesquisarProduto } from '@/features/estoque/pesquisa/PesquisarProduto.tsx';
-import { Localizacoes } from '@/features/estoque/Localizacoes.tsx';
+import { Localizacoes } from '@/features/estoque/pesquisa/Localizacoes.tsx';
 
 export function ProtectedRoute() {
   const token = localStorage.getItem('token');
 
   if (!token) {
-    return <Navigate to="/log-in" />;
+    return <Navigate to={"/log-in"} />;
   }
 
   return <Outlet />;
@@ -27,7 +27,7 @@ export function PublicRoute() {
   const token = localStorage.getItem('token');
 
   if (token) {
-    return <Navigate to="/produtos" />;
+    return <Navigate to={"/produtos"} />;
   }
 
   return <Outlet />;
@@ -36,7 +36,7 @@ export function PublicRoute() {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/produtos" replace />,
+    element: <Navigate to={"/produtos/pesquisar"} replace />,
   },
   {
     element: <PublicRoute />,

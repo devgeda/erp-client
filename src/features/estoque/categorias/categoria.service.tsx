@@ -2,7 +2,7 @@ import { api } from '@/shared/api/client.tsx';
 import type {
   CategoriaRequestDTO,
   CategoriaResponseDTO,
-} from '@/features/categorias/categoria.types.tsx';
+} from '@/features/estoque/categorias/categoria.types.tsx';
 
 export async function criarCategoria(data: CategoriaRequestDTO) {
   const response = await api.post<CategoriaResponseDTO>('/categorias', data);

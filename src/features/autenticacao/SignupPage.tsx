@@ -68,7 +68,7 @@ export const SignupPage = () => {
 
   return (
     <div className={styles.root}>
-      <Card className="w-full max-w-sm">
+      <Card className={"w-full max-w-sm"}>
         <header>
           <h1>Cadastrar conta business.name</h1>
           <h3>Preencha os dados para criar sua conta business.name.</h3>
@@ -83,10 +83,10 @@ export const SignupPage = () => {
             >
               <Input
                 {...register('nome')}
-                id="nome"
-                type="text"
-                placeholder="Digite seu nome"
-                autoComplete="off"
+                id={"nome"}
+                type={"text"}
+                placeholder={"Digite seu nome"}
+                autoComplete={"off"}
               />
             </Field>
             <Field
@@ -97,10 +97,10 @@ export const SignupPage = () => {
             >
               <Input
                 {...register('email')}
-                id="email"
-                type="email"
-                placeholder="email@exemplo.com"
-                autoComplete="off"
+                id={"email"}
+                type={"email"}
+                placeholder={"email@exemplo.com"}
+                autoComplete={"off"}
               />
             </Field>
             <Field
@@ -111,10 +111,10 @@ export const SignupPage = () => {
             >
               <Input
                 {...register('senha')}
-                id="senha"
-                type="password"
-                placeholder="Digite uma senha"
-                autoComplete="off"
+                id={"senha"}
+                type={"password"}
+                placeholder={"Digite uma senha"}
+                autoComplete={"off"}
               />
             </Field>
             <Field
@@ -125,21 +125,21 @@ export const SignupPage = () => {
             >
               <Input
                 {...register('confirmarSenha')}
-                id="confirmarSenha"
-                type="password"
-                placeholder="Repita a senha"
-                autoComplete="off"
+                id={"confirmarSenha"}
+                type={"password"}
+                placeholder={"Repita a senha"}
+                autoComplete={"off"}
               />
             </Field>
           </div>
           <Field>
-            <Button type="submit" appearance={'primary'}>
+            <Button type={"submit"} appearance={'primary'}>
               Cadastar-se
             </Button>
           </Field>
           <div className={styles.link}>
             Já tem uma conta?
-            <Link href="/log-in">Entrar</Link>
+            <Link href={"/log-in"}>Entrar</Link>
           </div>
         </form>
       </Card>

@@ -1,7 +1,7 @@
 import { useAppToast } from '@/app/context/ToastContext.tsx';
 import { useEffect, useState } from 'react';
-import type { CategoriaResponseDTO } from '@/features/categorias/categoria.types.tsx';
-import type { EstoqueResponseDTO } from '@/features/estoque/estoque.types.tsx';
+import type { CategoriaResponseDTO } from '@/features/estoque/categorias/categoria.types.tsx';
+import type { EstoqueResponseDTO } from '@/features/estoque/pesquisa/estoque.types.tsx';
 import { produtoFormSchema } from '@/features/estoque/produto.schemas.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type {
@@ -10,9 +10,9 @@ import type {
 } from '@/features/estoque/AdicionarProduto.tsx';
 import { useForm } from 'react-hook-form';
 import type { AppError } from '@/shared/api/client.tsx';
-import { getCategorias } from '@/features/categorias/categoria.service.tsx';
-import { obterLocalizacaoPorId } from '@/features/localizacao/localizacao.service.tsx';
-import { getEstoques } from '@/features/estoque/estoque.service.tsx';
+import { getCategorias } from '@/features/estoque/categorias/categoria.service.tsx';
+import { obterLocalizacaoPorId } from '@/features/estoque/localizacao/localizacao.service.tsx';
+import { getEstoques } from '@/features/estoque/pesquisa/estoque.service.tsx';
 import { criarProduto } from '@/features/estoque/produto.service.tsx';
 import { parseCurrencyToNumber } from '@/shared/utils/formatters.tsx';
 

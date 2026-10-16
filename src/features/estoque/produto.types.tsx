@@ -49,7 +49,20 @@ export interface ProdutoResponseDTO {
   ivaSt: string;
 }
 
-export interface ProdutoFiscalResponseDTO {
+export type ProdutoBaseDTO = {
+  id: string;
+  nome: string;
+  codigo: string;
+  codigoAdicional: string;
+  valor: string;
+  valorPromocional: string;
+  categoria: string;
+  localizacao: string[];
+  quantidade: string;
+  ativo: string;
+};
+
+export interface ProdutoFiscalDTO {
   codigo: string;
   descricao: string;
   grupo: string;

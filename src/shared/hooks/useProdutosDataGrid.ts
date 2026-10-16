@@ -1,20 +1,17 @@
-import {
-  type DataGridProps,
-  type TableRowId,
-  useRestoreFocusSource,
-} from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import {
   getProdutos,
   obterProdutoById,
 } from '@/features/estoque/produto.service.tsx';
-import { getEstoques } from '@/features/estoque/estoque.service.tsx';
+import { getEstoques } from '@/features/estoque/pesquisa/estoque.service.tsx';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
-import type { ProdutoResponseDTO } from '@/features/estoque/produto.types.tsx';
-import { formatCurrencyBRL } from '@/shared/utils/formatters.tsx';
-import { obterLocalizacaoPorId } from '@/features/localizacao/localizacao.service.tsx';
+import type {
+  ProdutoBaseDTO,
+  ProdutoResponseDTO,
+} from '@/features/estoque/produto.types.tsx';
+import { obterLocalizacaoPorId } from '@/features/estoque/localizacao/localizacao.service.tsx';
 import { useQuery } from '@tanstack/react-query';
-import { getCategorias } from '@/features/categorias/categoria.service.tsx';
+import { getCategorias } from '@/features/estoque/categorias/categoria.service.tsx';
 
 interface useProdutosDataGridProps {
   tipoFiltro:
@@ -40,15 +37,6 @@ export const useProdutosDataGrid = ({
     null
   );
 
-  // RestoreFocusSourceAttributes para os drawers.
-  const restoreFocusSourceAttributes = useRestoreFocusSource();
-
-  // Estados da selectedRow.
-  const [selectedRows, setSelectedRows] = useState(new Set<TableRowId>());
-  const onSelectionChange: DataGridProps['onSelectionChange'] = (_e, data) => {
-    setSelectedRows(data.selectedItems);
-  };
-
   // Estados dos Drawers.
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
@@ -57,13 +45,6 @@ export const useProdutosDataGrid = ({
   const { data: produtos = [], isLoading: carregandoProdutos } = useQuery({
     queryKey: ['produtos', { tipoFiltro, termoBusca }],
     queryFn: async () => await getProdutos(),
-  });
-
-  // useQuery de listagem de categorias.
-  const { data: categoriasData = [] } = useQuery({
-    queryKey: ['categoriaId'],
-    queryFn: async () => await getCategorias(),
-    staleTime: 1000 * 60 * 5, // 5 minutos.
   });
 
   // useQuery de produto.
@@ -110,16 +91,18 @@ export const useProdutosDataGrid = ({
     enabled: !!produto?.id,
   });
 
-  // Dados da tabela de pesquisa de produtos.
+  // Dados da tabela de pesquisa de estoques.
   const estoques = useMemo(
     () => estoquesData?.lista || [],
     [estoquesData?.lista]
   );
 
-  const localizacaoMap = useMemo(
-    () => estoquesData?.localizacoesMap || {},
-    [estoquesData?.localizacoesMap]
-  );
+  // useQuery de listagem de categorias.
+  const { data: categoriasData = [] } = useQuery({
+    queryKey: ['categoriaId'],
+    queryFn: async () => await getCategorias(),
+    staleTime: 1000 * 60 * 5, // 5 minutos.
+  });
 
   // Mapeia o array de categorias para um dicionário
   const categoriasMap = useMemo(() => {
@@ -130,55 +113,28 @@ export const useProdutosDataGrid = ({
     return map;
   }, [categoriasData]);
 
-  // Regras de filtragem e mapeamento dos itens.
-  const items = useMemo(() => {
-    if (!Array.isArray(produtos)) {
-      return [];
-    }
+  const localizacaoMap = useMemo(
+    () => estoquesData?.localizacoesMap || {},
+    [estoquesData?.localizacoesMap]
+  );
 
-    const regrasFiltro: Record<
-      string,
-      (produto: ProdutoResponseDTO) => boolean
-    > = {
-      nome: (produto) => produto.nome.includes(termoBusca),
-      codigo: (produto) => produto.codigo.includes(termoBusca),
-      codigoAdicional: (produto) =>
-        (produto.codigoAdicional || '').includes(termoBusca),
-      categoriaId: (produto) =>
-        (categoriasMap[produto.categoriaId] || '').includes(termoBusca),
-      ativo: (produto) => (produto.ativo ? 'SIM' : 'NÃO').includes(termoBusca),
-    };
-
-    const produtosFiltrados = produtos.filter((produto) => {
-      if (!termoBusca.trim()) return true;
-
-      const regra = regrasFiltro[tipoFiltro];
-      return regra(produto);
-    });
-
-    return produtosFiltrados.map((produto) => {
+  const produtosLocalizados: ProdutoBaseDTO[] = produtos.map(
+    (p: ProdutoResponseDTO) => {
       return {
-        id: produto.id,
-        nome: produto.nome,
-        codigo: produto.codigo,
-        codigoAdicional: produto.codigoAdicional ?? '',
-        valor: formatCurrencyBRL(produto.valor),
-        valorPromocional: formatCurrencyBRL(produto.valorPromocional),
-        categoriaId: categoriasMap[produto.categoriaId] ?? 'Sem Categoria',
+        id: p.id,
+        nome: p.nome,
+        codigo: p.codigo,
+        codigoAdicional: p.codigoAdicional ?? '-',
+        valor: p.valor,
+        valorPromocional: p.valorPromocional,
+        categoria: categoriasMap[p.categoriaId],
         localizacao:
           estoques.map((e) => localizacaoMap[e.localizacaoId]) || 'Sem estoque',
         quantidade: '0',
-        ativo: produto.ativo ? 'Sim' : 'Não',
+        ativo: p.ativo ? 'Sim' : 'Não',
       };
-    });
-  }, [
-    produtos,
-    termoBusca,
-    categoriasMap,
-    tipoFiltro,
-    estoques,
-    localizacaoMap,
-  ]);
+    }
+  );
 
   // Handler do trigger do drawer de edição de produto.
   const handleEditClick = (item: ProdutoResponseDTO) => {
@@ -193,11 +149,10 @@ export const useProdutosDataGrid = ({
   };
 
   return {
-    items,
-
-    produto,
     produtos,
     produtoAtivo,
+    produtosLocalizados,
+
     carregandoProduto,
     carregandoProdutos,
 
@@ -206,9 +161,6 @@ export const useProdutosDataGrid = ({
 
     categoriasMap,
 
-    selectedRows,
-    onSelectionChange,
-
     isEditDrawerOpen,
     setIsEditDrawerOpen,
     isViewDrawerOpen,
@@ -216,6 +168,5 @@ export const useProdutosDataGrid = ({
 
     handleEditClick,
     handleViewClick,
-    restoreFocusSourceAttributes,
   };
 };

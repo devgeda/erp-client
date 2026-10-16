@@ -9,7 +9,7 @@ import { type Control, Controller, type Path } from 'react-hook-form';
 import type { ProdutoFormInput } from '@/features/estoque/AdicionarProduto.tsx';
 import { type ReactElement, useEffect, useState } from 'react';
 import { listarProdutoFiscal } from '@/features/estoque/produto.service.tsx';
-import type { ProdutoFiscalResponseDTO } from '@/features/estoque/produto.types.tsx';
+import type { ProdutoFiscalDTO } from '@/features/estoque/produto.types.tsx';
 import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
 
 export interface AdicionarProdutoFiscalSelectProps {
@@ -32,7 +32,7 @@ export const AdicionarProdutoFiscalSelect = ({
   disabled,
 }: AdicionarProdutoFiscalSelectProps): JSXElement => {
   const styles = sharedStyles();
-  const [fiscal, setFiscal] = useState<ProdutoFiscalResponseDTO[]>([]);
+  const [fiscal, setFiscal] = useState<ProdutoFiscalDTO[]>([]);
   const [carregandoFiscal, setCarregandoFiscal] = useState(true);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const AdicionarProdutoFiscalSelect = ({
   }, [endPointPath]);
 
   const fiscalAgrupado = (fiscal || []).reduce<
-    Record<string, ProdutoFiscalResponseDTO[]>
+    Record<string, ProdutoFiscalDTO[]>
   >((acc, atual) => {
     if (!acc[atual.grupo]) {
       acc[atual.grupo] = [];

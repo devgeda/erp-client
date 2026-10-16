@@ -60,7 +60,7 @@ export const AdicionarProduto = () => {
 
   return (
     <form
-      id="form-adicionar-produto"
+      id={"form-adicionar-produto"}
       className={styles.root}
       onSubmit={onSubmit}
       noValidate
@@ -68,7 +68,7 @@ export const AdicionarProduto = () => {
       {/* INFORMAÇÕES */}
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          <Text size={500} weight="semibold" className={styles.cardTitle}>
+          <Text size={500} weight={"semibold"} className={styles.cardTitle}>
             Informações Gerais
           </Text>
           <Field
@@ -95,7 +95,7 @@ export const AdicionarProduto = () => {
             render={({ field }) => (
               <Field
                 id={'nome'}
-                label="Nome do Produto"
+                label={"Nome do Produto"}
                 validationState={errors.nome ? 'error' : 'none'}
                 validationMessage={errors.nome?.message}
                 required
@@ -119,7 +119,7 @@ export const AdicionarProduto = () => {
             render={({ field }) => (
               <Field
                 id={'codigo'}
-                label="Código do Produto"
+                label={"Código do Produto"}
                 validationState={errors.codigo ? 'error' : 'none'}
                 validationMessage={errors.codigo?.message}
                 required
@@ -143,7 +143,7 @@ export const AdicionarProduto = () => {
             render={({ field }) => (
               <Field
                 id={'codigoAdicional'}
-                label="Código Adicional"
+                label={"Código Adicional"}
                 validationState={errors.codigoAdicional ? 'error' : 'none'}
                 validationMessage={errors.codigoAdicional?.message}
               >
@@ -164,7 +164,7 @@ export const AdicionarProduto = () => {
       {/* CATEGORIA */}
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          <Text size={500} weight="semibold" className={styles.cardTitle}>
+          <Text size={500} weight={"semibold"} className={styles.cardTitle}>
             Categoria
           </Text>
           <div className={styles.buttonGroup}>
@@ -196,7 +196,7 @@ export const AdicionarProduto = () => {
             render={({ field }) => (
               <Field
                 id={'categoriaId'}
-                label="Categoria"
+                label={"Categoria"}
                 validationState={errors.categoriaId ? 'error' : 'none'}
                 validationMessage={errors.categoriaId?.message}
                 required
@@ -291,7 +291,7 @@ export const AdicionarProduto = () => {
 
       {/* INFORMAÇÕES FISCAIS */}
       <div className={styles.card}>
-        <Text size={500} weight="semibold" className={styles.cardTitle}>
+        <Text size={500} weight={"semibold"} className={styles.cardTitle}>
           Informações Fiscais
         </Text>
         <div className={styles.grid3}>
@@ -421,7 +421,7 @@ export const AdicionarProduto = () => {
         </div>
 
         {/* ALÍQUOTAS */}
-        <Text size={300} weight="medium" style={{ marginTop: '8px' }}>
+        <Text size={300} weight={"medium"} style={{ marginTop: '8px' }}>
           Alíquotas
         </Text>
 
@@ -484,7 +484,7 @@ export const AdicionarProduto = () => {
       <div className={styles.actionFooter}>
         <Button
           type={'reset'}
-          appearance="secondary"
+          appearance={"secondary"}
           icon={<Dismiss24Regular />}
           onClick={() => reset()}
           disabled={!!produtoCriadoId}
@@ -493,7 +493,7 @@ export const AdicionarProduto = () => {
         </Button>
         <Button
           type={'submit'}
-          appearance="primary"
+          appearance={"primary"}
           icon={<Save24Regular />}
           disabled={!!produtoCriadoId}
         >

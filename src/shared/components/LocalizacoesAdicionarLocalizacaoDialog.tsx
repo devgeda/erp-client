@@ -15,13 +15,13 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
-import { localizacaoFormSchema } from '@/features/localizacao/localizacao.schemas.tsx';
-import type { LocalizacaoRequestDTO } from '@/features/localizacao/localizacao.types.tsx';
+import { localizacaoFormSchema } from '@/features/estoque/localizacao/localizacao.schemas.tsx';
+import type { LocalizacaoRequestDTO } from '@/features/estoque/localizacao/localizacao.types.tsx';
 
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
-import { criarLocalizacao } from '@/features/localizacao/localizacao.service.tsx';
+import { criarLocalizacao } from '@/features/estoque/localizacao/localizacao.service.tsx';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
 import type { AppError } from '@/shared/api/client.tsx';
 
@@ -126,7 +126,7 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
     <Dialog
       open={isOpen}
       onOpenChange={(_e, data) => !data.open && onClose()}
-      modalType="modal"
+      modalType={"modal"}
     >
       <DialogSurface>
         <form

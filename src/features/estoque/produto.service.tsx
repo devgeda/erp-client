@@ -1,5 +1,5 @@
 import type {
-  ProdutoFiscalResponseDTO,
+  ProdutoFiscalDTO,
   ProdutoRequestDTO,
   ProdutoResponseDTO,
 } from '@/features/estoque/produto.types.tsx';
@@ -24,7 +24,7 @@ export async function obterProdutoById(id: string) {
 }
 
 export async function listarProdutoFiscal(path: string) {
-  const response = await api.get<ProdutoFiscalResponseDTO[]>(path);
+  const response = await api.get<ProdutoFiscalDTO[]>(path);
 
   return response.data;
 }

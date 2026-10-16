@@ -52,7 +52,7 @@ export const EstoqueDialog = ({
     <Dialog
       open={isOpen}
       onOpenChange={(_e, data) => !data.open && onClose()}
-      modalType="modal"
+      modalType={"modal"}
     >
       <DialogSurface>
         <form id={'form-dialog-estoque'} onSubmit={onSubmit} noValidate>
@@ -76,7 +76,7 @@ export const EstoqueDialog = ({
                 render={({ field }) => (
                   <Field
                     id={'localizacaoId'}
-                    label="Localização"
+                    label={"Localização"}
                     validationState={errors.localizacaoId ? 'error' : 'none'}
                     validationMessage={errors.localizacaoId?.message}
                     required

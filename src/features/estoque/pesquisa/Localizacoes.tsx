@@ -13,10 +13,10 @@ import {
   Text,
 } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
-import type { LocalizacaoResponseDTO } from '@/features/localizacao/localizacao.types.tsx';
+import type { LocalizacaoResponseDTO } from '@/features/estoque/localizacao/localizacao.types.tsx';
 import { Add24Regular, ArrowRepeatAll20Regular } from '@fluentui/react-icons';
 import { LocalizacoesAdicionarLocalizacaoDialog } from '@/shared/components/LocalizacoesAdicionarLocalizacaoDialog.tsx';
-import { listarLocalizacoes } from '@/features/localizacao/localizacao.service.tsx';
+import { listarLocalizacoes } from '@/features/estoque/localizacao/localizacao.service.tsx';
 import type { AppError } from '@/shared/api/client.tsx';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
 
@@ -175,13 +175,13 @@ export const Localizacoes = () => {
     <>
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          <Text weight="semibold" className={styles.cardTitle}>
+          <Text weight={"semibold"} className={styles.cardTitle}>
             LOCALIZAÇÕES CADASTRADAS
           </Text>
           <div className={styles.buttonGroup}>
             <Button
               icon={<Add24Regular />}
-              aria-label="Adicionar Localização"
+              aria-label={"Adicionar Localização"}
               onClick={() => setIsDialogOpen(true)}
             >
               Adicionar Localização

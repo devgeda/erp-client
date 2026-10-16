@@ -12,11 +12,11 @@ import {
   type JSXElement,
   Switch,
 } from '@fluentui/react-components';
-import { categoriaFormSchema } from '@/features/categorias/categoria.schemas.tsx';
-import { criarCategoria } from '@/features/categorias/categoria.service.tsx';
+import { categoriaFormSchema } from '@/features/estoque/categorias/categoria.schemas.tsx';
+import { criarCategoria } from '@/features/estoque/categorias/categoria.service.tsx';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { CategoriaRequestDTO } from '@/features/categorias/categoria.types.tsx';
+import type { CategoriaRequestDTO } from '@/features/estoque/categorias/categoria.types.tsx';
 import { onNestedSubmit } from '@/shared/utils/nestedFormSubmit.tsx';
 import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
@@ -78,7 +78,7 @@ export const AdicionarProdutoCategoriaDialog = ({
     <Dialog
       open={isOpen}
       onOpenChange={(_e, data) => !data.open && onClose()}
-      modalType="modal"
+      modalType={"modal"}
     >
       <DialogSurface>
         <form id={'form-dialog-categoria'} onSubmit={onInnerSubmit} noValidate>

@@ -27,7 +27,7 @@ export function DataTable<TData extends RowData>({
   });
   return (
     <>
-      <Table className="rounded-md border">
+      <Table className={"rounded-md border"}>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
