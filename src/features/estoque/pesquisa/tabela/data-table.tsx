@@ -26,8 +26,8 @@ export function DataTable<TData extends RowData>({
     columns,
   });
   return (
-    <>
-      <Table className={'rounded-md border'}>
+    <div className={'overflow-hidden rounded-md border'}>
+      <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -64,6 +64,6 @@ export function DataTable<TData extends RowData>({
           )}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 }

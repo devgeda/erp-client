@@ -8,15 +8,25 @@ import { ProdutosDataGrid } from '@/features/estoque/pesquisa/ProdutosDataGrid.t
 // Components shascn/ui.
 import { Input } from '@/shared/components/ui/input.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
-import { Card } from '@/shared/components/ui/card';
-import { Separator } from '@/shared/components/ui/separator';
+import { Card } from '@/shared/components/ui/card.tsx';
+import { Separator } from '@/shared/components/ui/separator.tsx';
+import { ButtonGroup } from '@/shared/components/ui/button-group.tsx';
 import {
   Menubar,
   MenubarSeparator,
   MenubarTrigger,
   MenubarMenu,
-} from '@/shared/components/ui/menubar';
+} from '@/shared/components/ui/menubar.tsx';
 import { AspectRatio } from '@/shared/components/ui/aspect-ratio.tsx';
+
+// Ícones Lucide Icons.
+import {
+  ChevronDown,
+  ChevronUp,
+  ArrowUpAZ,
+  ArrowDownAZ,
+  RotateCcw,
+} from 'lucide-react';
 
 export const PesquisarProduto = () => {
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
@@ -48,7 +58,7 @@ export const PesquisarProduto = () => {
 
   return (
     <>
-      <Card>
+      <Card className={'p-4'}>
         <div className={'flex items-center gap-4 w-full'}>
           <div className={'grow'}>
             <Input
@@ -63,69 +73,68 @@ export const PesquisarProduto = () => {
           <div className={'flex items-center gap-4'}>
             <Separator orientation={'vertical'} />
             <div className={'flex gap-2 items-center'}>
-              <Menubar>
-                <MenubarMenu>
-                  <MenubarTrigger>Crescente</MenubarTrigger>
-                  <MenubarTrigger>Decrescente</MenubarTrigger>
-                  <MenubarTrigger>Redefinir Ordenação</MenubarTrigger>
-                  <MenubarSeparator />
-                  <MenubarTrigger>Filtros</MenubarTrigger>
-                </MenubarMenu>
-              </Menubar>
-              <div className={'flex items-center gap-2'}>
-                <Button>Redefinir</Button>
-              </div>
+              <ButtonGroup>
+                <Button variant={'outline'}>
+                  <ArrowUpAZ />
+                  Crescente
+                </Button>
+                <Button variant={'outline'}>
+                  <ArrowDownAZ />
+                  Decrescente
+                </Button>
+                <Button variant={'outline'}>
+                  <RotateCcw />
+                  Redefinir Ordenação
+                </Button>
+                <Button variant={'outline'} onClick={() => setOpen(!open)}>
+                  {open ? <ChevronUp /> : <ChevronDown />}
+                  Filtros
+                </Button>
+              </ButtonGroup>
+              <Button variant={'outline'}>Redefinir</Button>
             </div>
           </div>
         </div>
         <div />
         {open && (
-          <AspectRatio>
-            <div className={'flex w-full mt-2'}>
-              <div
-                className={
-                  'flex w-full justify-between items-center wrap gap-2'
-                }
-              >
-                <Button
-                  variant={'ghost'}
-                  onClick={() => setTipoFiltroAtivo('nome')}
-                >
-                  Filtrar por Nome
-                </Button>
-                <Button
-                  variant={'ghost'}
-                  onClick={() => setTipoFiltroAtivo('codigo')}
-                >
-                  Filtrar por Código
-                </Button>
-                <Button
-                  variant={'ghost'}
-                  onClick={() => setTipoFiltroAtivo('codigoAdicional')}
-                >
-                  Filtrar por Código Adicional
-                </Button>
-                <Button
-                  variant={'ghost'}
-                  onClick={() => setTipoFiltroAtivo('categoriaId')}
-                >
-                  Filtrar por Categoria
-                </Button>
-                <Button
-                  variant={'ghost'}
-                  onClick={() => setTipoFiltroAtivo('localizacao')}
-                >
-                  Filtrar por Localização
-                </Button>
-                <Button
-                  variant={'ghost'}
-                  onClick={() => setTipoFiltroAtivo('ativo')}
-                >
-                  Filtrar por Ativo
-                </Button>
-              </div>
-            </div>
-          </AspectRatio>
+          <div className={'flex justify-between items-center wrap'}>
+            <Button
+              variant={'ghost'}
+              onClick={() => setTipoFiltroAtivo('nome')}
+            >
+              Filtrar por Nome
+            </Button>
+            <Button
+              variant={'ghost'}
+              onClick={() => setTipoFiltroAtivo('codigo')}
+            >
+              Filtrar por Código
+            </Button>
+            <Button
+              variant={'ghost'}
+              onClick={() => setTipoFiltroAtivo('codigoAdicional')}
+            >
+              Filtrar por Código Adicional
+            </Button>
+            <Button
+              variant={'ghost'}
+              onClick={() => setTipoFiltroAtivo('categoriaId')}
+            >
+              Filtrar por Categoria
+            </Button>
+            <Button
+              variant={'ghost'}
+              onClick={() => setTipoFiltroAtivo('localizacao')}
+            >
+              Filtrar por Localização
+            </Button>
+            <Button
+              variant={'ghost'}
+              onClick={() => setTipoFiltroAtivo('ativo')}
+            >
+              Filtrar por Ativo
+            </Button>
+          </div>
         )}
         <ProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}

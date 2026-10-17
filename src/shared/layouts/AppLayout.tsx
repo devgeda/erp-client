@@ -26,67 +26,6 @@ import {
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Separator } from '@/shared/components/ui/separator.tsx';
 import { Avatar } from '@/shared/components/ui/avatar.tsx';
-/*
-const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    height: '100vh',
-    width: '100vw',
-    backgroundColor: tokens.colorNeutralBackground2,
-  },
-  sidebar: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '64px',
-    backgroundColor: tokens.colorBrandBackground,
-    ...shorthands.padding('16px', '0'),
-    alignItems: 'center',
-    ...shorthands.gap('12px'),
-  },
-  sidebarTop: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    ...shorthands.gap('12px'),
-    marginBottom: '24px',
-  },
-  mainContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-    backgroundColor: tokens.colorNeutralBackground1,
-  },
-  header: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: '56px',
-    ...shorthands.padding('0', '24px'),
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-  },
-  headerSearch: {
-    minWidth: '300px',
-  },
-  headerActions: {
-    display: 'flex',
-    alignItems: 'center',
-    ...shorthands.gap('8px'),
-  },
-  pageHeader: {
-    display: 'flex',
-    alignItems: 'baseline',
-    ...shorthands.padding('24px', '24px', '16px', '24px'),
-    ...shorthands.gap('12px'),
-  },
-  outletArea: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-    ...shorthands.padding('0', '24px', '24px', '24px'),
-    ...shorthands.overflow('hidden', 'auto'),
-  },
-});
-*/
 
 export const AppLayout = () => {
   // const styles = useStyles(); > migrando para o tailwindcss (v4).
