@@ -49,7 +49,7 @@ export const PesquisarProdutoVisualizar = ({
         <div className={styles.root}>
           <div className={styles.card}>
             <div className={styles.cardHeader}>
-              <Text size={500} weight={"semibold"} className={styles.cardTitle}>
+              <Text size={500} weight={'semibold'} className={styles.cardTitle}>
                 Informações Gerais
               </Text>
               <Field id={'ativo'} label={'PRODUTO ATIVO:'}>
@@ -57,16 +57,16 @@ export const PesquisarProdutoVisualizar = ({
               </Field>
             </div>
             <div className={styles.grid6}>
-              <Field id={'nome'} label={"NOME DO PRODUTO:"}>
+              <Field id={'nome'} label={'NOME DO PRODUTO:'}>
                 <Text>{produto.nome}</Text>
               </Field>
-              <Field id={'codigo'} label={"CÓDIGO DO PRODUTO:"}>
+              <Field id={'codigo'} label={'CÓDIGO DO PRODUTO:'}>
                 <Text>{produto.codigo}</Text>
               </Field>
-              <Field id={'codigoAdicional'} label={"CÓDIGO ADICIONAL:"}>
+              <Field id={'codigoAdicional'} label={'CÓDIGO ADICIONAL:'}>
                 <Text>{produto.codigoAdicional}</Text>
               </Field>
-              <Field id={'categoria'} label={"CATEGORIA DO PRODUTO:"}>
+              <Field id={'categoria'} label={'CATEGORIA DO PRODUTO:'}>
                 <Text>{categoria}</Text>
               </Field>
             </div>
@@ -104,7 +104,7 @@ export const PesquisarProdutoVisualizar = ({
             </div>
           </div>
           <div className={styles.card}>
-            <Text size={500} weight={"semibold"} className={styles.cardTitle}>
+            <Text size={500} weight={'semibold'} className={styles.cardTitle}>
               Informações Fiscais
             </Text>
             <div className={styles.grid3}>
@@ -140,7 +140,7 @@ export const PesquisarProdutoVisualizar = ({
               </Field>
             </div>
 
-            <Text size={300} weight={"medium"} style={{ marginTop: '8px' }}>
+            <Text size={300} weight={'medium'} style={{ marginTop: '8px' }}>
               Alíquotas
             </Text>
 

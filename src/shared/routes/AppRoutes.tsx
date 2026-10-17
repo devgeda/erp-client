@@ -4,7 +4,7 @@ import {
   Outlet,
   RouterProvider,
 } from 'react-router-dom';
-import { AppLayout } from '@/app/layouts/AppLayout.tsx';
+import { AppLayout } from '@/shared/layouts/AppLayout.tsx';
 import { ProdutosPage } from '@/features/estoque/ProdutosPage.tsx';
 // import { AdicionarProduto } from '@/features/estoque/AdicionarProduto.tsx';
 // import { HistoricoProduto } from '@/features/estoque/HistoricoProduto.tsx';

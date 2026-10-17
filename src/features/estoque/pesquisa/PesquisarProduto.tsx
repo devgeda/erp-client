@@ -4,10 +4,19 @@ import { useState } from 'react';
 import { ProdutosDataGrid } from '@/features/estoque/pesquisa/ProdutosDataGrid.tsx';
 
 // Hooks.
-import { useAppToast } from '@/app/context/ToastContext.tsx';
 
 // Components shascn/ui.
-import { Input } from '@/components/ui/input.tsx';
+import { Input } from '@/shared/components/ui/input.tsx';
+import { Button } from '@/shared/components/ui/button.tsx';
+import { Card } from '@/shared/components/ui/card';
+import { Separator } from '@/shared/components/ui/separator';
+import {
+  Menubar,
+  MenubarSeparator,
+  MenubarTrigger,
+  MenubarMenu,
+} from '@/shared/components/ui/menubar';
+import { AspectRatio } from '@/shared/components/ui/aspect-ratio.tsx';
 
 export const PesquisarProduto = () => {
   const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
@@ -17,7 +26,7 @@ export const PesquisarProduto = () => {
     sortColumn: 'nome',
     sortDirection: 'ascending' as const,
   };
-  const notify = useAppToast();
+  // const notify = useAppToast(); > reimplementar
 
   const [tipoFiltroAtivo, setTipoFiltroAtivo] = useState<
     | 'nome'
@@ -40,141 +49,89 @@ export const PesquisarProduto = () => {
   return (
     <>
       <Card>
-        <div className={styles.toolbar}>
-          <div className={styles.toolbarSearchBox}>
-            <Field className={styles.fullWidth}>
-              <Input
-                className={styles.fullWidth}
-                type={'text'}
-                style={{ textTransform: 'uppercase' }}
-                placeholder={`Pesquisar por ${placeholders[tipoFiltroAtivo] || 'Nome'} ...`}
-                value={termoBusca}
-                onChange={(e) => setTermoBusca(e.target.value.toUpperCase())}
-              />
-            </Field>
+        <div className={'flex items-center gap-4 w-full'}>
+          <div className={'grow'}>
+            <Input
+              className={'w-full max-w-full'}
+              type={'text'}
+              style={{ textTransform: 'uppercase' }}
+              placeholder={`Pesquisar por ${placeholders[tipoFiltroAtivo] || 'Nome'} ...`}
+              value={termoBusca}
+              onChange={(e) => setTermoBusca(e.target.value.toUpperCase())}
+            />
           </div>
-          <div className={styles.toolbarButtonsRight}>
-            <Divider vertical={true} />
-            <div className={styles.toolbarSortersAndFilters}>
-              <Toolbar>
-                <ToolbarButton
-                  onClick={() =>
-                    setSortState((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            sortColumn: tipoFiltroAtivo,
-                            sortDirection: 'ascending',
-                          }
-                        : estadoOrdenacaoInicial
-                    )
-                  }
-                  icon={<TextSortAscending24Regular />}
-                >
-                  Crescente
-                </ToolbarButton>
-                <ToolbarButton
-                  onClick={() =>
-                    setSortState((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            sortColumn: tipoFiltroAtivo,
-                            sortDirection: 'descending',
-                          }
-                        : estadoOrdenacaoInicial
-                    )
-                  }
-                  icon={<TextSortDescending24Regular />}
-                >
-                  Decrescente
-                </ToolbarButton>
-                <ToolbarButton
-                  onClick={() => {
-                    setSortState(estadoOrdenacaoInicial);
-                    notify({
-                      intent: 'info',
-                      title: 'Redefinir ordenação',
-                      body: 'A ordenação foi redefinida.',
-                      subtitle: `Coluna: ${estadoOrdenacaoInicial.sortColumn}, Direção: ${estadoOrdenacaoInicial.sortDirection === 'ascending' ? 'crescente' : 'decrescente'}.`,
-                    });
-                  }}
-                  icon={<ArrowReset24Regular />}
-                >
-                  Redefinir Ordenação
-                </ToolbarButton>
-                <ToolbarDivider />
-                <ToolbarButton
-                  onClick={() => setOpen(!open)}
-                  icon={
-                    open ? <ChevronUp24Regular /> : <ChevronDown24Regular />
-                  }
-                  appearance={'transparent'}
-                >
-                  Filtros
-                </ToolbarButton>
-              </Toolbar>
-              <div className={styles.buttonGroup}>
-                <Button
-                  icon={<ArrowRepeatAll20Regular />}
-                  onClick={() => {
-                    setUpdateProdutosTrigger((prev) => prev + 1);
-                  }}
-                />
+          <div className={'flex items-center gap-4'}>
+            <Separator orientation={'vertical'} />
+            <div className={'flex gap-2 items-center'}>
+              <Menubar>
+                <MenubarMenu>
+                  <MenubarTrigger>Crescente</MenubarTrigger>
+                  <MenubarTrigger>Decrescente</MenubarTrigger>
+                  <MenubarTrigger>Redefinir Ordenação</MenubarTrigger>
+                  <MenubarSeparator />
+                  <MenubarTrigger>Filtros</MenubarTrigger>
+                </MenubarMenu>
+              </Menubar>
+              <div className={'flex items-center gap-2'}>
+                <Button>Redefinir</Button>
               </div>
             </div>
           </div>
         </div>
-        <div ref={setMountNode} />
-        {open && mountNode && (
-          <Portal mountNode={mountNode}>
-            <div className={styles.portalContainer}>
-              <div className={styles.filtersWrapper}>
+        <div />
+        {open && (
+          <AspectRatio>
+            <div className={'flex w-full mt-2'}>
+              <div
+                className={
+                  'flex w-full justify-between items-center wrap gap-2'
+                }
+              >
                 <Button
-                  appearance={'subtle'}
+                  variant={'ghost'}
                   onClick={() => setTipoFiltroAtivo('nome')}
                 >
                   Filtrar por Nome
                 </Button>
                 <Button
-                  appearance={'subtle'}
+                  variant={'ghost'}
                   onClick={() => setTipoFiltroAtivo('codigo')}
                 >
                   Filtrar por Código
                 </Button>
                 <Button
-                  appearance={'subtle'}
+                  variant={'ghost'}
                   onClick={() => setTipoFiltroAtivo('codigoAdicional')}
                 >
                   Filtrar por Código Adicional
                 </Button>
                 <Button
-                  appearance={'subtle'}
+                  variant={'ghost'}
                   onClick={() => setTipoFiltroAtivo('categoriaId')}
                 >
                   Filtrar por Categoria
                 </Button>
                 <Button
-                  appearance={'subtle'}
+                  variant={'ghost'}
                   onClick={() => setTipoFiltroAtivo('localizacao')}
                 >
                   Filtrar por Localização
                 </Button>
                 <Button
-                  appearance={'subtle'}
+                  variant={'ghost'}
                   onClick={() => setTipoFiltroAtivo('ativo')}
                 >
                   Filtrar por Ativo
                 </Button>
               </div>
             </div>
-          </Portal>
+          </AspectRatio>
         )}
         <ProdutosDataGrid
           tipoFiltro={tipoFiltroAtivo}
           termoBusca={termoBusca}
         />
-      </div>
+      </Card>
     </>
   );
 };

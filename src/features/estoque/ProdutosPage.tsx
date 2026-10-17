@@ -1,18 +1,12 @@
 import { Outlet, useLocation, useMatches, useNavigate } from 'react-router-dom';
 
-import { Tab, TabList, Text, Title3, tokens } from '@fluentui/react-components';
-import {
-  Add24Regular,
-  BoxSearch24Regular,
-  History24Regular,
-  Search24Regular,
-} from '@fluentui/react-icons';
-import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
+// Componentes shadcn/ui.
+import { CardDescription, CardTitle } from '@/shared/components/ui/card.tsx';
+import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs.tsx';
 
 export const sectionTitle = 'ESTOQUE';
 
 export const ProdutosPage = () => {
-  const styles = sharedStyles();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -40,43 +34,29 @@ export const ProdutosPage = () => {
   };
 
   return (
-    <div className={styles.root}>
+    <div className={'flex flex-col gap-6 max-w-7xl mx-auto m-4'}>
       {/* GRUPO DE CABEÇALHO + ABAS */}
-      <div className={styles.headerGroup}>
+      <div className={'flex justify-between items-center mb-2'}>
         {/* Título e Ações Globais */}
-        <div className={styles.headerTop}>
+        <div className={'flex justify-between items-center'}>
           <div>
-            <Text
-              size={300}
-              weight={"semibold"}
-              style={{ color: tokens.colorBrandForeground1 }}
-            >
-              {sectionTitle}
-            </Text>
-            <Title3 block>{handle?.pageTitle ?? 'Seção de Produtos'}</Title3>
+            <CardTitle>{sectionTitle}</CardTitle>
+            <CardDescription>
+              {handle?.pageTitle ?? 'Seção de Produtos'}
+            </CardDescription>
           </div>
         </div>
 
         {/* O TABLIST DE NAVEGAÇÃO */}
-        <div className={styles.tabContainer}>
-          <TabList
-            selectedValue={currentTab}
-            onTabSelect={handleTabSelect}
-            size={"medium"}
-          >
-            <Tab value={"adicionar"} icon={<Add24Regular />}>
-              Adicionar
-            </Tab>
-            <Tab value={"pesquisar"} icon={<Search24Regular />}>
-              Pesquisar
-            </Tab>
-            <Tab value={"localizacoes"} icon={<BoxSearch24Regular />}>
-              Localizações
-            </Tab>
-            <Tab value={"historico"} icon={<History24Regular />}>
-              Histórico
-            </Tab>
-          </TabList>
+        <div className={'border-b border-solid border-b-neutral-200'}>
+          <Tabs>
+            <TabsList>
+              <TabsTrigger value={'adicionar'}>Adicionar</TabsTrigger>
+              <TabsTrigger value={'pesquisar'}>Pesquisar</TabsTrigger>
+              <TabsTrigger value={'localizacoes'}>Localizações</TabsTrigger>
+              <TabsTrigger value={'historico'}>Histórico</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </div>
       <Outlet />

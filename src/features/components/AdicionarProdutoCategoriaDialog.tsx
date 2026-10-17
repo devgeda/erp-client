@@ -78,7 +78,7 @@ export const AdicionarProdutoCategoriaDialog = ({
     <Dialog
       open={isOpen}
       onOpenChange={(_e, data) => !data.open && onClose()}
-      modalType={"modal"}
+      modalType={'modal'}
     >
       <DialogSurface>
         <form id={'form-dialog-categoria'} onSubmit={onInnerSubmit} noValidate>

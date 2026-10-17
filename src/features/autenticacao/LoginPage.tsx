@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/shared/components/ui/button';
+import { Label } from '@/shared/components/ui/label';
 import {
   Card,
   CardAction,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@/shared/components/ui/card';
 import { useForm } from 'react-hook-form';
 import {
   login,
@@ -18,37 +18,13 @@ import {
 } from '@/features/autenticacao/auth.service.tsx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import { Input } from '@/components/ui/input.tsx';
-
-/*
-const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    minHeight: '100vh', // Ocupa 100% da altura da tela
-    width: '100%', // Ocupa a largura total
-    alignItems: 'center', // Alinha na vertical (correto no lugar de 'align')
-    justifyContent: 'center', // Alinha na horizontal
-    boxSizing: 'border-box',
-    padding: '6px',
-  },
-  flexCol: {
-    display: 'flex-col',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '24px',
-  },
-  link: {
-    display: 'flex',
-    gap: '6px',
-  },
-});
-*/
+import { Input } from '@/shared/components/ui/input.tsx';
 
 export const LoginPage = () => {
   // const styles = useStyles(); > implementado tailwindcss (v4).
   const navigate = useNavigate();
 
-  const { handleSubmit } = useForm<LoginRequestDTO>({
+  const { handleSubmit, register } = useForm<LoginRequestDTO>({
     resolver: zodResolver(loginFormSchema),
     mode: 'onChange',
   });
@@ -57,7 +33,7 @@ export const LoginPage = () => {
     try {
       await login(data);
 
-      navigate('/produtos');
+      navigate('/produtos/pesquisar');
     } catch (e) {
       console.log(e);
     }
@@ -87,6 +63,7 @@ export const LoginPage = () => {
                 <Label htmlFor={'email'}>Email</Label>
                 <Input
                   id={'email'}
+                  {...register('email')}
                   type={'email'}
                   placeholder={'email@exemplo.com'}
                   required
@@ -104,13 +81,18 @@ export const LoginPage = () => {
                     Esqueceu a senha?
                   </a>
                 </div>
-                <Input id={'password'} type={'password'} required />
-              </div>{' '}
+                <Input
+                  id={'senha'}
+                  {...register('senha')}
+                  type={'password'}
+                  required
+                />
+              </div>
             </div>
           </form>
         </CardContent>
         <CardFooter>
-          <Button type={'submit'} variant={'default'}>
+          <Button type={'submit'} form={'form-log-in'} variant={'default'}>
             Entrar
           </Button>
           <a
@@ -119,8 +101,8 @@ export const LoginPage = () => {
             }
           >
             Não tem uma conta?
-            <a href={'/sign-up'}>Cadastrar-se</a>
           </a>
+          <a href={'/sign-up'}>Cadastrar-se</a>
         </CardFooter>
       </Card>
     </div>

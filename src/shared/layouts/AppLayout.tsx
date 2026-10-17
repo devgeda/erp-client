@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/shared/components/ui/button.tsx';
+import { Input } from '@/shared/components/ui/input.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/shared/components/ui/dropdown-menu.tsx';
 import {
   Bolt,
   Box,
@@ -24,8 +24,8 @@ import {
   Wrench,
 } from 'lucide-react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Separator } from '@/components/ui/separator.tsx';
-import { Avatar } from '@/components/ui/avatar.tsx';
+import { Separator } from '@/shared/components/ui/separator.tsx';
+import { Avatar } from '@/shared/components/ui/avatar.tsx';
 /*
 const useStyles = makeStyles({
   root: {

@@ -126,7 +126,7 @@ export const LocalizacoesAdicionarLocalizacaoDialog = ({
     <Dialog
       open={isOpen}
       onOpenChange={(_e, data) => !data.open && onClose()}
-      modalType={"modal"}
+      modalType={'modal'}
     >
       <DialogSurface>
         <form
