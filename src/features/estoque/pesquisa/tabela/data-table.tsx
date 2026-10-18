@@ -2,7 +2,15 @@ import {
   features,
   type DataTableFeatures,
 } from '@/features/estoque/pesquisa/tabela/data-table-features.ts';
-import { type ColumnDef, type RowData, useTable } from '@tanstack/react-table';
+
+import {
+  type ColumnDef,
+  type RowData,
+  type SortingState,
+  useTable,
+} from '@tanstack/react-table';
+
+// shadcn/ui.
 import {
   Table,
   TableHeader,
@@ -12,6 +20,8 @@ import {
   TableCell,
 } from '@/shared/components/ui/table';
 
+import { useState } from 'react';
+
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData>[];
   data: TData[];
@@ -20,10 +30,16 @@ export function DataTable<TData extends RowData>({
   columns,
   data,
 }: DataTableProps<TData>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const table = useTable({
     features,
     data,
     columns,
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
   });
   return (
     <div className={'overflow-hidden rounded-md border'}>

@@ -15,7 +15,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import type { LocalizacaoResponseDTO } from '@/features/estoque/localizacao/localizacao.types.tsx';
 import { Add24Regular, ArrowRepeatAll20Regular } from '@fluentui/react-icons';
-import { LocalizacoesAdicionarLocalizacaoDialog } from '@/features/components/LocalizacoesAdicionarLocalizacaoDialog.tsx';
+import { LocalizacoesAdicionarLocalizacaoDialog } from '@/features/estoque/adicionar/LocalizacoesAdicionarLocalizacaoDialog.tsx';
 import { listarLocalizacoes } from '@/features/estoque/localizacao/localizacao.service.tsx';
 import type { AppError } from '@/shared/api/client.tsx';
 import { useAppToast } from '@/app/context/ToastContext.tsx';

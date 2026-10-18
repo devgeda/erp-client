@@ -9,7 +9,7 @@ import {
 import { formatPercentField } from '@/shared/utils/formatters.tsx';
 import { TextPercentRegular } from '@fluentui/react-icons';
 import { type Control, Controller, type Path } from 'react-hook-form';
-import type { ProdutoFormInput } from '@/features/estoque/AdicionarProduto.tsx';
+import type { ProdutoFormInput } from '@/app/pages/AdicionarProduto.tsx';
 import type { ReactElement } from 'react';
 import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
 

@@ -1,15 +1,11 @@
-import { Outlet, useLocation, useMatches, useNavigate } from 'react-router-dom';
+import { Outlet, useMatches } from 'react-router-dom';
 
 // Componentes shadcn/ui.
 import { CardDescription, CardTitle } from '@/shared/components/ui/card.tsx';
-import { Tabs, TabsList, TabsTrigger } from '@/shared/components/ui/tabs.tsx';
 
 export const sectionTitle = 'ESTOQUE';
 
 export const ProdutosPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const matches = useMatches();
 
   // Pega a rota filha que está ativa no momento

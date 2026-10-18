@@ -18,17 +18,17 @@ import {
 import { Controller } from 'react-hook-form';
 import { produtoFormSchema } from '@/features/estoque/produto.schemas.tsx';
 import { z } from 'zod';
-import { AdicionarProdutoCategoriaDialog } from '@/features/components/AdicionarProdutoCategoriaDialog.tsx';
+import { AdicionarProdutoCategoriaDialog } from '@/features/estoque/adicionar/AdicionarProdutoCategoriaDialog.tsx';
 import {
   formatDate,
   formatFiscalField,
   formatInputCurrencyBRL,
 } from '@/shared/utils/formatters.tsx';
-import { AdicionarProdutoFiscalSelect } from '@/features/components/AdicionarProdutoFiscalSelect.tsx';
-import { AdicionarProdutoAliquotaField } from '@/features/components/AdicionarProdutoAliquotaField.tsx';
+import { AdicionarProdutoFiscalSelect } from '@/features/estoque/adicionar/AdicionarProdutoFiscalSelect.tsx';
+import { AdicionarProdutoAliquotaField } from '@/features/estoque/adicionar/AdicionarProdutoAliquotaField.tsx';
 import { FISCAL_INFO } from '@/shared/constants/fiscalInfo.ts';
 import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
-import { EstoqueDialog } from '@/features/components/EstoqueDialog.tsx';
+import { EstoqueDialog } from '@/features/estoque/EstoqueDialog.tsx';
 import { useAdicionarProduto } from '@/shared/hooks/useAdicionarProduto.ts';
 
 export type ProdutoFormInput = z.input<typeof produtoFormSchema>;

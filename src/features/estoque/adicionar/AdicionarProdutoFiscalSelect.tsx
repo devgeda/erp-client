@@ -6,7 +6,7 @@ import {
   Select,
 } from '@fluentui/react-components';
 import { type Control, Controller, type Path } from 'react-hook-form';
-import type { ProdutoFormInput } from '@/features/estoque/AdicionarProduto.tsx';
+import type { ProdutoFormInput } from '@/app/pages/AdicionarProduto.tsx';
 import { type ReactElement, useEffect, useState } from 'react';
 import { listarProdutoFiscal } from '@/features/estoque/produto.service.tsx';
 import type { ProdutoFiscalDTO } from '@/features/estoque/produto.types.tsx';

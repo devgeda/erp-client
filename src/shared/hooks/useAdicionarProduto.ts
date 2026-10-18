@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type {
   ProdutoFormInput,
   ProdutoFormOutput,
-} from '@/features/estoque/AdicionarProduto.tsx';
+} from '@/app/pages/AdicionarProduto.tsx';
 import { useForm } from 'react-hook-form';
 import type { AppError } from '@/shared/api/client.tsx';
 import { getCategorias } from '@/features/estoque/categorias/categoria.service.tsx';
