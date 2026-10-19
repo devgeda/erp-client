@@ -1,10 +1,11 @@
 import {
-  features,
   type DataTableFeatures,
+  features,
 } from '@/features/estoque/pesquisa/tabela/data-table-features.ts';
 
 import {
   type ColumnDef,
+  type ColumnFiltersState,
   type RowData,
   type SortingState,
   useTable,
@@ -13,32 +14,37 @@ import {
 // shadcn/ui.
 import {
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/shared/components/ui/table';
-
-import { useState } from 'react';
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData>[];
   data: TData[];
+  sorting: SortingState;
+  onSortingChange: (
+    updater: SortingState | ((old: SortingState) => SortingState)
+  ) => void;
+  columnFilters: ColumnFiltersState;
 }
 export function DataTable<TData extends RowData>({
   columns,
   data,
+  sorting,
+  onSortingChange,
+  columnFilters,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-
   const table = useTable({
     features,
     data,
     columns,
-    onSortingChange: setSorting,
+    onSortingChange,
     state: {
       sorting,
+      columnFilters,
     },
   });
   return (

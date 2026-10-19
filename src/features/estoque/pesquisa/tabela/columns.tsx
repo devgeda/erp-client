@@ -15,7 +15,13 @@ import {
 import { Button } from '@/shared/components/ui/button.tsx';
 
 // lucide-react.
-import { ArrowUpAZ, ArrowDownAZ, MoreHorizontal } from 'lucide-react';
+import {
+  ArrowDown01,
+  ArrowDownAZ,
+  ArrowUp10,
+  ArrowUpAZ,
+  MoreHorizontal,
+} from 'lucide-react';
 
 // utils.
 import { formatCurrencyBRL } from '@/shared/utils/formatters.tsx';
@@ -42,7 +48,9 @@ export const columns = columnHelper.columns([
       return (
         <Button
           variant={'ghost'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={() =>
+            column.toggleSorting(column.getIsSorted() === 'asc', true)
+          }
         >
           Nome
           {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
@@ -54,10 +62,56 @@ export const columns = columnHelper.columns([
       return <div className={'px-2'}>{cellContent as string}</div>;
     },
   }),
-  columnHelper.accessor('codigo', { header: 'Código' }),
-  columnHelper.accessor('codigoAdicional', { header: 'Código Adicional' }),
+  columnHelper.accessor('codigo', {
+    header: ({ column }) => {
+      return (
+        <Button
+          variant={'ghost'}
+          onClick={() =>
+            column.toggleSorting(column.getIsSorted() === 'asc', true)
+          }
+        >
+          Código
+          {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const cellContent = row.getValue('codigo');
+      return <div className={'px-2'}>{cellContent as string}</div>;
+    },
+  }),
+  columnHelper.accessor('codigoAdicional', {
+    header: ({ column }) => {
+      return (
+        <Button
+          variant={'ghost'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Código Adicional
+          {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const cellContent = row.getValue('codigoAdicional');
+      return <div className={'px-2'}>{cellContent as string}</div>;
+    },
+  }),
   columnHelper.accessor('valor', {
-    header: () => <div className={'text-right'}>Valor</div>,
+    header: ({ column }) => {
+      return (
+        <div className={'text-right'}>
+          <Button
+            variant={'ghost'}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Valor
+            {column.getIsSorted() === 'asc' ? <ArrowUp10 /> : <ArrowDown01 />}
+          </Button>
+        </div>
+      );
+    },
     cell: ({ row }) => {
       const valor = parseFloat(row.getValue('valor'));
       const formattedValor = formatCurrencyBRL(valor);
@@ -65,23 +119,101 @@ export const columns = columnHelper.columns([
     },
   }),
   columnHelper.accessor('valorPromocional', {
-    header: () => <div className={'text-right'}>Valor Promocional</div>,
+    header: ({ column }) => {
+      return (
+        <div className={'text-right'}>
+          <Button
+            variant={'ghost'}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Valor Promocional
+            {column.getIsSorted() === 'asc' ? <ArrowUp10 /> : <ArrowDown01 />}
+          </Button>
+        </div>
+      );
+    },
     cell: ({ row }) => {
-      const valor = parseFloat(row.getValue('valor'));
-      const formattedValor = formatCurrencyBRL(valor);
-      return <div className={'text-right font-medium'}>{formattedValor}</div>;
+      const valorPromocional = parseFloat(row.getValue('valorPromocional'));
+      const formattedValorPromocional = formatCurrencyBRL(valorPromocional);
+      return (
+        <div className={'text-right font-medium'}>
+          {formattedValorPromocional}
+        </div>
+      );
     },
   }),
-  columnHelper.accessor('categoria', { header: 'Categoria' }),
-  columnHelper.accessor('localizacao', { header: 'Localização' }),
+  columnHelper.accessor('categoria', {
+    header: ({ column }) => {
+      return (
+        <Button
+          variant={'ghost'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Categoria
+          {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const cellContent = row.getValue('categoria');
+      return <div className={'px-2'}>{cellContent as string}</div>;
+    },
+  }),
+  columnHelper.accessor('localizacao', {
+    header: ({ column }) => {
+      return (
+        <Button
+          variant={'ghost'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Localização
+          {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const cellContent = row.getValue('localizacao');
+      return <div className={'px-2'}>{cellContent as string}</div>;
+    },
+  }),
   columnHelper.accessor('quantidade', {
-    header: () => <div className={'text-right'}>Quantidade</div>,
+    header: ({ column }) => {
+      return (
+        <div className={'text-right'}>
+          <Button
+            variant={'ghost'}
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Quantidade
+            {column.getIsSorted() === 'asc' ? <ArrowUp10 /> : <ArrowDown01 />}
+          </Button>
+        </div>
+      );
+    },
     cell: ({ row }) => {
-      const valor = row.getValue('quantidade');
-      return <div className={'text-right font-medium'}>{valor as string}</div>;
+      const cellContent = row.getValue('quantidade');
+      return (
+        <div className={'text-right font-medium'}>{cellContent as string}</div>
+      );
     },
   }),
-  columnHelper.accessor('ativo', { header: 'Ativo' }),
+  columnHelper.accessor('ativo', {
+    header: ({ column }) => {
+      return (
+        <Button
+          variant={'ghost'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Ativo
+          {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const cellContent = row.getValue('ativo');
+      return <div className={'px-2'}>{cellContent as string}</div>;
+    },
+  }),
   columnHelper.display({
     id: 'actions',
     cell: () => {

@@ -4,6 +4,7 @@ import {
   createFilteredRowModel,
   createSortedRowModel,
   filterFn_includesString,
+  filterFn_inNumberRange,
   rowSelectionFeature,
   rowSortingFeature,
   sortFn_alphanumeric,
@@ -18,7 +19,10 @@ export const features = tableFeatures({
   rowSortingFeature,
   filteredRowModel: createFilteredRowModel(),
   sortedRowModel: createSortedRowModel(),
-  filterFns: { includeStrings: filterFn_includesString },
+  filterFns: {
+    includeStrings: filterFn_includesString,
+    isNumberRange: filterFn_inNumberRange,
+  },
   sortFns: { alphanumeric: sortFn_alphanumeric, text: sortFn_text },
 });
 

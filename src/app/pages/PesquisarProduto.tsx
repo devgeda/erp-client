@@ -1,8 +1,6 @@
 import { useState } from 'react';
 
 // Pages.
-import { ProdutosDataGrid } from '@/features/estoque/pesquisa/ProdutosDataGrid.tsx';
-
 // Hooks.
 // Components shascn/ui.
 import { Input } from '@/shared/components/ui/input.tsx';
@@ -18,6 +16,9 @@ import {
   ChevronUp,
   RotateCcw,
 } from 'lucide-react';
+import { DataTable } from '@/features/estoque/pesquisa/tabela/data-table.tsx';
+import { columns } from '@/features/estoque/pesquisa/tabela/columns.tsx';
+import { usePesquisarProduto } from '@/shared/hooks/usePesquisarProduto.ts';
 
 export const PesquisarProduto = () => {
   const [open, setOpen] = useState(false);
@@ -43,6 +44,19 @@ export const PesquisarProduto = () => {
     ativo: 'Ativo',
   };
 
+  const {
+    produtosLocalizados,
+    sorting,
+    setSorting,
+    columnFilters,
+    handleSortAsc,
+    handleSortDesc,
+    handleClearSort,
+  } = usePesquisarProduto({
+    tipoFiltroAtivo,
+    termoBusca,
+  });
+
   return (
     <>
       <Card className={'p-4'}>
@@ -60,15 +74,15 @@ export const PesquisarProduto = () => {
           <div className={'flex items-center gap-4'}>
             <div className={'flex gap-2 items-center'}>
               <ButtonGroup>
-                <Button variant={'outline'}>
+                <Button variant={'outline'} onClick={() => handleSortAsc()}>
                   <ArrowUpAZ />
                   Crescente
                 </Button>
-                <Button variant={'outline'}>
+                <Button variant={'outline'} onClick={() => handleSortDesc()}>
                   <ArrowDownAZ />
                   Decrescente
                 </Button>
-                <Button variant={'outline'}>
+                <Button variant={'outline'} onClick={() => handleClearSort()}>
                   <RotateCcw />
                   Redefinir Ordenação
                 </Button>
@@ -124,9 +138,12 @@ export const PesquisarProduto = () => {
             </ButtonGroup>
           </div>
         )}
-        <ProdutosDataGrid
-          tipoFiltro={tipoFiltroAtivo}
-          termoBusca={termoBusca}
+        <DataTable
+          columns={columns}
+          data={produtosLocalizados}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          columnFilters={columnFilters}
         />
       </Card>
     </>

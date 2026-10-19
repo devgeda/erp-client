@@ -12,9 +12,10 @@ import type {
 import { obterLocalizacaoPorId } from '@/features/estoque/localizacao/localizacao.service.tsx';
 import { useQuery } from '@tanstack/react-query';
 import { getCategorias } from '@/features/estoque/categorias/categoria.service.tsx';
+import type { ColumnFiltersState, SortingState } from '@tanstack/react-table';
 
 interface useProdutosDataGridProps {
-  tipoFiltro:
+  tipoFiltroAtivo:
     | 'nome'
     | 'codigo'
     | 'codigoAdicional'
@@ -25,8 +26,8 @@ interface useProdutosDataGridProps {
   termoBusca: string;
 }
 
-export const useProdutosDataGrid = ({
-  tipoFiltro,
+export const usePesquisarProduto = ({
+  tipoFiltroAtivo,
   termoBusca,
 }: useProdutosDataGridProps) => {
   // Implementa o hook useAppToast para gerenciar as notificações via Toast.
@@ -37,13 +38,22 @@ export const useProdutosDataGrid = ({
     null
   );
 
+  // Estados do tanstack-table.
+  const [sorting, setSorting] = useState<SortingState>([]);
+
+  // Array filtrada para a tabela tanstack-table.
+  const columnFilters: ColumnFiltersState = useMemo(() => {
+    if (!termoBusca) return [];
+    return [{ id: tipoFiltroAtivo, value: termoBusca }];
+  }, [termoBusca, tipoFiltroAtivo]);
+
   // Estados dos Drawers.
   const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
   const [isViewDrawerOpen, setIsViewDrawerOpen] = useState(false);
 
   // useQuery de listagem de produtos.
   const { data: produtos = [], isLoading: carregandoProdutos } = useQuery({
-    queryKey: ['produtos', { tipoFiltro, termoBusca }],
+    queryKey: ['produtos'],
     queryFn: async () => await getProdutos(),
   });
 
@@ -148,6 +158,17 @@ export const useProdutosDataGrid = ({
     setIsViewDrawerOpen(true);
   };
 
+  // Handler do botão de ordenação ascendente.
+  const handleSortAsc = () =>
+    setSorting([{ id: tipoFiltroAtivo, desc: false }]);
+
+  // Handler do botão de ordenação descendente.
+  const handleSortDesc = () =>
+    setSorting([{ id: tipoFiltroAtivo, desc: true }]);
+
+  // Handler do botão de desfazer ordenação.
+  const handleClearSort = () => setSorting([]);
+
   return {
     produtos,
     produtoAtivo,
@@ -161,12 +182,20 @@ export const useProdutosDataGrid = ({
 
     categoriasMap,
 
+    sorting,
+    setSorting,
+    columnFilters,
+
     isEditDrawerOpen,
     setIsEditDrawerOpen,
     isViewDrawerOpen,
     setIsViewDrawerOpen,
 
+    // Handlers.
     handleEditClick,
     handleViewClick,
+    handleSortAsc,
+    handleSortDesc,
+    handleClearSort,
   };
 };
