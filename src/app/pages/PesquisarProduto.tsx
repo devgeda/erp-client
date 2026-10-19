@@ -8,7 +8,6 @@ import { ProdutosDataGrid } from '@/features/estoque/pesquisa/ProdutosDataGrid.t
 import { Input } from '@/shared/components/ui/input.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
 import { Card } from '@/shared/components/ui/card.tsx';
-import { Separator } from '@/shared/components/ui/separator.tsx';
 import { ButtonGroup } from '@/shared/components/ui/button-group.tsx';
 
 // Ícones Lucide Icons.
@@ -50,7 +49,7 @@ export const PesquisarProduto = () => {
         <div className={'flex items-center gap-4 w-full'}>
           <div className={'grow'}>
             <Input
-              className={'w-full max-w-full'}
+              className={'w-full max-w-1/2'}
               type={'text'}
               style={{ textTransform: 'uppercase' }}
               placeholder={`Pesquisar por ${placeholders[tipoFiltroAtivo] || 'Nome'} ...`}
@@ -59,7 +58,6 @@ export const PesquisarProduto = () => {
             />
           </div>
           <div className={'flex items-center gap-4'}>
-            <Separator orientation={'vertical'} />
             <div className={'flex gap-2 items-center'}>
               <ButtonGroup>
                 <Button variant={'outline'}>

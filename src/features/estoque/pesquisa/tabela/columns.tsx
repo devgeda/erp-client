@@ -15,7 +15,7 @@ import {
 import { Button } from '@/shared/components/ui/button.tsx';
 
 // lucide-react.
-import { ArrowUpAZ, MoreHorizontal } from 'lucide-react';
+import { ArrowUpAZ, ArrowDownAZ, MoreHorizontal } from 'lucide-react';
 
 // utils.
 import { formatCurrencyBRL } from '@/shared/utils/formatters.tsx';
@@ -44,8 +44,8 @@ export const columns = columnHelper.columns([
           variant={'ghost'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          <ArrowUpAZ />
           Nome
+          {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
         </Button>
       );
     },

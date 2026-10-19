@@ -13,7 +13,7 @@ export const ProdutosPage = () => {
   const handle = currentMatch?.handle as { pageTitle?: string };
 
   return (
-    <div className={'flex flex-col gap-6 max-w-7xl mx-auto p-4'}>
+    <div className={'flex flex-col gap-6 mx-auto p-4'}>
       {/* GRUPO DE CABEÇALHO + ABAS */}
       <div className={'flex flex-col justify-between items-start'}>
         {/* Título e Ações Globais */}
