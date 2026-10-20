@@ -48,8 +48,8 @@ export const columns = columnHelper.columns([
       return (
         <Button
           variant={'ghost'}
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === 'asc', true)
+          onClick={(e) =>
+            column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
           }
         >
           Nome
@@ -67,8 +67,8 @@ export const columns = columnHelper.columns([
       return (
         <Button
           variant={'ghost'}
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === 'asc', true)
+          onClick={(e) =>
+            column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
           }
         >
           Código
@@ -86,7 +86,9 @@ export const columns = columnHelper.columns([
       return (
         <Button
           variant={'ghost'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={(e) =>
+            column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
+          }
         >
           Código Adicional
           {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
@@ -104,7 +106,9 @@ export const columns = columnHelper.columns([
         <div className={'text-right'}>
           <Button
             variant={'ghost'}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            onClick={(e) =>
+              column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
+            }
           >
             Valor
             {column.getIsSorted() === 'asc' ? <ArrowUp10 /> : <ArrowDown01 />}
@@ -124,7 +128,9 @@ export const columns = columnHelper.columns([
         <div className={'text-right'}>
           <Button
             variant={'ghost'}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            onClick={(e) =>
+              column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
+            }
           >
             Valor Promocional
             {column.getIsSorted() === 'asc' ? <ArrowUp10 /> : <ArrowDown01 />}
@@ -147,7 +153,9 @@ export const columns = columnHelper.columns([
       return (
         <Button
           variant={'ghost'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={(e) =>
+            column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
+          }
         >
           Categoria
           {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
@@ -164,7 +172,9 @@ export const columns = columnHelper.columns([
       return (
         <Button
           variant={'ghost'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={(e) =>
+            column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
+          }
         >
           Localização
           {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
@@ -182,7 +192,9 @@ export const columns = columnHelper.columns([
         <div className={'text-right'}>
           <Button
             variant={'ghost'}
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            onClick={(e) =>
+              column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
+            }
           >
             Quantidade
             {column.getIsSorted() === 'asc' ? <ArrowUp10 /> : <ArrowDown01 />}
@@ -202,7 +214,9 @@ export const columns = columnHelper.columns([
       return (
         <Button
           variant={'ghost'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          onClick={(e) =>
+            column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
+          }
         >
           Ativo
           {column.getIsSorted() === 'asc' ? <ArrowUpAZ /> : <ArrowDownAZ />}
