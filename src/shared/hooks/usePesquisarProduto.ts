@@ -137,7 +137,7 @@ export const usePesquisarProduto = ({
         codigoAdicional: p.codigoAdicional ?? '-',
         valor: p.valor,
         valorPromocional: p.valorPromocional,
-        categoria: categoriasMap[p.categoriaId],
+        categoriaId: categoriasMap[p.categoriaId],
         localizacao:
           estoques.map((e) => localizacaoMap[e.localizacaoId]) || 'Sem estoque',
         quantidade: '0',

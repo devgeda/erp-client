@@ -73,7 +73,7 @@ export function DataTable<TData extends RowData>({
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell>
+                  <TableCell key={cell.id}>
                     <table.FlexRender cell={cell} />
                   </TableCell>
                 ))}

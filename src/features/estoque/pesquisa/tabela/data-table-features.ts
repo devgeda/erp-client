@@ -20,8 +20,8 @@ export const features = tableFeatures({
   filteredRowModel: createFilteredRowModel(),
   sortedRowModel: createSortedRowModel(),
   filterFns: {
-    includeStrings: filterFn_includesString,
-    isNumberRange: filterFn_inNumberRange,
+    includesStrings: filterFn_includesString,
+    inNumberRange: filterFn_inNumberRange,
   },
   sortFns: { alphanumeric: sortFn_alphanumeric, text: sortFn_text },
 });

@@ -91,7 +91,16 @@ export const PesquisarProduto = () => {
                   Filtros
                 </Button>
               </ButtonGroup>
-              <Button variant={'outline'}>Redefinir</Button>
+              <Button
+                variant={'outline'}
+                onClick={() => {
+                  setTipoFiltroAtivo('nome');
+                  setTermoBusca('');
+                  handleClearSort();
+                }}
+              >
+                Redefinir
+              </Button>
             </div>
           </div>
         </div>

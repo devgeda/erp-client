@@ -33,9 +33,8 @@ export type Columns = {
   codigoAdicional: string;
   valor: string;
   valorPromocional: string;
-  categoria: string;
+  categoriaId: string;
   localizacao: string[];
-  quantidade: string;
   ativo: string;
 };
 
@@ -44,6 +43,7 @@ const columnHelper = createColumnHelper<DataTableFeatures, Columns>();
 
 export const columns = columnHelper.columns([
   columnHelper.accessor('nome', {
+    filterFn: 'includesStrings',
     header: ({ column }) => {
       return (
         <Button
@@ -63,6 +63,8 @@ export const columns = columnHelper.columns([
     },
   }),
   columnHelper.accessor('codigo', {
+    filterFn: 'includesStrings',
+
     header: ({ column }) => {
       return (
         <Button
@@ -82,6 +84,8 @@ export const columns = columnHelper.columns([
     },
   }),
   columnHelper.accessor('codigoAdicional', {
+    filterFn: 'includesStrings',
+
     header: ({ column }) => {
       return (
         <Button
@@ -148,7 +152,9 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  columnHelper.accessor('categoria', {
+  columnHelper.accessor('categoriaId', {
+    filterFn: 'includesStrings',
+
     header: ({ column }) => {
       return (
         <Button
@@ -163,11 +169,12 @@ export const columns = columnHelper.columns([
       );
     },
     cell: ({ row }) => {
-      const cellContent = row.getValue('categoria');
+      const cellContent = row.getValue('categoriaId');
       return <div className={'px-2'}>{cellContent as string}</div>;
     },
   }),
   columnHelper.accessor('localizacao', {
+    filterFn: 'includesStrings',
     header: ({ column }) => {
       return (
         <Button
@@ -186,30 +193,8 @@ export const columns = columnHelper.columns([
       return <div className={'px-2'}>{cellContent as string}</div>;
     },
   }),
-  columnHelper.accessor('quantidade', {
-    header: ({ column }) => {
-      return (
-        <div className={'text-right'}>
-          <Button
-            variant={'ghost'}
-            onClick={(e) =>
-              column.toggleSorting(column.getIsSorted() === 'asc', e.shiftKey)
-            }
-          >
-            Quantidade
-            {column.getIsSorted() === 'asc' ? <ArrowUp10 /> : <ArrowDown01 />}
-          </Button>
-        </div>
-      );
-    },
-    cell: ({ row }) => {
-      const cellContent = row.getValue('quantidade');
-      return (
-        <div className={'text-right font-medium'}>{cellContent as string}</div>
-      );
-    },
-  }),
   columnHelper.accessor('ativo', {
+    filterFn: 'includesStrings',
     header: ({ column }) => {
       return (
         <Button

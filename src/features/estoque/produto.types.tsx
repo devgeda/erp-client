@@ -56,9 +56,8 @@ export type ProdutoBaseDTO = {
   codigoAdicional: string;
   valor: string;
   valorPromocional: string;
-  categoria: string;
+  categoriaId: string;
   localizacao: string[];
-  quantidade: string;
   ativo: string;
 };
 
