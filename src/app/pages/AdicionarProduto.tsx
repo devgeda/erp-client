@@ -1,41 +1,49 @@
-import {
-  Button,
-  Field,
-  InfoLabel,
-  Input,
-  Label,
-  Link,
-  Select,
-  Switch,
-  Text,
-} from '@fluentui/react-components';
-import {
-  Add24Regular,
-  ArrowRepeatAll20Regular,
-  Dismiss24Regular,
-  Save24Regular,
-} from '@fluentui/react-icons';
+// react-hook-form.
 import { Controller } from 'react-hook-form';
-import { produtoFormSchema } from '@/features/estoque/produto.schemas.tsx';
+
+// zod.
 import { z } from 'zod';
-import { AdicionarProdutoCategoriaDialog } from '@/features/estoque/adicionar/AdicionarProdutoCategoriaDialog.tsx';
+
+// Produto service.
+import { produtoFormSchema } from '@/features/estoque/produto.schemas.tsx';
+
+// Formatters.
 import {
   formatDate,
   formatFiscalField,
   formatInputCurrencyBRL,
 } from '@/shared/utils/formatters.tsx';
+
+// Constants.
+import { FISCAL_INFO } from '@/shared/constants/fiscalInfo.ts';
+
+// Custom hooks.
+import { useAdicionarProduto } from '@/shared/hooks/useAdicionarProduto.ts';
+
+// Custom components.
+import { AdicionarProdutoCategoriaDialog } from '@/features/estoque/adicionar/AdicionarProdutoCategoriaDialog.tsx';
 import { AdicionarProdutoFiscalSelect } from '@/features/estoque/adicionar/AdicionarProdutoFiscalSelect.tsx';
 import { AdicionarProdutoAliquotaField } from '@/features/estoque/adicionar/AdicionarProdutoAliquotaField.tsx';
-import { FISCAL_INFO } from '@/shared/constants/fiscalInfo.ts';
-import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
 import { EstoqueDialog } from '@/features/estoque/EstoqueDialog.tsx';
-import { useAdicionarProduto } from '@/shared/hooks/useAdicionarProduto.ts';
+import {
+  Card,
+  CardAction,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/ui/card.tsx';
+import { Switch } from '@/shared/components/ui/switch.tsx';
+import { Input } from '@/shared/components/ui/input.tsx';
+import { Button } from '@/shared/components/ui/button.tsx';
+import { Select } from '@/shared/components/ui/select.tsx';
+
+// Lucide-icons
+import { Plus, RotateCcw } from 'lucide-react';
 
 export type ProdutoFormInput = z.input<typeof produtoFormSchema>;
 export type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
 
 export const AdicionarProduto = () => {
-  const styles = sharedStyles();
+  // const styles = sharedStyles();
 
   const {
     produtoCriadoId,
@@ -59,56 +67,35 @@ export const AdicionarProduto = () => {
   } = useAdicionarProduto();
 
   return (
-    <form
-      id={'form-adicionar-produto'}
-      className={styles.root}
-      onSubmit={onSubmit}
-      noValidate
-    >
+    <form id={'form-adicionar-produto'} onSubmit={onSubmit} noValidate>
       {/* INFORMAÇÕES */}
-      <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <Text size={500} weight={'semibold'} className={styles.cardTitle}>
-            Informações Gerais
-          </Text>
-          <Field
-            id={'ativo'}
-            label={'Produto Ativo'}
-            className={styles.switch}
-            validationState={errors.ativo ? 'error' : 'none'}
-            validationMessage={errors.ativo?.message}
-            required
-          >
+      <Card className={'p-4'}>
+        <CardHeader>
+          <CardTitle>Informações Gerais</CardTitle>
+          <CardAction>
             <Switch
               disabled={!!produtoCriadoId}
               {...register('ativo')}
               defaultChecked
             />
-          </Field>
-        </div>
+          </CardAction>
+        </CardHeader>
 
-        <div className={styles.grid3}>
+        <div className={'grid grid-cols-[repeat(3, 1fr)] gap-4 items-start'}>
           <Controller
             name={'nome'}
             control={control}
             defaultValue={''}
             render={({ field }) => (
-              <Field
-                id={'nome'}
-                label={'Nome do Produto'}
-                validationState={errors.nome ? 'error' : 'none'}
-                validationMessage={errors.nome?.message}
+              <Input
+                {...field}
+                disabled={!!produtoCriadoId}
+                value={field.value || ''}
+                onChange={(e) => {
+                  field.onChange(e.target.value.toUpperCase());
+                }}
                 required
-              >
-                <Input
-                  {...field}
-                  disabled={!!produtoCriadoId}
-                  value={field.value || ''}
-                  onChange={(e) => {
-                    field.onChange(e.target.value.toUpperCase());
-                  }}
-                />
-              </Field>
+              />
             )}
           />
 
@@ -117,22 +104,15 @@ export const AdicionarProduto = () => {
             control={control}
             defaultValue={''}
             render={({ field }) => (
-              <Field
-                id={'codigo'}
-                label={'Código do Produto'}
-                validationState={errors.codigo ? 'error' : 'none'}
-                validationMessage={errors.codigo?.message}
+              <Input
+                {...field}
+                disabled={!!produtoCriadoId}
+                value={field.value || ''}
+                onChange={(e) => {
+                  field.onChange(e.target.value.toUpperCase());
+                }}
                 required
-              >
-                <Input
-                  {...field}
-                  disabled={!!produtoCriadoId}
-                  value={field.value || ''}
-                  onChange={(e) => {
-                    field.onChange(e.target.value.toUpperCase());
-                  }}
-                />
-              </Field>
+              />
             )}
           />
 
@@ -141,83 +121,69 @@ export const AdicionarProduto = () => {
             control={control}
             defaultValue={''}
             render={({ field }) => (
-              <Field
-                id={'codigoAdicional'}
-                label={'Código Adicional'}
-                validationState={errors.codigoAdicional ? 'error' : 'none'}
-                validationMessage={errors.codigoAdicional?.message}
-              >
-                <Input
-                  {...field}
-                  disabled={!!produtoCriadoId}
-                  value={field.value || ''}
-                  onChange={(e) => {
-                    field.onChange(e.target.value.toUpperCase());
-                  }}
-                />
-              </Field>
+              <Input
+                {...field}
+                disabled={!!produtoCriadoId}
+                value={field.value || ''}
+                onChange={(e) => {
+                  field.onChange(e.target.value.toUpperCase());
+                }}
+              />
             )}
           />
         </div>
-      </div>
+      </Card>
 
       {/* CATEGORIA */}
-      <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <Text size={500} weight={'semibold'} className={styles.cardTitle}>
-            Categoria
-          </Text>
-          <div className={styles.buttonGroup}>
+      <Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Categoria</CardTitle>
+          </CardHeader>
+          <div className={'flex items-center gap-2'}>
             <Button
               disabled={!!produtoCriadoId}
-              icon={<Add24Regular />}
               aria-label={'Adicionar Categoria'}
               onClick={() => {
                 setIsCategoriaDialogOpen(true);
                 atualizarCategorias();
               }}
             >
+              <Plus />
               Adicionar Categoria
             </Button>
             <Button
               disabled={!!produtoCriadoId}
-              icon={<ArrowRepeatAll20Regular />}
               aria-label={'Recarregar Categorias'}
               onClick={() => atualizarCategorias}
-            />
+            >
+              <RotateCcw />
+            </Button>
           </div>
-        </div>
+        </Card>
 
-        <div className={styles.grid3}>
+        <div className={'grid grid-cols-[repeat(3, 1fr)] gap-4 items-start'}>
           <Controller
             name={'categoriaId'}
             control={control}
             defaultValue={''}
             render={({ field }) => (
-              <Field
-                id={'categoriaId'}
-                label={'Categoria'}
-                validationState={errors.categoriaId ? 'error' : 'none'}
-                validationMessage={errors.categoriaId?.message}
-                required
+              <Select
+                disabled={carregandoCategorias || !!produtoCriadoId}
+                value={field.value || ''}
+                onChange={(_e, data) => field.onChange(data.value)}
               >
-                <Select
-                  disabled={carregandoCategorias || !!produtoCriadoId}
-                  value={field.value || ''}
-                  onChange={(_e, data) => field.onChange(data.value)}
-                >
-                  <option value={''}>
-                    {carregandoCategorias
-                      ? 'Carregando...'
-                      : 'Selecione uma categoria'}
+                <option value={''}>
+                  {carregandoCategorias
+                    ? 'Carregando...'
+                    : 'Selecione uma categoria'}
+                </option>
+                {categorias.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome}
                   </option>
-                  {categorias.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nome}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
+                ))}
+              </Select>
             )}
           ></Controller>
         </div>
@@ -228,13 +194,13 @@ export const AdicionarProduto = () => {
             atualizarEstoques();
           }}
         />
-      </div>
+      </Card>
 
       {/* PRECIFICAÇÃO */}
-      <div className={styles.card}>
-        <Text size={500} weight={'semibold'} className={styles.cardTitle}>
-          Precificação
-        </Text>
+      <Card>
+        <CardHeader>
+          <CardTitle>Precificação</CardTitle>
+        </CardHeader>
 
         <div className={styles.grid2}>
           <Controller
@@ -287,7 +253,7 @@ export const AdicionarProduto = () => {
             )}
           />
         </div>
-      </div>
+      </Card>
 
       {/* INFORMAÇÕES FISCAIS */}
       <div className={styles.card}>

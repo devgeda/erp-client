@@ -5,7 +5,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import { AppLayout } from '@/shared/layouts/AppLayout.tsx';
-import { ProdutosPage } from '@/app/pages/ProdutosPage.tsx';
+import { EstoquePage } from '@/app/pages/EstoquePage.tsx';
 // import { AdicionarProduto } from '@/features/estoque/AdicionarProduto.tsx';
 // import { HistoricoProduto } from '@/features/estoque/HistoricoProduto.tsx';
 import { LoginPage } from '@/features/autenticacao/LoginPage.tsx';
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: '/produtos',
-            element: <ProdutosPage />,
+            element: <EstoquePage />,
             children: [
               /*{
                 path: '/produtos/adicionar',

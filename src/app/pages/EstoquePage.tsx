@@ -5,7 +5,7 @@ import { CardDescription, CardTitle } from '@/shared/components/ui/card.tsx';
 
 export const sectionTitle = 'ESTOQUE';
 
-export const ProdutosPage = () => {
+export const EstoquePage = () => {
   const matches = useMatches();
 
   // Pega a rota filha que está ativa no momento

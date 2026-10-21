@@ -1,3 +1,4 @@
+// shadcn/ui.
 import { Button } from '@/shared/components/ui/button.tsx';
 import { Input } from '@/shared/components/ui/input.tsx';
 import {
@@ -8,24 +9,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu.tsx';
+import { Avatar } from '@/shared/components/ui/avatar.tsx';
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/shared/components/ui/sidebar.tsx';
+import { LayoutSidebar } from '@/shared/layouts/sidebar/sidebar.tsx';
+// lucide-icons
 import {
   Bolt,
-  Box,
-  BriefcaseBusiness,
-  BuildingComplex,
   CircleAlert,
   CircleUserIcon,
-  ClipboardList,
   ListChecks,
   LogOut,
   MessageCircleQuestionMark,
-  User,
-  Users,
-  Wrench,
 } from 'lucide-react';
+
+// react-router-dom.
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Separator } from '@/shared/components/ui/separator.tsx';
-import { Avatar } from '@/shared/components/ui/avatar.tsx';
 
 export const AppLayout = () => {
   // const styles = useStyles(); > migrando para o tailwindcss (v4).
@@ -38,92 +40,65 @@ export const AppLayout = () => {
   }
 
   return (
-    <div className={'flex h-screen w-screen bg-neutral-200'}>
-      {/* NAVEGAÇÃO LATERAL */}
-      <nav className={'flex flex-col w-16 bg-brand items-center'}>
-        <div className={'flex flex-col items-center mb-24'}>
-          {/* Seletor de Empresa */}
-          <Button variant={'ghost'} aria-label={'Selecionar Empresa'}>
-            <BuildingComplex color={'white'} />
-          </Button>
-        </div>
-        <Separator />
-        {/* Ícones do ERP */}
-        <Button variant={'ghost'} title={'Dashboard'}>
-          <ClipboardList color={'white'} />
-        </Button>
-        <Button variant={'ghost'} title={'Estoque'}>
-          <Box color={'white'} />
-        </Button>
-        <Button variant={'ghost'} title={'Ordens de Serviço'}>
-          <Wrench color={'white'} />
-        </Button>
-        <Button variant={'ghost'} title={'Clientes'}>
-          <User color={'white'} />
-        </Button>
-        <Button variant={'ghost'} title={'Serviços'}>
-          <BriefcaseBusiness color={'white'} />
-        </Button>
-        <Button variant={'ghost'} title={'Funcionários'}>
-          <Users color={'white'} />
-        </Button>
-      </nav>
+    <SidebarProvider>
+      <div className={'flex h-screen w-screen bg-neutral-200'}>
+        <LayoutSidebar />
+        <SidebarInset>
+          <header className={'flex justify-between items-center h-14 px-4'}>
+            <div className={'flex min-w-72 items-center gap-4'}>
+              <SidebarTrigger />
+              <Input
+                placeholder={'Buscar... (Ctrl+K)'}
+                style={{ width: '100%' }}
+              />
+            </div>
 
-      {/* ÁREA PRINCIPAL */}
-      <main className={'flex-1 flex-col bg-neutral-100'}>
-        {/* HEADER GLOBAL */}
-        <header className={'flex items-center content-between h-14'}>
-          <div className={'min-w-72'}>
-            <Input
-              placeholder={'Buscar... (Ctrl+K)'}
-              style={{ width: '100%' }}
-            />
-          </div>
+            <div className={'flex items-center'}>
+              <Button variant={'ghost'} aria-label={'Tarefas'}>
+                <ListChecks />
+              </Button>
+              <Button variant={'ghost'} aria-label={'Suporte'}>
+                <MessageCircleQuestionMark />
+              </Button>
+              <Button variant={'ghost'} aria-label={'Notificações'}>
+                <CircleAlert />
+              </Button>
 
-          <div className={'flex items-center'}>
-            <Button variant={'ghost'} aria-label={'Tarefas'}>
-              <ListChecks />
-            </Button>
-            <Button variant={'ghost'} aria-label={'Suporte'}>
-              <MessageCircleQuestionMark />
-            </Button>
-            <Button variant={'ghost'} aria-label={'Notificações'}>
-              <CircleAlert />
-            </Button>
-
-            {/* MENU DO USUÁRIO */}
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Button variant={'ghost'}>
-                  <Avatar /> {/* Implementar componente para exi*/}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem prefix={'Perfil'}>
-                    <CircleUserIcon />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    prefix={'Configurações'}
-                    onClick={() => localStorage.removeItem('token')}
-                  >
-                    <Bolt />
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem prefix={'Sair'} onClick={handleLogout}>
-                    <LogOut />
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </header>
-
-        {/* ÁREA DO OUTLET */}
-        <div className={'flex-1 flex-col'}>
-          <Outlet />
-        </div>
-      </main>
-    </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Button variant={'ghost'}>
+                    <Avatar />
+                    {/* Implementar componente para exibir informações de usuários */}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem prefix={'Perfil'}>
+                      <CircleUserIcon />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      prefix={'Configurações'}
+                      onClick={() => localStorage.removeItem('token')}
+                    >
+                      <Bolt />
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem prefix={'Sair'} onClick={handleLogout}>
+                      <LogOut />
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </header>
+          <main className={'flex-1 flex-col bg-neutral-100'}>
+            {/* ÁREA DO OUTLET */}
+            <div className={'flex-1 flex-col'}>
+              <Outlet />
+            </div>
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
