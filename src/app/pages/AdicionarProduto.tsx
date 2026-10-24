@@ -21,10 +21,12 @@ import { FISCAL_INFO } from '@/shared/constants/fiscalInfo.ts';
 import { useAdicionarProduto } from '@/shared/hooks/useAdicionarProduto.ts';
 
 // Custom components.
+import { EstoqueDialog } from '@/features/estoque/EstoqueDialog.tsx';
 import { AdicionarProdutoCategoriaDialog } from '@/features/estoque/adicionar/AdicionarProdutoCategoriaDialog.tsx';
 import { AdicionarProdutoFiscalSelect } from '@/features/estoque/adicionar/AdicionarProdutoFiscalSelect.tsx';
 import { AdicionarProdutoAliquotaField } from '@/features/estoque/adicionar/AdicionarProdutoAliquotaField.tsx';
-import { EstoqueDialog } from '@/features/estoque/EstoqueDialog.tsx';
+
+// shadcn/ui.
 import {
   Card,
   CardAction,
@@ -35,9 +37,10 @@ import { Switch } from '@/shared/components/ui/switch.tsx';
 import { Input } from '@/shared/components/ui/input.tsx';
 import { Button } from '@/shared/components/ui/button.tsx';
 import { Select } from '@/shared/components/ui/select.tsx';
+import { Label } from '@/shared/components/ui/label.tsx';
 
 // Lucide-icons
-import { Plus, RotateCcw } from 'lucide-react';
+import { Plus, RotateCcw, SaveCheck, X } from 'lucide-react';
 
 export type ProdutoFormInput = z.input<typeof produtoFormSchema>;
 export type ProdutoFormOutput = z.output<typeof produtoFormSchema>;
@@ -55,12 +58,7 @@ export const AdicionarProduto = () => {
     isEstoqueDialogOpen,
     setIsEstoqueDialogOpen,
     localizacaoMap,
-    form: {
-      register,
-      control,
-      formState: { errors },
-      reset,
-    },
+    form: { register, control, reset },
     onSubmit,
     atualizarCategorias,
     atualizarEstoques,
@@ -171,7 +169,6 @@ export const AdicionarProduto = () => {
               <Select
                 disabled={carregandoCategorias || !!produtoCriadoId}
                 value={field.value || ''}
-                onChange={(_e, data) => field.onChange(data.value)}
               >
                 <option value={''}>
                   {carregandoCategorias
@@ -202,30 +199,22 @@ export const AdicionarProduto = () => {
           <CardTitle>Precificação</CardTitle>
         </CardHeader>
 
-        <div className={styles.grid2}>
+        <div className={'grid grid-cols-[1fr 1fr] gap-4 items-start'}>
           <Controller
             name={'valor'}
             control={control}
             defaultValue={''}
             render={({ field }) => (
-              <Field
-                id={'valor'}
-                label={'Valor (R$)'}
-                validationState={errors.valor ? 'error' : 'none'}
-                validationMessage={errors.valor?.message}
-                required
-              >
-                <Input
-                  {...field}
-                  disabled={!!produtoCriadoId}
-                  placeholder={'R$ 0,00'}
-                  value={field.value.toString() || ''}
-                  onChange={(e) => {
-                    const formatted = formatInputCurrencyBRL(e.target.value);
-                    field.onChange(formatted);
-                  }}
-                />
-              </Field>
+              <Input
+                {...field}
+                disabled={!!produtoCriadoId}
+                placeholder={'R$ 0,00'}
+                value={field.value.toString() || ''}
+                onChange={(e) => {
+                  const formatted = formatInputCurrencyBRL(e.target.value);
+                  field.onChange(formatted);
+                }}
+              />
             )}
           />
           <Controller
@@ -233,41 +222,33 @@ export const AdicionarProduto = () => {
             control={control}
             defaultValue={''}
             render={({ field }) => (
-              <Field
-                id={'valorPromocional'}
-                label={'Valor Promocional (R$)'}
-                validationState={errors.valorPromocional ? 'error' : 'none'}
-                validationMessage={errors.valorPromocional?.message}
-              >
-                <Input
-                  {...field}
-                  disabled={!!produtoCriadoId}
-                  placeholder={'R$ 0,00'}
-                  value={field.value.toString() || ''}
-                  onChange={(e) => {
-                    const formatted = formatInputCurrencyBRL(e.target.value);
-                    field.onChange(formatted);
-                  }}
-                />
-              </Field>
+              <Input
+                {...field}
+                disabled={!!produtoCriadoId}
+                placeholder={'R$ 0,00'}
+                value={field.value.toString() || ''}
+                onChange={(e) => {
+                  const formatted = formatInputCurrencyBRL(e.target.value);
+                  field.onChange(formatted);
+                }}
+              />
             )}
           />
         </div>
       </Card>
 
-      {/* INFORMAÇÕES FISCAIS */}
-      <div className={styles.card}>
-        <Text size={500} weight={'semibold'} className={styles.cardTitle}>
-          Informações Fiscais
-        </Text>
-        <div className={styles.grid3}>
+      <Card>
+        <CardHeader>
+          <CardTitle>Informações Fiscais</CardTitle>
+        </CardHeader>
+        <div className={'grid grid-cols-[repeat(3, 1fr)] gap-4 items-start'}>
           <AdicionarProdutoFiscalSelect
             disabled={!!produtoCriadoId}
             endPointPath={'/produtos/origem-do-produto'}
             label={'Origem do Produto'}
             infoLabelText={FISCAL_INFO.ORIGEM_DO_PRODUTO}
             infoLabelAddon={
-              <Link
+              <a
                 href={
                   'https://app1.sefaz.mt.gov.br/Sistema/legislacao/regulamentoicms.nsf/cc90333e16d28a8c0425736e0076800a/c560e4b8bc6af2ea04256f0f006df104?OpenDocument'
                 }
@@ -275,7 +256,7 @@ export const AdicionarProduto = () => {
                 rel={'noopener noreferrer'}
               >
                 Tabela A do ICMS - Fonte: sefaz.mt.gov.br
-              </Link>
+              </a>
             }
             nome={'origemDoProduto'}
             control={control}
@@ -285,26 +266,16 @@ export const AdicionarProduto = () => {
             control={control}
             defaultValue={''}
             render={({ field }) => (
-              <Field
-                id={'ncm'}
-                validationState={errors.ncm ? 'error' : 'none'}
-                validationMessage={errors.ncm?.message}
-              >
-                <div className={styles.label}>
-                  <Label>NCM</Label>
-                  <InfoLabel info={<>{FISCAL_INFO.NCM}</>} />
-                </div>
-                <Input
-                  {...field}
-                  disabled={!!produtoCriadoId}
-                  placeholder={'0000.00.00'}
-                  value={field.value || ''}
-                  onChange={(e) => {
-                    const maskValue = formatFiscalField(e.target.value, 'ncm');
-                    field.onChange(maskValue);
-                  }}
-                />
-              </Field>
+              <Input
+                {...field}
+                disabled={!!produtoCriadoId}
+                placeholder={'0000.00.00'}
+                value={field.value || ''}
+                onChange={(e) => {
+                  const maskValue = formatFiscalField(e.target.value, 'ncm');
+                  field.onChange(maskValue);
+                }}
+              />
             )}
           />
           <Controller
@@ -312,30 +283,24 @@ export const AdicionarProduto = () => {
             control={control}
             defaultValue={''}
             render={({ field }) => (
-              <Field
-                id={'cest'}
-                validationState={errors.cest ? 'error' : 'none'}
-                validationMessage={errors.cest?.message}
-              >
-                <div className={styles.label}>
-                  <Label>CEST</Label>
-                  <InfoLabel info={<>{FISCAL_INFO.CEST}</>} />
-                </div>
-                <Input
-                  {...field}
-                  disabled={!!produtoCriadoId}
-                  value={field.value || ''}
-                  placeholder={'00.000.00'}
-                  onChange={(e) => {
-                    const maskValue = formatFiscalField(e.target.value, 'cest');
-                    field.onChange(maskValue);
-                  }}
-                />
-              </Field>
+              <Input
+                {...field}
+                disabled={!!produtoCriadoId}
+                value={field.value || ''}
+                placeholder={'00.000.00'}
+                onChange={(e) => {
+                  const maskValue = formatFiscalField(e.target.value, 'cest');
+                  field.onChange(maskValue);
+                }}
+              />
             )}
           />
         </div>
-        <div className={styles.grid6}>
+        <div
+          className={
+            'grid grid-cols-[repeat(3, minmax(0, 1fr))] gap-4 items-start'
+          }
+        >
           <AdicionarProdutoFiscalSelect
             nome={'cfopInterno'}
             infoLabelText={FISCAL_INFO.CFOP_INTERNO}
@@ -386,12 +351,11 @@ export const AdicionarProduto = () => {
           />
         </div>
 
-        {/* ALÍQUOTAS */}
-        <Text size={300} weight={'medium'} style={{ marginTop: '8px' }}>
-          Alíquotas
-        </Text>
+        <CardHeader>
+          <CardTitle>Alíquotas</CardTitle>
+        </CardHeader>
 
-        <div className={styles.grid3}>
+        <div className={'grid grid-cols-[repeat(3, 1fr)] gap-4 items-start'}>
           <AdicionarProdutoAliquotaField
             nome={'aliquotaIcms'}
             label={'ICMS'}
@@ -418,7 +382,7 @@ export const AdicionarProduto = () => {
             label={'IPI'}
             infoLabelText={FISCAL_INFO.IPI}
             infoLabelAddon={
-              <Link
+              <a
                 href={
                   'https://www.gov.br/receitafederal/pt-br/acesso-a-informacao/legislacao/documentos-e-arquivos/tipi.pdf'
                 }
@@ -426,7 +390,7 @@ export const AdicionarProduto = () => {
                 rel={'noopener noreferrer'}
               >
                 Tabela TIPI - Fonte: Gov.br
-              </Link>
+              </a>
             }
             control={control}
             disabled={!!produtoCriadoId}
@@ -446,69 +410,76 @@ export const AdicionarProduto = () => {
             disabled={!!produtoCriadoId}
           />
         </div>
-      </div>
-      <div className={styles.actionFooter}>
+      </Card>
+      <div
+        className={
+          'flex justify-end gap-3 mt-4 p-4 border-t border-t-solid border-t-neutral-200'
+        }
+      >
         <Button
           type={'reset'}
-          appearance={'secondary'}
-          icon={<Dismiss24Regular />}
+          variant={'secondary'}
           onClick={() => reset()}
           disabled={!!produtoCriadoId}
         >
+          <X />
           Cancelar
         </Button>
         <Button
           type={'submit'}
-          appearance={'primary'}
-          icon={<Save24Regular />}
+          variant={'default'}
           disabled={!!produtoCriadoId}
         >
+          <SaveCheck />
           Adicionar Produto
         </Button>
       </div>
 
-      {/* LOCALIZAÇÃO */}
       {produtoCriadoId && (
-        <div className={styles.card}>
-          <div className={styles.cardHeader}>
-            <Text size={500} weight={'semibold'} className={styles.cardTitle}>
-              Localização
-            </Text>
-            <div className={styles.buttonGroup}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Localização</CardTitle>
+            <CardAction>
               <Button
-                icon={<Add24Regular />}
                 aria-label={'Adicionar Localização'}
                 onClick={() => {
                   setIsEstoqueDialogOpen(true);
                   atualizarEstoques();
                 }}
               >
+                <Plus />
                 Adicionar Localização
               </Button>
               <Button
-                icon={<ArrowRepeatAll20Regular />}
                 aria-label={'Recarregar Localizações'}
                 onClick={() => atualizarEstoques()}
-              />
-            </div>
-          </div>
-          <div className={styles.content}>
+              >
+                <RotateCcw />
+              </Button>
+            </CardAction>
+          </CardHeader>
+          <div className={'flex flex-col justify-between'}>
             {estoques?.length === 0 ? (
-              <Text>
+              <Label>
                 Nenhum produto em estoque encontrado, cadastre a partir de
                 "Adicionar Localização" ou atualize através do botão recarregar.
-              </Text>
+              </Label>
             ) : (
               estoques?.map((e) => (
-                <div key={e.id} className={styles.list}>
-                  <Text>
+                <div
+                  key={e.id}
+                  className={
+                    'flex justify-between p-2 border-b-solid border-b-neutral-100'
+                  }
+                >
+                  <Label>
                     Localização:
                     {localizacaoMap[e.localizacaoId] || 'Carregando...'}
-                  </Text>
-                  <Text>Quantidade: {e.quantidade}</Text>
-                  <Text>Criado por: {e.criadoPor}</Text>
-                  <Text>Data da criação: {formatDate(e.dataCriacao)}</Text>
-                  <Text>Ativo: {e.ativo ? 'SIM' : 'NÃO'}</Text>
+                  </Label>
+                  <Label>Quantidade: {e.quantidade}</Label>
+                  <Label>Criado por: {e.criadoPor}</Label>
+                  <Label>Data da criação: {formatDate(e.dataCriacao)}</Label>
+                  <Label>Ativo: {e.ativo ? 'SIM' : 'NÃO'}</Label>
                 </div>
               ))
             )}
@@ -522,7 +493,7 @@ export const AdicionarProduto = () => {
             }}
             updateEstoquesTrigger={atualizarEstoques}
           />
-        </div>
+        </Card>
       )}
     </form>
   );

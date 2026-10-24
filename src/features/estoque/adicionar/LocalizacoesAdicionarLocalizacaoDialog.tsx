@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react';
 import { Dismiss24Regular, Save24Regular } from '@fluentui/react-icons';
 import { criarLocalizacao } from '@/features/estoque/localizacao/localizacao.service.tsx';
 import { useAppToast } from '@/app/context/ToastContext.tsx';
-import type { AppError } from '@/shared/api/client.tsx';
+import type { AppError } from '@/app/api/client.tsx';
 
 interface LocalizacoesAdicionarLocalizacaoDialogProps {
   isOpen: boolean;

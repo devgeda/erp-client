@@ -9,7 +9,7 @@ import type {
   ProdutoFormOutput,
 } from '@/app/pages/AdicionarProduto.tsx';
 import { useForm } from 'react-hook-form';
-import type { AppError } from '@/shared/api/client.tsx';
+import type { AppError } from '@/app/api/client.tsx';
 import { getCategorias } from '@/features/estoque/categorias/categoria.service.tsx';
 import { obterLocalizacaoPorId } from '@/features/estoque/localizacao/localizacao.service.tsx';
 import { getEstoques } from '@/features/estoque/pesquisa/estoque.service.tsx';

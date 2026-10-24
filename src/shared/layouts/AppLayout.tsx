@@ -44,7 +44,11 @@ export const AppLayout = () => {
       <div className={'flex h-screen w-screen bg-neutral-200'}>
         <LayoutSidebar />
         <SidebarInset>
-          <header className={'flex justify-between items-center h-14 px-4'}>
+          <header
+            className={
+              'flex justify-between items-center p-4 shrink-0 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12'
+            }
+          >
             <div className={'flex min-w-72 items-center gap-4'}>
               <SidebarTrigger />
               <Input
@@ -92,7 +96,6 @@ export const AppLayout = () => {
             </div>
           </header>
           <main className={'flex-1 flex-col bg-neutral-100'}>
-            {/* ÁREA DO OUTLET */}
             <div className={'flex-1 flex-col'}>
               <Outlet />
             </div>

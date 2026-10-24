@@ -1,4 +1,4 @@
-import { AppRoutes } from '@/shared/routes/AppRoutes.tsx';
+import { AppRoutes } from '@/app/routes/AppRoutes.tsx';
 
 function App() {
   return <AppRoutes />;

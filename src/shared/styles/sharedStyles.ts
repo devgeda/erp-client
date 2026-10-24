@@ -25,6 +25,7 @@ export const sharedStyles = makeStyles({
   colSpan2: {
     gridColumnEnd: 'span 2',
   },
+  // 'flex justify-end gap-3 mt-4 p-4 border-t border-t-solid border-t-neutral-200'
   actionFooter: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -104,6 +105,7 @@ export const sharedStyles = makeStyles({
     gap: '16px',
     alignItems: 'start',
   },
+  // 'grid grid-cols-[repeat(3, 1fr)] gap-4 items-start'
   grid3: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -116,6 +118,7 @@ export const sharedStyles = makeStyles({
     gap: '16px',
     alignItems: 'start',
   },
+  // 'grid grid-cols-[repeat(3, minmax(0, 1fr))] gap-4 items-start'
   grid6: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
@@ -143,11 +146,13 @@ export const sharedStyles = makeStyles({
     alignItems: 'start',
     gridTemplateColumns: '1fr 1fr',
   },
+  // 'flex flex-col justify-between'
   content: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
+  // 'flex justify-between p-2 border-b-solid border-b-neutral-100'
   list: {
     display: 'flex',
     justifyContent: 'space-between',

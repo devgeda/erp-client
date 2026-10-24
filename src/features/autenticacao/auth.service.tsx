@@ -1,4 +1,4 @@
-import { api } from '@/shared/api/client.tsx';
+import { api } from '@/app/api/client.tsx';
 import * as z from 'zod';
 
 export interface LoginRequestDTO {

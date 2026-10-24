@@ -65,7 +65,6 @@ export const PesquisarProduto = () => {
             <Input
               className={'w-full max-w-1/2'}
               type={'text'}
-              style={{ textTransform: 'uppercase' }}
               placeholder={`Pesquisar por ${placeholders[tipoFiltroAtivo] || 'Nome'} ...`}
               value={termoBusca}
               onChange={(e) => setTermoBusca(e.target.value.toUpperCase())}

@@ -11,6 +11,8 @@ import { EstoquePage } from '@/app/pages/EstoquePage.tsx';
 import { LoginPage } from '@/features/autenticacao/LoginPage.tsx';
 // import { SignupPage } from '@/features/autenticacao/SignupPage.tsx';
 import { PesquisarProduto } from '@/app/pages/PesquisarProduto.tsx';
+import { AdicionarProduto } from '@/app/pages/AdicionarProduto.tsx';
+
 // import { Localizacoes } from '@/features/estoque/pesquisa/Localizacoes.tsx';
 
 export function ProtectedRoute() {
@@ -55,13 +57,13 @@ const router = createBrowserRouter([
             path: '/produtos',
             element: <EstoquePage />,
             children: [
-              /*{
+              {
                 path: '/produtos/adicionar',
                 element: <AdicionarProduto />,
                 handle: {
                   pageTitle: 'Adicionar Produto',
                 },
-              },*/
+              },
               {
                 path: '/produtos/pesquisar',
                 element: <PesquisarProduto />,

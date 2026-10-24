@@ -1,16 +1,16 @@
-import {
-  Field,
-  InfoLabel,
-  type JSXElement,
-  Label,
-  Select,
-} from '@fluentui/react-components';
+// react-hook-form.
 import { type Control, Controller, type Path } from 'react-hook-form';
+
+// Custom components.
 import type { ProdutoFormInput } from '@/app/pages/AdicionarProduto.tsx';
-import { type ReactElement, useEffect, useState } from 'react';
+
+// shadcn/ui.
+import { Select } from '@/shared/components/ui/select.tsx';
+
 import { listarProdutoFiscal } from '@/features/estoque/produto.service.tsx';
 import type { ProdutoFiscalDTO } from '@/features/estoque/produto.types.tsx';
-import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
+
+import { type ReactElement, useEffect, useState } from 'react';
 
 export interface AdicionarProdutoFiscalSelectProps {
   endPointPath: string;
@@ -30,8 +30,8 @@ export const AdicionarProdutoFiscalSelect = ({
   nome,
   control,
   disabled,
-}: AdicionarProdutoFiscalSelectProps): JSXElement => {
-  const styles = sharedStyles();
+}: AdicionarProdutoFiscalSelectProps) => {
+  // const styles = sharedStyles();
   const [fiscal, setFiscal] = useState<ProdutoFiscalDTO[]>([]);
   const [carregandoFiscal, setCarregandoFiscal] = useState(true);
 
@@ -50,7 +50,7 @@ export const AdicionarProdutoFiscalSelect = ({
         setCarregandoFiscal(false);
       }
     }
-    carregarFiscal();
+    void carregarFiscal();
   }, [endPointPath]);
 
   const fiscalAgrupado = (fiscal || []).reduce<
@@ -69,52 +69,31 @@ export const AdicionarProdutoFiscalSelect = ({
       name={nome}
       control={control}
       render={({ field, fieldState }) => (
-        <Field
-          id={`${nome}`}
-          validationState={fieldState.error ? 'error' : 'none'}
-          validationMessage={fieldState.error?.message}
+        <Select
+          disabled={carregandoFiscal || disabled}
+          value={(field.value as string) ?? ''}
         >
-          <div className={styles.label}>
-            <Label>{label}</Label>
-            <InfoLabel
-              info={
-                <>
-                  {infoLabelText} {infoLabelAddon}
-                </>
-              }
-            ></InfoLabel>
-          </div>
-          <Select
-            style={{ width: '100%', minWidth: 0 }}
-            disabled={carregandoFiscal || disabled}
-            value={(field.value as string) ?? ''}
-            onChange={(_e, data) => {
-              field.onChange(data.value);
-            }}
-            onBlur={field.onBlur}
-          >
-            <option value={''} disabled hidden>
-              {carregandoFiscal ? 'Carregando...' : `Selecione ${label}`}
-            </option>
-            {fiscal.find((value) => value.grupo)
-              ? Object.entries(fiscalAgrupado).map(
-                  ([nomeDoGrupo, itensDoGrupo]) => (
-                    <optgroup key={nomeDoGrupo} label={nomeDoGrupo}>
-                      {itensDoGrupo.map((f) => (
-                        <option key={f.codigo} value={f.codigo}>
-                          {`${f.codigo} - ${f.descricao}`}
-                        </option>
-                      ))}
-                    </optgroup>
-                  )
+          <option value={''} disabled hidden>
+            {carregandoFiscal ? 'Carregando...' : `Selecione ${label}`}
+          </option>
+          {fiscal.find((value) => value.grupo)
+            ? Object.entries(fiscalAgrupado).map(
+                ([nomeDoGrupo, itensDoGrupo]) => (
+                  <optgroup key={nomeDoGrupo} label={nomeDoGrupo}>
+                    {itensDoGrupo.map((f) => (
+                      <option key={f.codigo} value={f.codigo}>
+                        {`${f.codigo} - ${f.descricao}`}
+                      </option>
+                    ))}
+                  </optgroup>
                 )
-              : fiscal.map((f) => (
-                  <option key={f.codigo} value={f.codigo}>
-                    {`${f.codigo} - ${f.descricao}`}
-                  </option>
-                ))}
-          </Select>
-        </Field>
+              )
+            : fiscal.map((f) => (
+                <option key={f.codigo} value={f.codigo}>
+                  {`${f.codigo} - ${f.descricao}`}
+                </option>
+              ))}
+        </Select>
       )}
     />
   );

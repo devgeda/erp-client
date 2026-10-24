@@ -1,34 +1,81 @@
+// shadcn/ui.
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/shared/components/ui/sidebar.tsx';
-import { useAppLayout } from '@/shared/hooks/useAppLayout.tsx';
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+} from '@/shared/components/ui/sidebar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/shared/components/ui/collapsible';
+
+// lucid-react.
+import { ChevronRight } from 'lucide-react';
+
+import { useAppLayout } from '@/shared/hooks/useAppLayout';
 
 export function LayoutSidebar() {
   const { ...menu } = useAppLayout();
   return (
-    <Sidebar>
+    <Sidebar collapsible={'icon'}>
       <SidebarHeader />
       <SidebarContent>
-        {menu.navbar.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+        {menu.navbar.map((section) => (
+          <SidebarGroup key={section.title}>
+            <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {item.items?.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                {section.items?.map((item) => (
+                  <Collapsible
+                    key={item.title}
+                    asChild
+                    defaultOpen={item.isActive}
+                    className={'group/collapsible'}
+                  >
+                    <SidebarMenuItem key={item.title}>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton
+                          isActive={item.isActive}
+                          tooltip={item.title}
+                        >
+                          {item.icon && <item.icon />}
+                          <span>Produtos</span>
+                          <ChevronRight
+                            className={
+                              'ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90'
+                            }
+                          />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {item.subItems?.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={subItem.isActive}
+                              >
+                                <a href={subItem.url}>
+                                  <span>{subItem.title}</span>
+                                </a>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
                 ))}
               </SidebarMenu>
             </SidebarGroupContent>

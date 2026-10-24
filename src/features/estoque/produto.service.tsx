@@ -3,7 +3,7 @@ import type {
   ProdutoRequestDTO,
   ProdutoResponseDTO,
 } from '@/features/estoque/produto.types.tsx';
-import { api } from '@/shared/api/client.tsx';
+import { api } from '@/app/api/client.tsx';
 
 export async function criarProduto(data: ProdutoRequestDTO) {
   const response = await api.post<ProdutoResponseDTO>('/produtos', data);

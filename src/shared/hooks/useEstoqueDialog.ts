@@ -5,7 +5,7 @@ import { estoqueFormSchema } from '@/features/estoque/localizacao/estoque.schema
 import { useAppToast } from '@/app/context/ToastContext.tsx';
 import { useEffect, useState } from 'react';
 import { listarLocalizacoes } from '@/features/estoque/localizacao/localizacao.service.tsx';
-import type { AppError } from '@/shared/api/client.tsx';
+import type { AppError } from '@/app/api/client.tsx';
 import { criarEstoque } from '@/features/estoque/pesquisa/estoque.service.tsx';
 import { onNestedSubmit } from '@/shared/utils/nestedFormSubmit.tsx';
 import type { LocalizacaoResponseDTO } from '@/features/estoque/localizacao/localizacao.types.tsx';
@@ -19,13 +19,13 @@ interface useEstoqueDialogProps {
 /**
  * Hook customizado para a lógica do componente de criação de estoque.
  *
- * 1. Gestor de estados: Gerencia o estado do componente.
+ * 1. Gestor de estados: gerencia o estado do componente.
  *
- * 2. Buscar/fetch: Busca de localizações.
+ * 2. Buscar/fetch: busca de localizações.
  *
- * 3. Validar: Validação do formulário de criação.
+ * 3. Validar: validação do formulário de criação.
  *
- * 4. EventHandler: Gerencia o evento de envio para o backend.
+ * 4. EventHandler: gerencia o evento de envio para o backend.
  * */
 export const useEstoqueDialog = ({
   produtoCriadoId,

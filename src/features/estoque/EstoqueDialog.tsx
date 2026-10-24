@@ -1,21 +1,23 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogBody,
-  DialogContent,
-  DialogSurface,
-  DialogTitle,
-  DialogTrigger,
-  Field,
-  Input,
-  type JSXElement,
-  Select,
-  Switch,
-} from '@fluentui/react-components';
+// react-hook-form.
 import { Controller } from 'react-hook-form';
-import { sharedStyles } from '@/shared/styles/sharedStyles.ts';
+
+// Formatters.
 import { formatNumber } from '@/shared/utils/formatters.tsx';
+
+// shadcn/ui.
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+} from '@/shared/components/ui/dialog.tsx';
+import { Switch } from '@/shared/components/ui/switch.tsx';
+import { Select } from '@/shared/components/ui/select.tsx';
+import { Input } from '@/shared/components/ui/input.tsx';
+import { Button } from '@/shared/components/ui/button.tsx';
+
+// Custom hooks.
 import { useEstoqueDialog } from '@/shared/hooks/useEstoqueDialog.ts';
 
 interface AdicionarProdutoEstoqueDialogProps {
@@ -30,18 +32,13 @@ export const EstoqueDialog = ({
   onClose,
   updateEstoquesTrigger,
   produtoCriadoId,
-}: AdicionarProdutoEstoqueDialogProps): JSXElement => {
-  const styles = sharedStyles();
+}: AdicionarProdutoEstoqueDialogProps) => {
+  // const styles = sharedStyles();
 
   const {
     localizacoes,
     carregandoLocalizacoes,
-    form: {
-      register,
-      control,
-      formState: { errors },
-      reset,
-    },
+    form: { register, control, reset },
     onSubmit,
   } = useEstoqueDialog({
     produtoCriadoId: produtoCriadoId,
@@ -49,100 +46,67 @@ export const EstoqueDialog = ({
   });
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(_e, data) => !data.open && onClose()}
-      modalType={'modal'}
-    >
-      <DialogSurface>
-        <form id={'form-dialog-estoque'} onSubmit={onSubmit} noValidate>
-          <DialogBody className={styles.content}>
-            <div className={styles.cardHeader}>
-              <DialogTitle>Adicionar Estoque</DialogTitle>
-              <Field
-                id={'ativo'}
-                label={'Estoque Ativo.'}
-                className={styles.switch}
-                required
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <form id={'form-dialog-estoque'} onSubmit={onSubmit} noValidate>
+        <DialogContent className={'flex flex-col justify-between'}>
+          <DialogTitle>Adicionar Estoque</DialogTitle>
+          <Switch {...register('ativo')} defaultChecked />
+          <Controller
+            name={'localizacaoId'}
+            control={control}
+            defaultValue={''}
+            render={({ field }) => (
+              <Select
+                disabled={carregandoLocalizacoes}
+                value={field.value || ''}
               >
-                <Switch {...register('ativo')} defaultChecked />
-              </Field>
-            </div>
-            <DialogContent className={styles.grid4}>
-              <Controller
-                name={'localizacaoId'}
-                control={control}
-                defaultValue={''}
-                render={({ field }) => (
-                  <Field
-                    id={'localizacaoId'}
-                    label={'Localização'}
-                    validationState={errors.localizacaoId ? 'error' : 'none'}
-                    validationMessage={errors.localizacaoId?.message}
-                    required
-                  >
-                    <Select
-                      disabled={carregandoLocalizacoes}
-                      value={field.value || ''}
-                      onChange={(_e, data) => field.onChange(data.value)}
-                    >
-                      <option value={''} disabled hidden>
-                        {carregandoLocalizacoes
-                          ? 'Carregando...'
-                          : 'Selecione um estoque'}
-                      </option>
-                      {localizacoes.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.codigo}
-                        </option>
-                      ))}
-                    </Select>
-                  </Field>
-                )}
-              />
-              <Controller
-                name={'quantidade'}
-                control={control}
-                defaultValue={0}
-                render={({ field }) => (
-                  <Field
-                    id={'quantidade'}
-                    label={'Quantidade'}
-                    validationState={errors.quantidade ? 'error' : 'none'}
-                    validationMessage={errors.quantidade?.message}
-                    required
-                  >
-                    <Input
-                      {...field}
-                      value={field.value as never}
-                      onChange={(e) => {
-                        const maskNumber = formatNumber(e.target.value);
-                        field.onChange(maskNumber);
-                      }}
-                    ></Input>
-                  </Field>
-                )}
-              />
-            </DialogContent>
-            <DialogActions className={styles.actionFooter}>
-              <Button appearance={'primary'} type={'submit'}>
-                Adicionar
+                <option value={''} disabled hidden>
+                  {carregandoLocalizacoes
+                    ? 'Carregando...'
+                    : 'Selecione um estoque'}
+                </option>
+                {localizacoes.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.codigo}
+                  </option>
+                ))}
+              </Select>
+            )}
+          />
+          <Controller
+            name={'quantidade'}
+            control={control}
+            defaultValue={0}
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value as never}
+                onChange={(e) => {
+                  const maskNumber = formatNumber(e.target.value);
+                  field.onChange(maskNumber);
+                }}
+                required
+              ></Input>
+            )}
+          />
+          <DialogFooter>
+            <Button variant={'default'} type={'submit'}>
+              Adicionar
+            </Button>
+            <DialogTrigger>
+              <Button
+                variant={'secondary'}
+                onClick={() => {
+                  onClose();
+                  reset();
+                }}
+              >
+                Fechar
               </Button>
-              <DialogTrigger disableButtonEnhancement>
-                <Button
-                  appearance={'secondary'}
-                  onClick={() => {
-                    onClose();
-                    reset();
-                  }}
-                >
-                  Fechar
-                </Button>
-              </DialogTrigger>
-            </DialogActions>
-          </DialogBody>
-        </form>
-      </DialogSurface>
+            </DialogTrigger>
+          </DialogFooter>
+        </DialogContent>
+      </form>
     </Dialog>
   );
 };
